@@ -1,0 +1,14 @@
+2013-03-17  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: release process streamlining.
+	* GNUmakefile (check-in-release): Don't switch back to master yet.
+	(release): Do it at the end!
+
+	maint: add gitlog-to-changelog.
+	Hand maintaining a ChangeLog is tedious.
+	* build-aux/gitlog-to-changelog: New file.
+
+	rockspecs: remove debug line.
+	* build-aux/mkrockspecs.lua: Remove left-over debug line.
+
+	Initial import.
