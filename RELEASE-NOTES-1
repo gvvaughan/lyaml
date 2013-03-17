@@ -1,0 +1,7 @@
+A binding for libYAML, by Andrew Danforth:  Updated for Lua 5.1 and 5.2,
+and packaged as a luarock.
+
+I spun this out of Specl (http://github.com/gvvaughan/specl) that other
+projects may use it, and to simplify the Specl build.
+
+There's not really any documentation, sorry.  Contributions welcome!
