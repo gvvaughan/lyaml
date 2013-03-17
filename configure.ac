@@ -19,7 +19,7 @@ dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 AC_PREREQ([2.69])
 
 dnl Initialise autoconf and automake
-AC_INIT([lyaml], [1], [http://github.com/gvvaughan/lyaml/issues])
+AC_INIT([lyaml], [2], [http://github.com/gvvaughan/lyaml/issues])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
