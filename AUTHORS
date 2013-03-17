@@ -1,0 +1,11 @@
+lyaml Contributors
+==================
+
+This file list contributors to lyaml. If you think you should be in
+this list, please file an issue on github (run `./configure --help`
+for the URL).
+
+ * Andrew Danforth <acd@weirdness.net>:
+   Designed and implemented lyaml.
+ * Gary V. Vaughan <gary@gnu.org>:
+   Lua 5.2 compatibility, build system, luarock packaging, releases.
