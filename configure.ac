@@ -1,20 +1,25 @@
 dnl configure.ac
 dnl
-dnl Copyright (c) 2013 Free Software Foundation, Inc.
+dnl Copyright (C) 2013 Gary V. Vaughan
 dnl Written by Gary V. Vaughan, 2013
 dnl
-dnl This program is free software; you can redistribute it and/or modify
-dnl it under the terms of the GNU General Public License as published
-dnl by the Free Software Foundation; either version 3, or (at your
-dnl option) any later version.
-dnl
-dnl This program is distributed in the hope that it will be useful, but
-dnl WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-dnl General Public License for more details.
-dnl
-dnl You should have received a copy of the GNU General Public License
-dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
+dnl Permission is hereby granted, free of charge, to any person obtaining a copy
+dnl of this software and associated documentation files (the "Software"), to deal
+dnl in the Software without restriction, including without limitation the rights
+dnl to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+dnl copies of the Software, and to permit persons to whom the Software is
+dnl furnished to do so, subject to the following conditions:
+dnl 
+dnl The above copyright notice and this permission notice shall be included in
+dnl all copies or substantial portions of the Software.
+dnl 
+dnl THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+dnl IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+dnl FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+dnl AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+dnl LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+dnl OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+dnl THE SOFTWARE.
 
 AC_PREREQ([2.69])
 
