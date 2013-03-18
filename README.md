@@ -23,8 +23,8 @@ options:
  * `load_nulls_as_nil`
 
 
-2. Instalation
---------------
+2. Installation
+---------------
 
     ./configure --prefix=INSTALLATION-ROOT-DIRECTORY
     make all install
