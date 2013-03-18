@@ -18,7 +18,7 @@ local default = {
       Read and write YAML format files with Lua.
      ]],
     homepage = "http://github.com/gvvaughan/"..package_name.."/",
-    license = "GPLv3+",
+    license = "MIT",
   },
   dependencies = {
     "lua >= 5.1",

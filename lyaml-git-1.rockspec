@@ -14,7 +14,7 @@ dependencies = {
 }
 description = {
   homepage = "http://github.com/gvvaughan/lyaml/",
-  license = "GPLv3+",
+  license = "MIT",
   summary = "libYAML binding for Lua",
   detailed = "      Read and write YAML format files with Lua.\
      ",

@@ -1,4 +1,15 @@
+2013-03-18  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: use correct MIT license.
+	The GPLv3+ license was a cut-n-paste error.
+	* lyaml-rockspec.lua (license): Correct license is MIT.
+	* GNUmakefile, Makefile.am, bootstrap.conf, configure.ac:
+	Relicense files authored by me under MIT.
+
 2013-03-17  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: bump release number to 2.
+	* configure.ac (AC_INIT): Bump release number to 2.
 
 	maint: release process streamlining.
 	* GNUmakefile (check-in-release): Don't switch back to master yet.
