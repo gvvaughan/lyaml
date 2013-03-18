@@ -1,7 +1,7 @@
 lyaml
 =====
 
-LibYAML binding for [Lua][].
+LibYAML binding for [Lua](http://www.lua.org)
 
 1. Usage
 --------
