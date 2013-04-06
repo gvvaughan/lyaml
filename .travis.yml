@@ -28,10 +28,9 @@ install:
 
 # Configure and build.
 script:
-  - eval `$LUAROCKS path`
   - ./bootstrap
   - ./configure LUA="$LUA"
   - make LUA="$LUA" LUA_INCDIR="$LUA_INCDIR" luarocks-config.lua
   - $LUAROCKS install stdlib
-  - make rockspecs
+  - eval `$LUAROCKS path`; make rockspecs
   - $LUAROCKS make lyaml-git-1.rockspec
