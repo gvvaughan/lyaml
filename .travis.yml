@@ -2,10 +2,11 @@
 language: erlang
 
 env:
-  - LUA=lua5.1
-  - LUA=lua5.2
-  - LUA=luajit
   matrix:
+    - LUA=lua5.1
+    - LUA=lua5.2
+    - LUA=luajit
+  global:
     - LUAROCKS_CONFIG=luarocks-config.lua
 
 # Tool setup.
