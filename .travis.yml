@@ -23,5 +23,5 @@ script:
   - ./configure LUA="$LUA"
   - make LUA="$LUA" LUA_INCDIR="/usr/include/$LUA" luarocks-config.lua
   - $LUA `which luarocks` install stdlib
-  - env $($LUA `which luarocks` path) make rockspecs
+  - eval $($LUA `which luarocks` path); make rockspecs
   - $LUA `which luarocks` make lyaml-git-1.rockspec
