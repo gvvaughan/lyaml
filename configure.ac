@@ -21,7 +21,7 @@ dnl LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM
 dnl OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 dnl THE SOFTWARE.
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.68])
 
 dnl Initialise autoconf and automake
 AC_INIT([lyaml], [2], [http://github.com/gvvaughan/lyaml/issues])
