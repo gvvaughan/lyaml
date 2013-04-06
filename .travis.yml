@@ -25,10 +25,10 @@ install:
   - ./configure --prefix=$HOME --lua-version=5.1 --lua-suffix=5.1 --with-lua-include="/usr/include/lua5.1"
   - make all install
   - cd ..
-  - eval `$LUAROCKS path`
 
 # Configure and build.
 script:
+  - eval `$LUAROCKS path`
   - ./bootstrap
   - ./configure LUA="$LUA"
   - make LUA="$LUA" LUA_INCDIR="$LUA_INCDIR" luarocks-config.lua
