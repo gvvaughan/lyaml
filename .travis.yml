@@ -1,0 +1,34 @@
+# Lua is not officially supported, but an erlang environment will do.
+language: erlang
+
+env:
+  - LUA="lua5.1"
+  - LUA="lua5.2"
+  - LUA="luajit"
+
+# Tool setup.
+install:
+  - sudo apt-get install libyaml-dev
+  - sudo apt-get install lua5.1
+  - sudo apt-get install lua5.2
+  - sudo apt-get install luajit
+  - sudo apt-get install luarocks
+
+# Configure and build.
+script:
+  - ./bootstrap
+  - ./configure || cat config.log
+  - make
+  - make rockspecs
+  - sudo luarocks make lyaml-git-1.rockspec
+
+# Run specs.
+after_script:
+  - make check
+
+notifications:
+  recipients:
+    - gary@vaughan.pe
+  email:
+    on_success: change
+    on_failure: always
