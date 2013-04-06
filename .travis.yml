@@ -16,6 +16,7 @@ install:
 
 # Configure and build.
 script:
+  - sudo luarocks install stdlib
   - ./bootstrap
   - ./configure || cat config.log
   - make
