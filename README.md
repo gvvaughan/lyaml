@@ -1,6 +1,8 @@
 lyaml
 =====
 
+[![travis-ci status](https://secure.travis-ci.org/gvvaughan/lyaml.png)](http://travis-ci.org/gvvaughan/lyaml/builds)
+
 LibYAML binding for [Lua](http://www.lua.org)
 
 1. Usage
