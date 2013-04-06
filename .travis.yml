@@ -2,10 +2,9 @@
 language: erlang
 
 env:
-  global:
-    - LUA=lua5.1
-    - LUA=lua5.2
-    - LUA=luajit
+  - LUA=lua5.1
+  - LUA=lua5.2
+  - LUA=luajit
   matrix:
     - LUAROCKS_CONFIG=luarocks-config.lua
 
@@ -25,10 +24,3 @@ script:
   - $LUA `which luarocks` install stdlib
   - env $($LUA `which luarocks` path) make rockspecs
   - $LUA `which luarocks` make lyaml-git-1.rockspec
-
-notifications:
-  recipients:
-    - gary@vaughan.pe
-  email:
-    on_success: change
-    on_failure: always
