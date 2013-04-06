@@ -9,6 +9,7 @@ env:
   global:
     - LUAROCKS_CONFIG=luarocks-config.lua
     - LUAROCKS_BASE=luarocks-2.0.12
+    - LUAROCKS="$LUA $HOME/bin/luarocks"
 
 # Tool setup.
 install:
@@ -24,12 +25,13 @@ install:
   - ./configure --prefix=$HOME --lua-version=5.1 --lua-suffix=5.1 --with-lua-include="/usr/include/lua5.1"
   - make all install
   - cd ..
+  - eval `$LUAROCKS path`
 
 # Configure and build.
 script:
   - ./bootstrap
   - ./configure LUA="$LUA"
   - make LUA="$LUA" LUA_INCDIR="$LUA_INCDIR" luarocks-config.lua
-  - $LUA $HOME/bin/luarocks install stdlib
-  - eval `$LUA $HOME/bin/luarocks path`; make rockspecs
-  - $LUA $HOME/bin/luarocks make lyaml-git-1.rockspec
+  - $LUAROCKS install stdlib
+  - make rockspecs
+  - $LUAROCKS make lyaml-git-1.rockspec
