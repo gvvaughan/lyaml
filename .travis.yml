@@ -2,18 +2,18 @@
 language: erlang
 
 env:
-  - LUA="lua5.1"
-  - LUA="lua5.2"
-  - LUA="luajit"
+  global:
+    - LUA=lua5.1
+    - LUA=lua5.2
+    - LUA=luajit
+  matrix:
+    - LUAROCKS_CONFIG=luarocks-config.lua
 
 # Tool setup.
 install:
   - sudo apt-get install libyaml-dev
-  - sudo apt-get install luajit
   - sudo apt-get install libluajit-5.1-dev
-  - sudo apt-get install lua5.1
   - sudo apt-get install liblua5.1-dev
-  - sudo apt-get install lua5.2
   - sudo apt-get install liblua5.2-dev
   - sudo apt-get install luarocks
 
@@ -22,9 +22,9 @@ script:
   - ./bootstrap
   - ./configure LUA="$LUA"
   - make LUA="$LUA" LUA_INCDIR="/usr/include/$LUA" luarocks-config.lua
-  - LUAROCKS_CONFIG=luarocks-config.lua $LUA `which luarocks` install stdlib
-  - make rockspecs
-  - LUAROCKS_CONFIG=luarocks-config.lua $LUA `which luarocks` make lyaml-git-1.rockspec
+  - $LUA `which luarocks` install stdlib
+  - env $($LUA `which luarocks` path) make rockspecs
+  - $LUA `which luarocks` make lyaml-git-1.rockspec
 
 notifications:
   recipients:
