@@ -47,6 +47,6 @@ for f, spec in pairs (settings) do
     end
     h:write (s)
     h:close ()
-    os.execute ("luarocks lint " .. specfile)
+    os.execute ("${LUAROCKS-luarocks} lint " .. specfile)
   end
 end
