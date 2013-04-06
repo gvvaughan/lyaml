@@ -22,9 +22,9 @@ script:
   - ./bootstrap
   - ./configure LUA="$LUA"
   - make LUA="$LUA" LUA_INCDIR="/usr/include/$LUA" luarocks-config.lua
-  - LUAROCKS_CONFIG=./luarocks-config.lua $LUA luarocks install stdlib
+  - LUAROCKS_CONFIG=luarocks-config.lua $LUA `which luarocks` install stdlib
   - make rockspecs
-  - LUAROCKS_CONFIG=./luarocks-config.lua $LUA luarocks make lyaml-git-1.rockspec
+  - LUAROCKS_CONFIG=luarocks-config.lua $LUA `which luarocks` make lyaml-git-1.rockspec
 
 notifications:
   recipients:
