@@ -43,4 +43,10 @@ lyaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
 EXTRA_DIST      += lua52compat.h
 DISTCLEANFILES  =
 
+# Point mkrockspecs at the in-tree lyaml module.
+MKROCKSPECS_ENV = LUA_CPATH=$(abs_builddir)/$(objdir)/?$(shrext)
+
 include build-aux/rockspecs.mk
+
+# Make sure lyaml is built before calling mkrockspecs.
+$(package_rockspec) $(scm_rockspec): $(lib_LTLIBRARIES)
