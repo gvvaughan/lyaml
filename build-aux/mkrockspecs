@@ -169,13 +169,31 @@ url = url:gsub ("^[a-z]*://", "")
 default.package = package
 default.version = version .. "-" .. revision
 
+configure_flags = ""
+if type (spec.external_dependencies) == "table" then
+  CPPFLAGS, LDFLAGS = "", ""
+  for name, vars in pairs (spec.external_dependencies) do
+    if vars.library then
+      CPPFLAGS = CPPFLAGS .. " -I$(" .. name .. "_INCDIR)"
+      LDFLAGS  = LDFLAGS  .. " -L$(" .. name .. "_LIBDIR)"
+    end
+  end
+
+  if string.len (CPPFLAGS) > 0 then
+    configure_flags = configure_flags ..
+        "CPPFLAGS='" .. CPPFLAGS:gsub ("^%s", "") .. "'" ..
+        " LDFLAGS='" ..  LDFLAGS:gsub ("^%s", "") .. "'" ..
+	" "
+  end
+end
+
 default.build = {
   type = "command",
   build_command = "./configure " ..
-    "LUA_INCLUDE=$(LUA_INCDIR) LUA=$(LUA) " ..
-    "--prefix=$(PREFIX) --libdir=$(LIBDIR) --datadir=$(LUADIR) " ..
+    "LUA='$(LUA)' LUA_INCLUDE='-I$(LUA_INCDIR)' " .. configure_flags ..
+    "--prefix='$(PREFIX)' --libdir='$(LIBDIR)' --datadir='$(LUADIR)' " ..
     "&& make clean all",
-  install_command = "make install luadir=$(LUADIR)",
+  install_command = "make install luadir='$(LUADIR)'",
   copy_directories = {},
 }
 
@@ -241,6 +259,7 @@ for _, k in ipairs {
   "description",
   "source",
   "dependencies",
+  "external_dependencies",
   "build",
 } do
   print (k .. " = " .. format (spec[k], "  "))
