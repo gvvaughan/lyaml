@@ -68,5 +68,3 @@ EXTRA_DIST +=						\
 ## ------------ ##
 
 FORCE:
-
-old_NEWS_hash = 361964dc9a022b376dcf72fa2236d3f6
