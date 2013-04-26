@@ -4,5 +4,6 @@
 /depcomp
 /install-sh
 /ltmain.sh
+/luarocks-config.lua
 /missing
 /speclc

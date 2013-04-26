@@ -12,7 +12,6 @@
 /ChangeLog
 /Makefile
 /Makefile.in
-/NEWS
 /aclocal.m4
 /autom4te.cache
 /config.h.in
@@ -23,7 +22,6 @@
 /config.lt
 /config.status
 /libtool
-/luarocks-config.lua
 /lyaml-*.rockspec
 /lyaml-*.tar.gz
 /stamp-h1

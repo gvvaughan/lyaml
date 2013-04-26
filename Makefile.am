@@ -39,6 +39,11 @@ lyaml_la_LDFLAGS  = -module -avoid-version
 lyaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
 
 EXTRA_DIST = lua52compat.h
+DISTCLEANFILES =
+
+MKROCKSPECS_ENV = LUA_CPATH=$(abs_builddir)/$(objdir)/?$(shrext)
+
+include build-aux/rockspecs.mk
 
 ## ------------- ##
 ## Distribution. ##
