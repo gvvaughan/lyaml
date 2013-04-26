@@ -83,7 +83,7 @@ $(package_rockspec): $(ROCKSPECS_DEPS)
 $(scm_rockspec): $(ROCKSPECS_DEPS)
 	$(AM_V_at)rm '$@' 2>/dev/null || :
 	$(AM_V_GEN)test -f '$@' ||				\
-	  $(MKROCKSPECS) $(PACKAGE) git $(rockspec_revision) > '$@'
+	  $(MKROCKSPECS) $(PACKAGE) git 1 > '$@'
 	$(AM_V_at)$(LUAROCKS) lint '$@'
 
 .PHONY: rockspecs
@@ -97,8 +97,9 @@ rockspecs:
 ## ------------- ##
 
 EXTRA_DIST +=						\
-	$(rockspec_template)				\
+	$(mkrockspecs)					\
 	$(package_rockspec)				\
+	$(rockspec_conf)				\
 	$(NOTHING_ELSE)
 
 

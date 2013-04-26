@@ -53,6 +53,7 @@ member-check =								\
 
 include Makefile
 
+
 ## --------- ##
 ## Defaults. ##
 ## --------- ##
@@ -81,6 +82,28 @@ gl_noteworthy_news_ = * Noteworthy changes in release ?.? (????-??-??) [?]
 PREV_VERSION        = $(shell cat $(prev_version_file) 2>/dev/null)
 VERSION_REGEXP      = $(subst .,\.,$(VERSION))
 PREV_VERSION_REGEXP = $(subst .,\.,$(PREV_VERSION))
+
+
+## ------------- ##
+## Distribution. ##
+## ------------- ##
+
+gitlog_to_changelog = $(srcdir)/build-aux/gitlog-to-changelog
+
+dist-hook: ChangeLog
+.PHONY: ChangeLog
+ChangeLog:
+	$(AM_V_GEN)if test -d '$(srcdir)/.git'; then	\
+	  $(gitlog_to_changelog) > '$@T';		\
+	  rm -f '$@'; mv '$@T' '$@';			\
+	fi
+
+EXTRA_DIST +=						\
+	.travis.yml					\
+	GNUmakefile					\
+	$(_build-aux)/release.mk			\
+	$(gitlog_to_changelog)				\
+	$(NOTHING_ELSE)
 
 
 ## -------- ##
@@ -237,7 +260,6 @@ release-tarball	 = $(my_distdir).tar.gz
 # filenames to save in save_release_files, for example:
 #    save_release_files = RELEASE-NOTES-
 _save-files =						\
-		.travis.yml				\
 		$(release-tarball)			\
 		$(save_release_files)			\
 		$(NOTHING_ELSE)
