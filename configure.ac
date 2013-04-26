@@ -24,7 +24,7 @@ dnl THE SOFTWARE.
 AC_PREREQ([2.68])
 
 dnl Initialise autoconf and automake
-AC_INIT([lyaml], [2], [http://github.com/gvvaughan/lyaml/issues])
+AC_INIT([lyaml], [3], [http://github.com/gvvaughan/lyaml/issues])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
