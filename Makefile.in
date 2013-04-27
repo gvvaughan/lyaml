@@ -37,6 +37,39 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+# Slingshot rockspec rules for make.
+
+# This file is distributed with Slingshot, and licensed under the
+# terms of the MIT license reproduced below.
+
+# ==================================================================== #
+# Copyright (C) 2013 Reuben Thomas and Gary V. Vaughan                 #
+#                                                                      #
+# Permission is hereby granted, free of charge, to any person          #
+# obtaining a copy of this software and associated documentation       #
+# files (the "Software"), to deal in the Software without restriction, #
+# including without limitation the rights to use, copy, modify, merge, #
+# publish, distribute, sublicense, and/or sell copies of the Software, #
+# and to permit persons to whom the Software is furnished to do so,    #
+# subject to the following conditions:                                 #
+#                                                                      #
+# The above copyright notice and this permission notice shall be       #
+# included in  all copies or substantial portions of the Software.     #
+#                                                                      #
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,      #
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF   #
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGE-   #
+# MENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE   #
+# FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF   #
+# CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION   #
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.      #
+# ==================================================================== #
+
+# This file is suitable for use from a portable Makeflie, you might
+# include it into the top-level Makefile.am with:
+#
+#   include build-aux/rockspecs.mk
+
 VPATH = @srcdir@
 am__make_dryrun = \
   { \
@@ -73,19 +106,19 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = .
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in $(top_srcdir)/build-aux/depcomp AUTHORS \
-	ChangeLog build-aux/ar-lib build-aux/config.guess \
-	build-aux/config.sub build-aux/depcomp build-aux/install-sh \
-	build-aux/missing build-aux/ltmain.sh \
-	$(top_srcdir)/build-aux/ar-lib \
+DIST_COMMON = $(srcdir)/build-aux/rockspecs.mk $(srcdir)/Makefile.in \
+	$(srcdir)/Makefile.am $(top_srcdir)/configure \
+	$(am__configure_deps) $(srcdir)/config.h.in \
+	$(top_srcdir)/build-aux/depcomp AUTHORS ChangeLog NEWS \
+	build-aux/ar-lib build-aux/config.guess build-aux/config.sub \
+	build-aux/depcomp build-aux/install-sh build-aux/missing \
+	build-aux/ltmain.sh $(top_srcdir)/build-aux/ar-lib \
 	$(top_srcdir)/build-aux/config.guess \
 	$(top_srcdir)/build-aux/config.sub \
 	$(top_srcdir)/build-aux/install-sh \
 	$(top_srcdir)/build-aux/ltmain.sh \
 	$(top_srcdir)/build-aux/missing
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_compare_version.m4 \
 	$(top_srcdir)/m4/ax_lua.m4 $(top_srcdir)/m4/libtool.m4 \
@@ -348,11 +381,37 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
+EXTRA_DIST = bootstrap lua52compat.h $(mkrockspecs) \
+	$(package_rockspec) $(rockspec_conf) $(NOTHING_ELSE)
 lib_LTLIBRARIES = lyaml.la
 lyaml_la_LDFLAGS = -module -avoid-version
 lyaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
-EXTRA_DIST = lua52compat.h GNUmakefile lyaml-rockspec.lua
-gitlog_to_changelog = $(srcdir)/build-aux/gitlog-to-changelog
+DISTCLEANFILES = $(luarocks_config) $(NOTHING_ELSE)
+
+# Point mkrockspecs at the in-tree lyaml module.
+MKROCKSPECS_ENV = LUA_CPATH=$(abs_builddir)/$(objdir)/?$(shrext)
+luarocks_config = build-aux/luarocks-config.lua
+rockspec_conf = $(srcdir)/rockspec.conf
+mkrockspecs = $(srcdir)/build-aux/mkrockspecs
+package_rockspec = $(srcdir)/$(PACKAGE)-$(VERSION)-$(rockspec_revision).rockspec
+scm_rockspec = $(PACKAGE)-git-$(rockspec_revision).rockspec
+
+# If you need a different rockspec revision, override this on the make
+# command line:
+#
+#     make rockspecs rockspec_revision=2
+rockspec_revision = 1
+LUAROCKS = luarocks
+MKROCKSPECS = $(MKROCKSPECS_ENV) $(LUA) $(mkrockspecs)
+ROCKSPECS_DEPS = \
+	$(luarocks_config)			\
+	$(mkrockspecs)				\
+	$(rockspec_conf)			\
+	$(NOTHING_ELSE)
+
+set_LUA_BINDIR = LUA_BINDIR=`which $(LUA) |$(SED) 's|/[^/]*$$||'`
+LUA_INCDIR = `cd $$LUA_BINDIR/../include && pwd`
+LUA_LIBDIR = `cd $$LUA_BINDIR/../lib && pwd`
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -360,7 +419,7 @@ all: config.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/build-aux/rockspecs.mk $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -383,6 +442,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/build-aux/rockspecs.mk:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -584,9 +644,6 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	$(MAKE) $(AM_MAKEFLAGS) \
-	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
-	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -744,6 +801,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -827,30 +885,53 @@ uninstall-am: uninstall-libLTLIBRARIES
 .PHONY: CTAGS GTAGS TAGS all all-am am--refresh check check-am clean \
 	clean-cscope clean-generic clean-libLTLIBRARIES clean-libtool \
 	cscope cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
-	dist-gzip dist-hook dist-lzip dist-shar dist-tarZ dist-xz \
-	dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-libLTLIBRARIES \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-libLTLIBRARIES
+	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
+	distcheck distclean distclean-compile distclean-generic \
+	distclean-hdr distclean-libtool distclean-tags distcleancheck \
+	distdir distuninstallcheck dvi dvi-am html html-am info \
+	info-am install install-am install-data install-data-am \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-libLTLIBRARIES
 
 
-dist-hook: ChangeLog
-ChangeLog: FORCE
-	$(AM_V_GEN)if test -d '$(srcdir)/.git'; then	\
-	  $(gitlog_to_changelog) > '$@T';		\
-	  rm -f '$@'; mv '$@T' '$@';			\
-	fi
+$(luarocks_config): Makefile.am
+	@test -d build-aux || mkdir build-aux
+	$(AM_V_GEN){						\
+	  $(set_LUA_BINDIR);					\
+	  echo 'rocks_trees = { "$(abs_srcdir)/luarocks" }';	\
+	  echo 'variables = {';					\
+	  echo '  LUA = "$(LUA)",';				\
+	  echo '  LUA_BINDIR = "'$$LUA_BINDIR'",';		\
+	  echo '  LUA_INCDIR = "'$(LUA_INCDIR)'",';		\
+	  echo '  LUA_LIBDIR = "'$(LUA_LIBDIR)'",';		\
+	  echo '}';						\
+	} > '$@'
 
-FORCE:
+$(package_rockspec): $(ROCKSPECS_DEPS)
+	$(AM_V_at)rm -f '$@' 2>/dev/null || :
+	$(AM_V_GEN)test -f '$@' ||				\
+	  $(MKROCKSPECS) $(PACKAGE) $(VERSION) $(rockspec_revision) > '$@'
+	$(AM_V_at)$(LUAROCKS) lint '$@'
+
+$(scm_rockspec): $(ROCKSPECS_DEPS)
+	$(AM_V_at)rm '$@' 2>/dev/null || :
+	$(AM_V_GEN)test -f '$@' ||				\
+	  $(MKROCKSPECS) $(PACKAGE) git 1 > '$@'
+	$(AM_V_at)$(LUAROCKS) lint '$@'
+
+.PHONY: rockspecs
+rockspecs:
+	$(AM_V_at)rm -f *.rockspec
+	$(AM_V_at)$(MAKE) $(package_rockspec) $(scm_rockspec)
+
+# Make sure lyaml is built before calling mkrockspecs.
+$(package_rockspec) $(scm_rockspec): $(lib_LTLIBRARIES)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1,4 +1,176 @@
+2013-04-27  Gary V. Vaughan  <gary@gnu.org>
+
+	Release version 3
+	* NEWS: Record release date.
+
+	travis: adjust for slingshot upgrades.
+	* .travis.yml: Be as verbose as possible.
+	Don't try to bootstrap the release branch.
+	Adjust luarcoks-config.lua path.
+	Remove lua-stdlib install; slingshot mkrockspecs works without it.
+	Pass LUAROCKS to make correctly.
+	(LUAROCKS_CONFIG): Set correctly.
+
+	maint: remove unused lyaml-rockspec.lua.
+	* lyaml-rockspec.lua: Remove.  No longer used.
+
+	configury: rockspecs depend on lyaml.
+	* Makeflie.am: Make sure lyaml is built before calling mkrockspecs.
+
+	maint: Move distribution rules into release.mk.
+	* Makeflie.am: Move distribution rules from here...
+	* build-aux/release.mk: ...to here.
+	* build-aux/rockspecs.mk (EXTRA_DIST): Add mkrockspecs script,
+	and rockspec_conf.
+	(smc_rockspec): git rockspec is always revision 1!
+
+	maint: support external_dependencies with mkrockspecs.
+	* build-aux/mkrockspecs: Support ordering of external_dependencies.
+	Add quote marks around various paths in case of whitespace after
+	variable expansion.
+	(configure_flags): Set defaults to respect external_dependencies
+	entries.
+	* rockspec.conf (external_dependencies): Required for a correct
+	build.
+
+2013-04-26  Gary V. Vaughan  <gary@gnu.org>
+
+	Revert "maint: post-release administrivia."
+	This reverts commit 9fcdd06a1f88d6db0ab344b0de4dda314ff8eb8c.
+
+	maint: post-release administrivia.
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* ./Makefile.am (old_NEWS_hash): Auto-update.
+
+	Release version 3
+	* NEWS: Record release date.
+
+	maint: upgrade to slingshot release files.
+	* rockspec.conf: lyaml rockspec configuration for slingshot.
+	* NEWS: New file.  Add release notes from previous versions.
+	* .prev-version: New file. Required by do-release-commit-and-tag.
+	* build-aux/do-release-commit-and-tag, build-aux/mkrockspecs,
+	bulid-aux/release.mk, build-aux/rockspecs.mk: Install from
+	slingshot upstream.
+	* build-aux/mkrockspecs.lua: Remove. Obsolete.
+	* GNUmakefile, Makefile.am: Adjust to work with slingshot files.
+	* .gitignore, build-aux/.gitignore: Update.
+
+	maint: bump release version to 3.
+	* configure.ac (AC_INIT): Bump release version to 3.
+
+2013-04-06  Gary V. Vaughan  <gary@gnu.org>
+
+	mkrockspecs: respect environment LUAROCKS settings.
+	* build-aux/mkrockspecs.lua: Use the user selected luarocks
+	invocation to execute luarocks lint.
+
+	maint: revert to setting lua paths for each command requiring it.
+	* .travis.yml (script): Move the luarocks path setting to the
+	same line as the command that uses it.
+
+	maint: move path injection for Travis CI.
+	* .travis.yml (install): Move path injection from here...
+	(script): ...to here.  It seems that environment settings made in
+	install are not visible in the script section.
+
+	maint: factor out repeated $LUA $HOME/bin/luarocks for Travis CI.
+	* .travis.yml (env.global): Set LUAROCKS.
+	(install): Set luarocks path.
+	(script): Simplify accordingly.
+
+	docs: add a travis build status badge to README.md for github.
+	* README.md: Add travis build status badge markup.
+
+	maint: Ubuntu Precise puts luajit headers in luajit-2.0 subdir.
+	* .travis.yml (env.matrix): Specify LUA_INCDIR for each Lua
+	interpreter in the build matrix.
+	(script): Pass LUA_INCDIR to make luarocks-config.lua rule.
+
+	maint: move Travis CI local luarocks build into install key.
+	* .travis.yml (script): Move local luarocks build from here...
+	(install): ...to here.
+
+	maint: let Travis local luarocks configure detect a Lua interpreter.
+	* .travis.yml (script): Remove --lua-version and --with-lua
+	configure parameters from local luarocks build.
+
+	maint: Ubuntu Precise ships too-old luarocks.
+	* .travis.yml (env.matrix): Use correct binary name for luajit.
+	(env.global): Set LUAROCKS_BASE to current luarocks release.
+	(install): Don't apt-get too-old luarocks from distro.
+	(script): Wget and build a local luarocks from latest release.
+
+	maint: install lua interpreters specifically for Travis CI.
+	* .travis.yml (install): Specifically install the lua interpreters
+	required by script.
+
+	maint: set LUA_PATH correctly for make rockspecs in Travis CI.
+	* .travis.yml (script): Use eval rather than env to push LUA_PATH
+	into the environment before running make rockspecs.
+
+	maint: generate Travis CI build matrix correctly.
+	* .travis.yml (env): Read the documentation again, and then set
+	the matrix up correctly for three specific Lua settings, and a
+	shared global environment variable.
+
+	maint: remove redundant Travis CI notifications.
+	* .travis.yml (env.global): Didn't work here, so move back to
+	env key.
+	(notifications): Remove.  Default is to do the same thing anyway.
+
+	maint: use local luarocks paths for make rockspecs.
+	* .travis.yml (env): Move LUA intepreters into global subkey.
+	(env.matrix): Set LUAROCKS_CONFIG once for everything here.
+	(install): Remove redundant lua interpreter installs.
+	(script): Set paths for local luarocks tree before calling `make
+	rockspecs`, otherwise it can't find the stdlib rock we just
+	installed.
+
+	maint: dynamically locate luarocks binary for Travis CI.
+	* .travis.yml (script): Use `which` to locate installed luarocks
+	binary for feeding to selected $LUA interpreter.
+
+	maint: use a local luarocks tree for Travis CI.
+	* .travis.yml (install): Don't forget the various foo-dev packages
+	needed to get lua header files.
+	(after_script): Remove. There are no tests!
+	(script): Build and use a luarocks-config to use a temporary
+	local luarocks tree tailored to the selected LUA interpreter.
+
+	configury: user overridable luarocks vars in luarocks-config.lua.
+	* GNUmakefile (luarocks-config.lua): In order to work correctly
+	with a given lua intepreter for a particular luarocks tree, make
+	sure to set the appropriate luarocks variables when writing a
+	luarocks-config.lua. Also, take care to honour environment
+	values for those variables at make-time, because the user probably
+	knows better how their environment is set up than the generic
+	make rules can!
+
+	maint: update rockspec template for latest ax-lua.m4.
+	* lyaml-rockspec.lua (build.build_command): Pass $(LUA) as a
+	configure precious variable so that latest ax-lua.m4 uses it as
+	passed instead of running the hardcoded search for a lua binary.
+
+	maint: install lua-stdlib for Travis CI.
+	* .travis.yml (script): install lua-stdlib luarock.
+
+	maint: relax autoconf requirement to v2.68.
+	* configure.ac (AC_INIT): 2.68 is new enough, and is the newest
+	version available by default on Travis CI server.
+
+	maint: use travis CI server.
+	* .travis.yml: New file. Travis CI directives.
+
 2013-03-18  Gary V. Vaughan  <gary@gnu.org>
+
+	docs: insert missing link.
+	* README.md (Lua): Add missing URL.
+
+	docs: fix a typo.
+	* README.md (Instalation): Rename from this...
+	(Installation): ...to this.
 
 	maint: use correct MIT license.
 	The GPLv3+ license was a cut-n-paste error.

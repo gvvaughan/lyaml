@@ -28,6 +28,8 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
+EXTRA_DIST = bootstrap
+
 
 ## ------------- ##
 ## Declarations. ##
@@ -38,28 +40,13 @@ lib_LTLIBRARIES = lyaml.la
 lyaml_la_LDFLAGS  = -module -avoid-version
 lyaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
 
-EXTRA_DIST = lua52compat.h
+EXTRA_DIST      += lua52compat.h
+DISTCLEANFILES  =
 
-## ------------- ##
-## Distribution. ##
-## ------------- ##
+# Point mkrockspecs at the in-tree lyaml module.
+MKROCKSPECS_ENV = LUA_CPATH=$(abs_builddir)/$(objdir)/?$(shrext)
 
-gitlog_to_changelog = $(srcdir)/build-aux/gitlog-to-changelog
+include build-aux/rockspecs.mk
 
-dist-hook: ChangeLog
-ChangeLog: FORCE
-	$(AM_V_GEN)if test -d '$(srcdir)/.git'; then	\
-	  $(gitlog_to_changelog) > '$@T';		\
-	  rm -f '$@'; mv '$@T' '$@';			\
-	fi
-
-EXTRA_DIST +=						\
-	GNUmakefile					\
-	lyaml-rockspec.lua
-
-
-## ------------ ##
-## Maintenance. ##
-## ------------ ##
-
-FORCE:
+# Make sure lyaml is built before calling mkrockspecs.
+$(package_rockspec) $(scm_rockspec): $(lib_LTLIBRARIES)

@@ -1,0 +1,34 @@
+lyaml NEWS - User visible changes
+
+* Noteworthy changes in release 3 (2013-04-27) [beta]
+
+** This release is functionally identical to the last.
+
+** New Features:
+
+  - lyaml builds are now made against Lua 5.1, Lua 5.2 and luajit 2.0.0
+    automatically, with every commit.
+
+  - move to a cleaner, automated release system.
+
+* Noteworthy changes in release 2 (2013-03-18) [beta]
+
+** This release is functionally identical to the last.
+
+** Use correct MIT license attribution, relicensing build files to match
+   Androw Danforth's MIT licensed lyaml.c too.
+
+
+* Noteworthy changes in release 1 (2013-03-17) [beta]
+
+** New Features:
+
+  - A binding for libYAML, by Andrew Danforth:  Updated for Lua 5.1 and
+    5.2, and packaged as a luarock.
+
+  - I spun this out of Specl (http://github.com/gvvaughan/specl) so that
+    other projects may use it, and to simplify the Specl build.
+
+** Known Issuse:
+
+  - There's not really any documentation, sorry.  Contributions welcome!
