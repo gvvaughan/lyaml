@@ -28,7 +28,9 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = bootstrap
+old_NEWS_hash   = 6ce65f1c2b9efaf308946bbbca9d5b89
+
+EXTRA_DIST      = bootstrap
 
 
 ## ------------- ##
