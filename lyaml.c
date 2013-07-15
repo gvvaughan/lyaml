@@ -41,6 +41,13 @@
 #define MYNAME		"yaml"
 #define MYVERSION	MYNAME " library for " LUA_VERSION " / " VERSION
 
+#ifndef STREQ
+#define STREQ !strcmp
+#endif
+#ifndef STRNEQ
+#define STRNEQ strcmp
+#endif
+
 /* configurable flags */
 static char Dump_Auto_Array = 1;
 static char Dump_Error_on_Unsupported = 0;
@@ -193,32 +200,32 @@ static void load_scalar(struct lua_yaml_loader *loader) {
    if (tag && !strncmp(tag, LUAYAML_TAG_PREFIX, sizeof(LUAYAML_TAG_PREFIX) - 1)) {
       tag += sizeof(LUAYAML_TAG_PREFIX) - 1;
 
-      if (!strcmp(tag, "str")) {
+      if (STREQ(tag, "str")) {
          lua_pushlstring(loader->L, str, length);
          return;
-      } else if (!strcmp(tag, "int")) {
+      } else if (STREQ(tag, "int")) {
          lua_pushinteger(loader->L, strtol(str, NULL, 10));
          return;
-      } else if (!strcmp(tag, "float")) {
+      } else if (STREQ(tag, "float")) {
          lua_pushnumber(loader->L, strtod(str, NULL));
          return;
-      } else if (!strcmp(tag, "bool")) {
-         lua_pushboolean(loader->L, !strcmp(str, "true") || !strcmp(str, "yes"));
+      } else if (STREQ(tag, "bool")) {
+         lua_pushboolean(loader->L, STREQ(str, "true") || STREQ(str, "yes"));
          return;
       }
    }
 
    if (loader->event.data.scalar.style == YAML_PLAIN_SCALAR_STYLE) {
-      if (!strcmp(str, "~")) {
+      if (STREQ(str, "~")) {
          if (Load_Nulls_As_Nil)
             lua_pushnil(loader->L);
          else
             Pnull(loader->L);
          return;
-      } else if (!strcmp(str, "true") || !strcmp(str, "yes")) {
+      } else if (STREQ(str, "true") || STREQ(str, "yes")) {
          lua_pushboolean(loader->L, 1);
          return;
-      } else if (!strcmp(str, "false") || !strcmp(str, "no")) {
+      } else if (STREQ(str, "false") || STREQ(str, "no")) {
          lua_pushboolean(loader->L, 0);
          return;
       }
@@ -376,9 +383,9 @@ static int dump_scalar(struct lua_yaml_dumper *dumper) {
 
    if (type == LUA_TSTRING) {
       str = lua_tolstring(dumper->L, -1, &len);
-      if (len <= 5 && (!strcmp(str, "true")
-         || !strcmp(str, "false")
-         || !strcmp(str, "~"))) {
+      if (len <= 5 && (STREQ(str, "true")
+         || STREQ(str, "false")
+         || STREQ(str, "~"))) {
          style = YAML_SINGLE_QUOTED_SCALAR_STYLE;
       } else if (lua_isnumber(dumper->L, -1)) {
          /* string is convertible to number, quote it to preserve type */
@@ -490,9 +497,9 @@ static int figure_table_type(lua_State *L) {
       lua_rawget(L, -2);
       if (lua_isstring(L, -1)) {
          const char *s = lua_tostring(L, -1);
-         if (!strcmp(s, "sequence") || !strcmp(s, "seq"))
+         if (STREQ(s, "sequence") || STREQ(s, "seq"))
             type = LUAYAML_KIND_SEQUENCE;
-         else if (!strcmp(s, "map") || !strcmp(s, "mapping"))
+         else if (STREQ(s, "map") || STREQ(s, "mapping"))
             type = LUAYAML_KIND_MAPPING;
       }
       lua_pop(L, 2); /* pop value and metatable */
@@ -661,7 +668,7 @@ static int handle_config_option(lua_State *L) {
 
    attr = lua_tostring(L, -2);
    for (i = 0; args[i].attr; i++) {
-      if (!strcmp(attr, args[i].attr)) {
+      if (STREQ(attr, args[i].attr)) {
          if (!lua_isnil(L, -1))
             *(args[i].val) = lua_toboolean(L, -1);
          lua_pushboolean(L, *(args[i].val));
