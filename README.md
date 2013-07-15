@@ -15,7 +15,7 @@ LibYAML binding for [Lua](http://www.lua.org)
     local null    = lyaml.null ()
 
 The configure function allows enabling and disabling of the following
-options:    
+options:
 
  * `dump_auto_array`
  * `dump_check_metatables`
