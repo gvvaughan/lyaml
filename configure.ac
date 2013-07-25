@@ -48,7 +48,7 @@ AC_SUBST(LIBTOOL_DEPS)
 
 dnl Check for programs
 AC_PROG_CC
-AC_PATH_PROG([SPECL], [specl], [false])
+AC_PATH_PROG([SPECL], [specl], [:])
 AX_PROG_LUA(5.1, 5.3)
 AX_LUA_HEADERS
 
@@ -61,7 +61,8 @@ AC_SEARCH_LIBS([yaml_document_initialize], [yaml], [], [
     AC_MSG_ERROR([Required library 'yaml' could not be found])])
 
 dnl Generate output files
-SS_CONFIG_TRAVIS
+SPECL_MIN=8
+SS_CONFIG_TRAVIS([specl])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
