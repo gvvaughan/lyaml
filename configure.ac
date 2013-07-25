@@ -48,6 +48,7 @@ AC_SUBST(LIBTOOL_DEPS)
 
 dnl Check for programs
 AC_PROG_CC
+AC_PATH_PROG([SPECL], [specl], [false])
 AX_PROG_LUA(5.1, 5.3)
 AX_LUA_HEADERS
 

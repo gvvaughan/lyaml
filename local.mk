@@ -22,11 +22,21 @@
 # THE SOFTWARE.
 
 
+## ------------ ##
+## Environment. ##
+## ------------ ##
+
+lyaml_cpath = $(abs_builddir)/$(objdir)/?$(shrext)
+LUA_ENV     = LUA_CPATH="$(lyaml_cpath);$(LUA_CPATH)"
+
+
 ## ---------- ##
 ## Bootstrap. ##
 ## ---------- ##
 
 old_NEWS_hash   = 6ce65f1c2b9efaf308946bbbca9d5b89
+
+include specs/specs.mk
 
 
 ## ------------- ##
@@ -38,10 +48,10 @@ lib_LTLIBRARIES += lyaml.la
 lyaml_la_LDFLAGS  = -module -avoid-version
 lyaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
 
-EXTRA_DIST      += lua52compat.h
+EXTRA_DIST      += lua52compat.h parser.c
 
 # Point mkrockspecs at the in-tree lyaml module.
-MKROCKSPECS_ENV = LUA_CPATH=$(abs_builddir)/$(objdir)/?$(shrext)
+MKROCKSPECS_ENV = $(LUA_ENV)
 
 # Make sure lyaml is built before calling mkrockspecs.
 $(package_rockspec) $(scm_rockspec): $(lib_LTLIBRARIES)

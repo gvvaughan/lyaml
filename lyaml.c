@@ -702,6 +702,8 @@ static int Pnull(lua_State *L) {
    return 1;
 }
 
+#include "parser.c"
+
 #define LYAML__STR_1(_s)	(#_s + 1)
 #define LYAML_STR_1(_s)		LYAML__STR_1(_s)
 
@@ -712,12 +714,17 @@ static const luaL_Reg R[] =
 	MENTRY( Pdump		),
 	MENTRY( Pconfigure	),
 	MENTRY( Pnull		),
+	MENTRY( Pparser		),
 #undef MENTRY
 	{NULL, NULL}
 };
 
 LUALIB_API int luaopen_lyaml (lua_State *L)
 {
+   luaL_newmetatable(L, "lyaml.loader");
+   lua_pushcfunction(L, loader_gc);
+   lua_setfield(L, -2, "__gc");
+
    luaL_register(L, "yaml", R);
 
    lua_pushliteral(L, MYVERSION);
