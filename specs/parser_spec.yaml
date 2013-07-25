@@ -202,13 +202,13 @@ describe parsing:
                        "What a year!\n")
     - specify literal style:
       - it removes indentation but preserves all line-breaks:
-          e = consume (2, "# ASCII Art\n" ..
-                          "--- |\n" ..
-                          "  \//||\/||\n" ..
-                          "  // ||  ||__\n")
+          e = consume (2, [[# ASCII Art]] .. "\n" ..
+                          [[--- |]] .. "\n" ..
+                          [[  \//||\/||]] .. "\n" ..
+                          [[  // ||  ||__]] .. "\n")
           expect (e ().value).
-            should_be ("\//||\/||\n" ..
-                       "// ||  ||__\n")
+            should_be ([[\//||\/||]] .. "\n" ..
+                       [[// ||  ||__]] .. "\n")
 
     - specify single quoted style:
       - it folds line breaks:
