@@ -93,11 +93,12 @@ The dependencies are listed in the dependencies entry of the file
 [rockspec.conf][L10].  You will also need [Autoconf][], [Automake][]
 and [Libtool][].
 
-See[INSTALL][] for instructions for `configure`.
+See [INSTALL][] for instructions for `configure`.
 
 [autoconf]: http://gnu.org/s/autoconf
 [automake]: http://gnu.org/s/automake
 [install]:  http://raw.github.com/gvvaughan/lyaml/release/INSTALL
+[libtool]:  http://gnu.org/s/libtool
 [libyaml]:  http://pyyaml.org/wiki/LibYAML
 [lua]:      http://www.lua.org
 [luarocks]: http://www.luarocks.org
