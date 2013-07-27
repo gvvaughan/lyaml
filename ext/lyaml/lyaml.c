@@ -38,8 +38,9 @@
 
 #include <yaml.h>
 
-extern int loader_gc (lua_State *L);
-extern int Pparser (lua_State *L);
+/* from parser.c */
+extern void	parser_init	(lua_State *L);
+extern int	Pparser		(lua_State *L);
 
 #define MYNAME		"yaml"
 #define MYVERSION	MYNAME " library for " LUA_VERSION " / " VERSION
@@ -722,9 +723,7 @@ static const luaL_Reg R[] =
 
 LUALIB_API int luaopen_lyaml (lua_State *L)
 {
-   luaL_newmetatable(L, "lyaml.loader");
-   lua_pushcfunction(L, loader_gc);
-   lua_setfield(L, -2, "__gc");
+   parser_init (L);
 
    luaL_register(L, "yaml", R);
 

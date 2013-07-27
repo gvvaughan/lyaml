@@ -376,8 +376,8 @@ event_iter (lua_State *L)
    return 1;
 }
 
-int
-loader_gc (lua_State *L)
+static int
+parser_gc (lua_State *L)
 {
    lyaml_parser *parser = (lyaml_parser *) lua_touserdata (L, 1);
 
@@ -387,6 +387,14 @@ loader_gc (lua_State *L)
       yaml_parser_delete (&parser->parser);
    }
    return 0;
+}
+
+void
+parser_init (lua_State *L)
+{
+   luaL_newmetatable(L, "lyaml.parser");
+   lua_pushcfunction(L, parser_gc);
+   lua_setfield(L, -2, "__gc");
 }
 
 int
