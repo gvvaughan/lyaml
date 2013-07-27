@@ -36,7 +36,10 @@
 #include <lauxlib.h>
 #include "lua52compat.h"
 
-#include "yaml.h"
+#include <yaml.h>
+
+extern int loader_gc (lua_State *L);
+extern int Pparser (lua_State *L);
 
 #define MYNAME		"yaml"
 #define MYVERSION	MYNAME " library for " LUA_VERSION " / " VERSION
@@ -701,8 +704,6 @@ static int Pnull(lua_State *L) {
 
    return 1;
 }
-
-#include "parser.c"
 
 #define LYAML__STR_1(_s)	(#_s + 1)
 #define LYAML_STR_1(_s)		LYAML__STR_1(_s)

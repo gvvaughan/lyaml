@@ -26,7 +26,7 @@
 ## Environment. ##
 ## ------------ ##
 
-lyaml_cpath = $(abs_builddir)/$(objdir)/?$(shrext)
+lyaml_cpath = $(abs_builddir)/ext/lyaml/$(objdir)/?$(shrext)
 LUA_ENV     = LUA_CPATH="$(lyaml_cpath);$(LUA_CPATH)"
 
 
@@ -43,12 +43,17 @@ include specs/specs.mk
 ## Declarations. ##
 ## ------------- ##
 
-lib_LTLIBRARIES += lyaml.la
+lib_LTLIBRARIES += ext/lyaml/lyaml.la
 
-lyaml_la_LDFLAGS  = -module -avoid-version
-lyaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
+ext_lyaml_lyaml_la_SOURCES  = \
+		ext/lyaml/lyaml.c	\
+		ext/lyaml/parser.c	\
+		$(NOTHING_ELSE)
 
-EXTRA_DIST      += lua52compat.h parser.c
+ext_lyaml_lyaml_la_LDFLAGS  = -module -avoid-version
+ext_lyaml_lyaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
+
+EXTRA_DIST      += ext/lyaml/lua52compat.h
 
 # Point mkrockspecs at the in-tree lyaml module.
 MKROCKSPECS_ENV = $(LUA_ENV)
