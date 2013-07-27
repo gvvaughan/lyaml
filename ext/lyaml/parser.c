@@ -122,7 +122,7 @@ parse_STREAM_START (lyaml_parser *parser)
          lua_error (L);
    }
 
-   parser_push_eventtable (parser, "STREAM-START", 1);
+   parser_push_eventtable (parser, "STREAM_START", 1);
    RAWSET_STRING ("encoding", encoding);
 #undef EVENTF
 }
@@ -130,7 +130,7 @@ parse_STREAM_START (lyaml_parser *parser)
 static void
 parse_STREAM_END (lyaml_parser *parser)
 {
-   parser_push_eventtable (parser, "STREAM-END", 0);
+   parser_push_eventtable (parser, "STREAM_END", 0);
 }
 
 /* With the tag list on the top of the stack, append TAG. */
@@ -154,7 +154,7 @@ parse_DOCUMENT_START (lyaml_parser *parser)
    /* increment document count */
    parser->document_count++;
 
-   parser_push_eventtable (parser, "DOCUMENT-START", 1);
+   parser_push_eventtable (parser, "DOCUMENT_START", 1);
    RAWSET_BOOLEAN ("implicit", EVENTF (implicit));
 
    /* version_directive = { major = M, minor = N } */
@@ -193,7 +193,7 @@ parse_DOCUMENT_END (lyaml_parser *parser)
 #define EVENTF(_f)	(parser->event.data.document_end._f)
    lua_State *L = parser->L;
 
-   parser_push_eventtable (parser, "DOCUMENT-END", 1);
+   parser_push_eventtable (parser, "DOCUMENT_END", 1);
    RAWSET_BOOLEAN ("implicit", EVENTF (implicit));
 #undef EVENTF
 }
@@ -247,7 +247,7 @@ parse_SEQUENCE_START (lyaml_parser *parser)
          lua_error (L);
    }
 
-   parser_push_eventtable (parser, "SEQUENCE-START", 4);
+   parser_push_eventtable (parser, "SEQUENCE_START", 4);
    RAWSET_EVENTF (anchor);
    RAWSET_EVENTF (tag);
    RAWSET_BOOLEAN ("implicit", EVENTF (implicit));
@@ -258,7 +258,7 @@ parse_SEQUENCE_START (lyaml_parser *parser)
 static void
 parse_SEQUENCE_END (lyaml_parser *parser)
 {
-   parser_push_eventtable (parser, "SEQUENCE-END", 0);
+   parser_push_eventtable (parser, "SEQUENCE_END", 0);
 }
 
 static void
@@ -283,7 +283,7 @@ parse_MAPPING_START (lyaml_parser *parser)
          lua_error (L);
    }
 
-   parser_push_eventtable (parser, "MAPPING-START", 4);
+   parser_push_eventtable (parser, "MAPPING_START", 4);
    RAWSET_EVENTF (anchor);
    RAWSET_EVENTF (tag);
    RAWSET_BOOLEAN ("implicit", EVENTF (implicit));
@@ -294,7 +294,7 @@ parse_MAPPING_START (lyaml_parser *parser)
 static void
 parse_MAPPING_END (lyaml_parser *parser)
 {
-   parser_push_eventtable (parser, "MAPPING-END", 0);
+   parser_push_eventtable (parser, "MAPPING_END", 0);
 }
 
 static void

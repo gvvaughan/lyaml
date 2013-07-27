@@ -4,22 +4,22 @@ before:
 describe parsing:
 - it parses empty streams:
     e = lyaml.parser ""
-    expect (e ().type).should_be "STREAM-START"
-    expect (e ().type).should_be "STREAM-END"
+    expect (e ().type).should_be "STREAM_START"
+    expect (e ().type).should_be "STREAM_END"
     expect (e ()).should_be (nil)
     expect (e ()).should_be (nil)
 - it ignores comments: '
     e = lyaml.parser "# A comment\nnon-comment # trailing comment\n"
-    expect (e ().type).should_be "STREAM-START"
-    expect (e ().type).should_be "DOCUMENT-START"
+    expect (e ().type).should_be "STREAM_START"
+    expect (e ().type).should_be "DOCUMENT_START"
     expect (e ().value).should_be "non-comment"
-    expect (e ().type).should_be "DOCUMENT-END"'
+    expect (e ().type).should_be "DOCUMENT_END"'
 
-- context STREAM-START:
+- context STREAM_START:
   - before:
       e = lyaml.parser "# no BOM"
   - it is the first event:
-      expect (e ().type).should_be "STREAM-START"
+      expect (e ().type).should_be "STREAM_START"
   - it reports event start marker:
       expect (e ().start_mark).should_equal {line = 0, column = 0, index = 0}
   - it reports event end marker:
@@ -30,22 +30,22 @@ describe parsing:
       e = lyaml.parser (BOM .. " BOM")
       expect (e ().encoding).should_match "UTF16[BL]E"
 
-- context STREAM-END:
+- context STREAM_END:
   - before:
       for t in lyaml.parser "nothing to see" do ev = t end
   - it is the last event:
-      expect (ev.type).should_be "STREAM-END"
+      expect (ev.type).should_be "STREAM_END"
   - it reports event start marker:
       expect (ev.start_mark).should_equal {line = 1, column = 0, index = 14}
   - it reports event end marker:
       expect (ev.end_mark).should_equal {line = 1, column = 0, index = 14}
 
-- context DOCUMENT-START:
+- context DOCUMENT_START:
   - before:
       e = consume (1, "---")
   - it recognizes document start marker:
       expect (filter (e (), "type", "implicit")).
-        should_equal {type = "DOCUMENT-START", implicit = false}
+        should_equal {type = "DOCUMENT_START", implicit = false}
   - it reports implicit document start:
       e = consume (1, "foo")
       expect (e ().implicit).should_be (true)
@@ -98,16 +98,16 @@ describe parsing:
         e = consume (1, "%TAG ! !\n")
         expect (e ()).should_error "expected <document start>"
 
-- context DOCUMENT-END:
+- context DOCUMENT_END:
   - before:
       e = consume (3, "foo\n...")
   - it recognizes the document end marker:
       expect (filter (e (), "type", "implicit")).
-        should_equal {type = "DOCUMENT-END", implicit = false}
+        should_equal {type = "DOCUMENT_END", implicit = false}
   - it reports an implicit document end marker:
       e = consume (3, "foo\n")
       expect (filter (e (), "type", "implicit")).
-        should_equal {type = "DOCUMENT-END", implicit = true}
+        should_equal {type = "DOCUMENT_END", implicit = true}
   - it reports event start marker:
       expect (e ().start_mark).should_equal {line = 1, column = 0, index = 4}
   - it reports event end marker:
@@ -278,13 +278,13 @@ describe parsing:
                         "  radius: 7")
         expect (e ().tag).should_be "tag:clarkevans.com,2002:circle"'
 
-- context SEQUENCE-START:
+- context SEQUENCE_START:
   - before: '
       e = consume (4, "fubar: &FOO\n" ..
                       "  - foo\n" ..
                       "  - bar\n")'
   - it recognizes a sequence start event:
-      expect (e ().type).should_be "SEQUENCE-START"
+      expect (e ().type).should_be "SEQUENCE_START"
   - it records anchors:
       expect (e ().anchor).should_be "FOO"
   - it reports event start marker:
@@ -297,14 +297,14 @@ describe parsing:
         e = consume (2, "--- !something\n" ..
                         "- foo\n")
         expect (filter (e (), "type", "tag")).
-          should_equal {type = "SEQUENCE-START", tag = "!something"}'
+          should_equal {type = "SEQUENCE_START", tag = "!something"}'
     - it recognizes global tags: '
         e = consume (2, "--- !!omap\n" ..
                         "- Mark McGwire: 65\n" ..
                         "- Sammy Sosa: 63\n" ..
                         "- Ken Griffy: 58\n")
         expect (filter (e (), "type", "tag")).
-          should_equal {type = "SEQUENCE-START",
+          should_equal {type = "SEQUENCE_START",
                         tag  = "tag:yaml.org,2002:omap"}'
     - it resolves %TAG declarations: '
         e = consume (2, "%TAG ! tag:clarkevans.com,2002:\n" ..
@@ -313,33 +313,33 @@ describe parsing:
                         "  center: &ORIGIN {x: 73, y: 129}\n" ..
                         "  radius: 7\n")
         expect (filter (e (), "type", "tag")).
-          should_equal {type = "SEQUENCE-START",
+          should_equal {type = "SEQUENCE_START",
                         tag  = "tag:clarkevans.com,2002:shape"}'
 
   - context with style:
     - it recognizes block style:
         e = consume (2, "- first\n- second")
         expect (filter (e (), "type", "style")).
-          should_equal {type = "SEQUENCE-START", style = "BLOCK"}
+          should_equal {type = "SEQUENCE_START", style = "BLOCK"}
     - it recognizes flow style:
         e = consume (2, "[first, second]")
         expect (filter (e (), "type", "style")).
-          should_equal {type = "SEQUENCE-START", style = "FLOW"}
+          should_equal {type = "SEQUENCE_START", style = "FLOW"}
 
-- context SEQUENCE-END:
+- context SEQUENCE_END:
   - before:
       e = consume (5, "- foo\n- bar\n")
   - it recognizes a sequence end event:
-      expect (e ().type).should_equal "SEQUENCE-END"
+      expect (e ().type).should_equal "SEQUENCE_END"
   - it reports event start marker:
       expect (e ().start_mark).should_equal {line = 2, column = 0, index = 12}
   - it reports event end marker:
       expect (e ().end_mark).should_equal {line = 2, column = 0, index = 12}
 
-- context MAPPING-START:
+- context MAPPING_START:
   - before: 'e = consume (3, "- &FUBAR\n  foo: bar\n")'
   - it recognizes a mapping start event:
-        expect (e ().type).should_be "MAPPING-START"
+        expect (e ().type).should_be "MAPPING_START"
   - it records anchors:
       expect (e ().anchor).should_be "FUBAR"
   - it reports event start marker:
@@ -351,14 +351,14 @@ describe parsing:
     - it recognizes local tags: '
     e = consume (2, "--- !something\nfoo: bar\n")
         expect (filter (e (), "type", "tag")).
-          should_equal {type = "MAPPING-START", tag = "!something"}'
+          should_equal {type = "MAPPING_START", tag = "!something"}'
     - it recognizes global tags: '
         e = consume (2, "--- !!set\n" ..
                         "? Mark McGwire\n" ..
                         "? Sammy Sosa\n" ..
                         "? Ken Griffy\n")
         expect (filter (e (), "type", "tag")).
-          should_equal {type = "MAPPING-START",
+          should_equal {type = "MAPPING_START",
                         tag  = "tag:yaml.org,2002:set"}'
     - it resolves %TAG declarations: '
         e = consume (3, "%TAG ! tag:clarkevans.com,2002:\n" ..
@@ -367,24 +367,24 @@ describe parsing:
                         "  center: &ORIGIN {x: 73, y: 129}\n" ..
                         "  radius: 7\n")
         expect (filter (e (), "type", "tag")).
-          should_equal {type = "MAPPING-START",
+          should_equal {type = "MAPPING_START",
                         tag  = "tag:clarkevans.com,2002:circle"}'
 
   - context with style:
     - it recognizes block style: '
         e = consume (2, "foo: bar\nbaz:\n  quux")
         expect (filter (e (), "type", "style")).
-          should_equal {type = "MAPPING-START", style = "BLOCK"}'
+          should_equal {type = "MAPPING_START", style = "BLOCK"}'
     - it recognizes flow style: '
         e = consume (2, "{foo: bar, baz: quux}")
         expect (filter (e (), "type", "style")).
-          should_equal {type = "MAPPING-START", style = "FLOW"}'
+          should_equal {type = "MAPPING_START", style = "FLOW"}'
 
 
-- context MAPPING-END:
+- context MAPPING_END:
   - before: 'e = consume (5, "foo: bar\n")'
   - it recognizes the mapping end event:
-      expect (e ().type).should_equal "MAPPING-END"
+      expect (e ().type).should_equal "MAPPING_END"
   - it reports event start marker:
       expect (e ().start_mark).should_equal {line = 1, column = 0, index = 9}
   - it reports event end marker:
