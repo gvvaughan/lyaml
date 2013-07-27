@@ -24,9 +24,6 @@
 
 #include <config.h>
 
-#define LYAML__STR(_s)		(#_s)
-#define LYAML_STR(_s)		LYAML__STR(_s)
-
 /* NOTE: Make sure L is in scope before using these macros. */
 #define RAWSET_BOOLEAN(_k, _v)			\
         lua_pushstring  (L, (_k));		\
@@ -44,7 +41,7 @@
         lua_rawset     (L, -3)
 
 #define RAWSET_EVENTF(_k)			\
-        lua_pushstring (L, LYAML_STR(_k));	\
+        lua_pushstring (L, #_k);		\
         lua_pushstring (L, EVENTF(_k));		\
         lua_rawset     (L, -3)
 
@@ -74,7 +71,7 @@ parser_set_mark (lua_State *L, const char *k, yaml_mark_t mark)
 {
    lua_pushstring  (L, k);
    lua_createtable (L, 0, 3);
-#define MENTRY(_s)	RAWSET_INTEGER(LYAML_STR(_s), mark._s)
+#define MENTRY(_s)	RAWSET_INTEGER(#_s, mark._s)
         MENTRY( index	);
         MENTRY( line	);
         MENTRY( column	);
@@ -90,7 +87,7 @@ parser_push_eventtable (lyaml_parser *parser, const char *v, int n)
 
    lua_createtable (L, 0, n + 3);
    RAWSET_STRING   ("type", v);
-#define MENTRY(_s)	parser_set_mark (L, LYAML_STR(_s), parser->event._s)
+#define MENTRY(_s)	parser_set_mark (L, #_s, parser->event._s)
         MENTRY( start_mark	);
         MENTRY( end_mark	);
 #undef MENTRY
@@ -106,7 +103,7 @@ parse_STREAM_START (lyaml_parser *parser)
    switch (EVENTF (encoding))
    {
 #define MENTRY(_s)		\
-      case YAML_##_s##_ENCODING: encoding = LYAML_STR(_s); break
+      case YAML_##_s##_ENCODING: encoding = #_s; break
 
         MENTRY( ANY	);
         MENTRY( UTF8	);
@@ -135,7 +132,7 @@ static void
 parser_append_tag (lua_State *L, yaml_tag_directive_t tag)
 {
    lua_createtable (L, 0, 2);
-#define MENTRY(_s)	RAWSET_STRING(LYAML_STR(_s), tag._s)
+#define MENTRY(_s)	RAWSET_STRING(#_s, tag._s)
         MENTRY( handle	);
         MENTRY( prefix	);
 #undef MENTRY
@@ -159,8 +156,7 @@ parse_DOCUMENT_START (lyaml_parser *parser)
    {
       lua_pushliteral (L, "version_directive");
       lua_createtable (L, 0, 2);
-#define MENTRY(_s)		\
-        RAWSET_INTEGER(LYAML_STR(_s), EVENTF (version_directive->_s))
+#define MENTRY(_s)	RAWSET_INTEGER(#_s, EVENTF (version_directive->_s))
         MENTRY( major	);
         MENTRY( minor	);
 #undef MENTRY
@@ -233,7 +229,7 @@ parse_SEQUENCE_START (lyaml_parser *parser)
    switch (EVENTF (style))
    {
 #define MENTRY(_s)		\
-      case YAML_##_s##_SEQUENCE_STYLE: style = LYAML_STR(_s); break
+      case YAML_##_s##_SEQUENCE_STYLE: style = #_s; break
 
         MENTRY( ANY	);
         MENTRY( BLOCK	);
@@ -269,7 +265,7 @@ parse_MAPPING_START (lyaml_parser *parser)
    switch (EVENTF (style))
    {
 #define MENTRY(_s)		\
-      case YAML_##_s##_MAPPING_STYLE: style = LYAML_STR(_s); break
+      case YAML_##_s##_MAPPING_STYLE: style = #_s; break
 
         MENTRY( ANY	);
         MENTRY( BLOCK	);
