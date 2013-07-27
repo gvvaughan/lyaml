@@ -29,31 +29,30 @@
 
 /* NOTE: Make sure L is in scope before using these macros. */
 #define RAWSET_BOOLEAN(_k, _v)			\
-	lua_pushstring  (L, (_k));		\
-	lua_pushboolean (L, (_v) != 0);		\
-	lua_rawset      (L, -3)
+        lua_pushstring  (L, (_k));		\
+        lua_pushboolean (L, (_v) != 0);		\
+        lua_rawset      (L, -3)
 
 #define RAWSET_INTEGER(_k, _v)			\
-	lua_pushstring  (L, (_k));		\
-	lua_pushinteger (L, (_v));		\
-	lua_rawset      (L, -3)
+        lua_pushstring  (L, (_k));		\
+        lua_pushinteger (L, (_v));		\
+        lua_rawset      (L, -3)
 
 #define RAWSET_STRING(_k, _v)			\
-	lua_pushstring (L, (_k));		\
-	lua_pushstring (L, (_v));		\
-	lua_rawset     (L, -3)
+        lua_pushstring (L, (_k));		\
+        lua_pushstring (L, (_v));		\
+        lua_rawset     (L, -3)
 
 #define RAWSET_EVENTF(_k)			\
-	lua_pushstring (L, LYAML_STR(_k));	\
-	lua_pushstring (L, EVENTF(_k));		\
-	lua_rawset     (L, -3)
+        lua_pushstring (L, LYAML_STR(_k));	\
+        lua_pushstring (L, EVENTF(_k));		\
+        lua_rawset     (L, -3)
 
 typedef struct {
    lua_State	 *L;
    yaml_parser_t  parser;
    yaml_event_t	  event;
    char		  validevent;
-   char		  error;
    int		  document_count;
 } lyaml_parser;
 
@@ -76,9 +75,9 @@ parser_set_mark (lua_State *L, const char *k, yaml_mark_t mark)
    lua_pushstring  (L, k);
    lua_createtable (L, 0, 3);
 #define MENTRY(_s)	RAWSET_INTEGER(LYAML_STR(_s), mark._s)
-	MENTRY( index	);
-	MENTRY( line	);
-	MENTRY( column	);
+        MENTRY( index	);
+        MENTRY( line	);
+        MENTRY( column	);
 #undef MENTRY
    lua_rawset (L, -3);
 }
@@ -92,8 +91,8 @@ parser_push_eventtable (lyaml_parser *parser, const char *v, int n)
    lua_createtable (L, 0, n + 3);
    RAWSET_STRING   ("type", v);
 #define MENTRY(_s)	parser_set_mark (L, LYAML_STR(_s), parser->event._s)
-	MENTRY( start_mark	);
-	MENTRY( end_mark	);
+        MENTRY( start_mark	);
+        MENTRY( end_mark	);
 #undef MENTRY
 }
 
@@ -109,16 +108,15 @@ parse_STREAM_START (lyaml_parser *parser)
 #define MENTRY(_s)		\
       case YAML_##_s##_ENCODING: encoding = LYAML_STR(_s); break
 
-	MENTRY( ANY	);
-	MENTRY( UTF8	);
-	MENTRY( UTF16LE	);
-	MENTRY( UTF16BE	);
+        MENTRY( ANY	);
+        MENTRY( UTF8	);
+        MENTRY( UTF16LE	);
+        MENTRY( UTF16BE	);
 #undef MENTRY
 
       default:
-         lua_pushfstring(L, "invalid encoding %d", EVENTF (encoding));
-         parser->error = 1;
-         return;
+         lua_pushfstring (L, "invalid encoding %d", EVENTF (encoding));
+         lua_error (L);
    }
 
    parser_push_eventtable (parser, "STREAM-START", 1);
@@ -138,8 +136,8 @@ parser_append_tag (lua_State *L, yaml_tag_directive_t tag)
 {
    lua_createtable (L, 0, 2);
 #define MENTRY(_s)	RAWSET_STRING(LYAML_STR(_s), tag._s)
-	MENTRY( handle	);
-	MENTRY( prefix	);
+        MENTRY( handle	);
+        MENTRY( prefix	);
 #undef MENTRY
    lua_rawseti (L, -2, lua_objlen (L, -2) + 1);
 }
@@ -162,9 +160,9 @@ parse_DOCUMENT_START (lyaml_parser *parser)
       lua_pushliteral (L, "version_directive");
       lua_createtable (L, 0, 2);
 #define MENTRY(_s)		\
-	RAWSET_INTEGER(LYAML_STR(_s), EVENTF (version_directive->_s))
-	MENTRY( major	);
-	MENTRY( minor	);
+        RAWSET_INTEGER(LYAML_STR(_s), EVENTF (version_directive->_s))
+        MENTRY( major	);
+        MENTRY( minor	);
 #undef MENTRY
       lua_rawset (L, -3);
    }
@@ -178,9 +176,9 @@ parse_DOCUMENT_START (lyaml_parser *parser)
       lua_newtable (L);
       for (cur = EVENTF (tag_directives.start);
            cur != EVENTF (tag_directives.end);
-	   cur = cur + 1)
+           cur = cur + 1)
       {
-	 parser_append_tag (L, *cur);
+         parser_append_tag (L, *cur);
       }
       lua_rawset (L, -3);
    }
@@ -237,15 +235,14 @@ parse_SEQUENCE_START (lyaml_parser *parser)
 #define MENTRY(_s)		\
       case YAML_##_s##_SEQUENCE_STYLE: style = LYAML_STR(_s); break
 
-	MENTRY( ANY	);
-	MENTRY( BLOCK	);
-	MENTRY( FLOW	);
+        MENTRY( ANY	);
+        MENTRY( BLOCK	);
+        MENTRY( FLOW	);
 #undef MENTRY
 
       default:
-         lua_pushfstring(L, "invalid sequence style %d", EVENTF (style));
-         parser->error = 1;
-         return;
+         lua_pushfstring (L, "invalid sequence style %d", EVENTF (style));
+         lua_error (L);
    }
 
    parser_push_eventtable (parser, "SEQUENCE-START", 4);
@@ -274,15 +271,14 @@ parse_MAPPING_START (lyaml_parser *parser)
 #define MENTRY(_s)		\
       case YAML_##_s##_MAPPING_STYLE: style = LYAML_STR(_s); break
 
-	MENTRY( ANY	);
-	MENTRY( BLOCK	);
-	MENTRY( FLOW	);
+        MENTRY( ANY	);
+        MENTRY( BLOCK	);
+        MENTRY( FLOW	);
 #undef MENTRY
 
       default:
-         lua_pushfstring(L, "invalid mapping style %d", EVENTF (style));
-         parser->error = 1;
-         return;
+         lua_pushfstring (L, "invalid mapping style %d", EVENTF (style));
+         lua_error (L);
    }
 
    parser_push_eventtable (parser, "MAPPING-START", 4);
@@ -342,7 +338,7 @@ event_iter (lua_State *L)
    if (yaml_parser_parse (&parser->parser, &parser->event) != 1)
    {
       parser_generate_error_message (parser);
-      lua_error (L);
+      return lua_error (L);
    }
 
    parser->validevent = 1;
@@ -353,30 +349,27 @@ event_iter (lua_State *L)
    switch (parser->event.type)
    {
 #define MENTRY(_s)		\
-	   case YAML_##_s##_EVENT: parse_##_s (parser); break
+           case YAML_##_s##_EVENT: parse_##_s (parser); break
 
-	MENTRY( STREAM_START	);
-	MENTRY( STREAM_END	);
-	MENTRY( DOCUMENT_START	);
-	MENTRY( DOCUMENT_END	);
-	MENTRY( ALIAS		);
-	MENTRY( SCALAR		);
-	MENTRY( SEQUENCE_START	);
-	MENTRY( SEQUENCE_END	);
-	MENTRY( MAPPING_START	);
-	MENTRY( MAPPING_END	);
+        MENTRY( STREAM_START	);
+        MENTRY( STREAM_END	);
+        MENTRY( DOCUMENT_START	);
+        MENTRY( DOCUMENT_END	);
+        MENTRY( ALIAS		);
+        MENTRY( SCALAR		);
+        MENTRY( SEQUENCE_START	);
+        MENTRY( SEQUENCE_END	);
+        MENTRY( MAPPING_START	);
+        MENTRY( MAPPING_END	);
 #undef MENTRY
 
       case YAML_NO_EVENT:
-	 lua_pushnil (L);
+         lua_pushnil (L);
          break;
       default:
-         lua_pushfstring (L, "invalid event %d", parser->event.type);
-         parser->error = 1;
-         break;
+         lua_pushfstring  (L, "invalid event %d", parser->event.type);
+         return lua_error (L);
    }
-
-   if (parser->error) lua_error (L);
 
    return 1;
 }
