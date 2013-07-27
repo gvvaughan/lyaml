@@ -29,7 +29,7 @@ SPECL_ENV = $(LUA_ENV)
 ## ------ ##
 
 specl_SPECS =						\
-	$(srcdir)/specs/parser_spec.yaml		\
+	$(srcdir)/specs/ext_lyaml_parser_spec.yaml	\
 	$(NOTHING_ELSE)
 
 EXTRA_DIST +=						\
