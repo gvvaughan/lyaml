@@ -42,6 +42,10 @@
 extern void	parser_init	(lua_State *L);
 extern int	Pparser		(lua_State *L);
 
+/* from scanner.c */
+extern void	scanner_init	(lua_State *L);
+extern int	Pscanner	(lua_State *L);
+
 #define MYNAME		"yaml"
 #define MYVERSION	MYNAME " library for " LUA_VERSION " / " VERSION
 
@@ -717,6 +721,7 @@ static const luaL_Reg R[] =
 	MENTRY( Pconfigure	),
 	MENTRY( Pnull		),
 	MENTRY( Pparser		),
+	MENTRY( Pscanner	),
 #undef MENTRY
 	{NULL, NULL}
 };
@@ -724,6 +729,7 @@ static const luaL_Reg R[] =
 LUALIB_API int luaopen_lyaml (lua_State *L)
 {
    parser_init (L);
+   scanner_init (L);
 
    luaL_register(L, "yaml", R);
 

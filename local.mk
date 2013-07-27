@@ -48,6 +48,7 @@ lib_LTLIBRARIES += ext/lyaml/lyaml.la
 ext_lyaml_lyaml_la_SOURCES  = \
 		ext/lyaml/lyaml.c	\
 		ext/lyaml/parser.c	\
+		ext/lyaml/scanner.c	\
 		$(NOTHING_ELSE)
 
 ext_lyaml_lyaml_la_LDFLAGS  = -module -avoid-version

@@ -41,7 +41,24 @@ on the `load_nulls_as_nil` configuration, lyaml will retain [YAML][]
 loading.
 
 
-### Low Level API
+### Low Level APIs
+
+```lua
+local iter = lyaml.scanner (YAML-STRING)
+
+for token_table in iter () do
+  -- process token table
+end
+```
+
+Each time the iterator returned by `scanner` is called, it returns
+a table describing the next token of YAML-STRING.  See LibYAML's
+[yaml.h][] for details of the contents and semantics of the various
+tokens produced by `yaml_parser_scan`, the underlying call made by
+the iterator.
+
+LibYAML implements a fast parser in C using `yaml_parser_scan`, which
+is also bound to lyaml, and easier to use than the token API above:
 
 ```lua
 local iter = lyaml.parser (YAML-STRING)
@@ -104,5 +121,6 @@ See [INSTALL][] for instructions for `configure`.
 [luarocks]: http://www.luarocks.org
 [lyaml]:    http://github.com/gvvaughan/lyaml
 [L10]:      http://github.com/gvvaughan/lyaml/blob/master/rockspec.conf#L10
+[yaml.h]:   http://pyyaml.org/browser/libyaml/branches/stable/include/yaml.h
 [yaml]:     http://yaml.org
 [yaml11]:   http://yaml.org/spec/1.1/
