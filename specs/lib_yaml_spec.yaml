@@ -1,0 +1,101 @@
+before:
+  yaml = require "yaml"
+
+describe loading:
+- it loads an empty stream:
+    expect (yaml.load "").should_equal {}
+- it ignores comments: '
+    expect (yaml.load "# A comment\nnon-comment # trailing comment\n").
+      should_equal { "non-comment" }'
+
+- context documents:
+  - it yaml.loads an empty document:
+      expect (yaml.load "---").should_equal {""}
+      expect (yaml.load "---\n...").should_equal {""}
+  - it yaml.loads multiple documents:
+      expect (yaml.load "one\n---\ntwo").should_equal {"one", "two"}
+  - it reports an empty document:
+      expect (yaml.load "---\n---\ntwo\n---\n").
+        should_equal {"", "two", ""}
+
+- context version directive:
+  - it recognizes version number:
+      expect (yaml.load "%YAML 1.1\n---").should_equal {""}
+  - it diagneses missing document start:
+      expect (yaml.load "%YAML 1.1").
+        should_error "expected <document start>"
+  - it diagnoses unsupported version:
+      expect (yaml.load "%YAML 2.0\n---").
+        should_error "incompatible YAML document"
+
+- context tag directive:
+  - it recognizes primary tag directive: '
+      expect (yaml.load ("%TAG ! tag:yaml.org,2002:\n" ..
+                         "---\n" ..
+                         "!bool untrue")).should_equal {false}'
+  - it recognizes secondary tag directive: '
+      expect (yaml.load ("%TAG !! tag:ben-kiki.org,2000:\n" ..
+                         "---\n" ..
+                         "!!bool untrue")).should_equal {"untrue"}'
+  - it recognizes named tag directive: '
+      expect (yaml.load ("%TAG !bkk! tag:ben-kiki.org,2000:\n" ..
+                         "---\n" ..
+                         "!bkk!bool untrue")).should_equal {"untrue"}'
+  - it diagnoses undefined tag handles: '
+      expect (yaml.load ("!bkk!bool untrue")).
+        should_error "undefined tag handle"'
+
+- context scalars:
+  - it recognizes null: '
+      expect (yaml.load "~").should_equal {yaml.null}'
+  - it recognizes booleans: '
+      expect (yaml.load "yes").should_equal {true}
+      expect (yaml.load "true").should_equal {true}
+      expect (yaml.load "false").should_equal {false}
+      expect (yaml.load "no").should_equal {false}'
+  - it recognizes numbers:
+      expect (yaml.load "123").should_equal {123}
+      expect (yaml.load "12.3").should_equal {12.3}
+  - it recognizes strings:
+      expect (yaml.load "a string").should_equal {"a string"}
+
+  - context global tags:
+    - it recognizes !!bool:
+        expect (yaml.load "!!bool true").should_equal {true}
+        expect (yaml.load "!!bool yes").should_equal {true}
+        expect (yaml.load "!!bool no").should_equal {false}
+        expect (yaml.load "!!bool false").should_equal {false}
+        expect (yaml.load "!!bool garbage").should_equal {false}
+    - it recognizes !!int:
+        expect (yaml.load "!!int 42").should_equal {42}
+    - it recognizes !!float:
+        expect (yaml.load "!!float 3.141592").should_equal {3.141592}
+
+- context sequences:
+   - it recognizes block sequences:
+       expect (yaml.load "- ~\n- true\n- 42").
+         should_equal {{yaml.null, true, 42}}
+   - it recognizes flow sequences:
+       expect (yaml.load "[~, true, 42]").
+         should_equal {{yaml.null, true, 42}}
+
+- context mapping:
+   - it recognizes block mapping: '
+       expect (yaml.load "null: ~\nboolean: yes\nnumber: 3.14").
+         should_equal {{null = yaml.null, boolean = true, number = 3.14}}'
+   - it recognizes flow mapping: '
+       expect (yaml.load "{null: ~, boolean: yes, number: 3.14}").
+         should_equal {{null = yaml.null, boolean = true, number = 3.14}}'
+
+- context anchors:
+   - it resolves scalar anchors: '
+       expect (yaml.load "anchor: &SS Sammy Sosa\nalias: *SS").
+         should_equal {{anchor = "Sammy Sosa", alias = "Sammy Sosa"}}'
+   - it resolves sequence anchors: '
+       expect (yaml.load "anchor: &SEQ [Mark McGwire, Sammy Sosa]\nalias: *SEQ").
+         should_equal {{anchor = {"Mark McGwire", "Sammy Sosa"},
+                        alias  = {"Mark McGwire", "Sammy Sosa"}}}'
+   - it resolves mapping anchors: '
+   expect (yaml.load "anchor: &MAP {Mark McGwire: 65, Sammy Sosa: 63}\nalias: *MAP").
+         should_equal {{anchor = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63},
+                        alias  = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63}}}'
