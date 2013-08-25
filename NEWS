@@ -4,25 +4,17 @@ lyaml NEWS - User visible changes
 
 ** New Features:
 
-  - New lyaml.emitter API returns an object with an emit method for
+  - New yaml.emitter API returns an object with an emit method for
     adding events using yaml_*_event_initialize() calls.
 
-  - New lyaml.parser API returns a Lua iterator that fetches the next
+  - New yaml.parser API returns a Lua iterator that fetches the next
     event using yaml_parser_parse().
 
-  - New lyaml.scanner API returns a Lua iterator that fetches the next
+  - New yaml.scanner API returns a Lua iterator that fetches the next
     token using yaml_parser_scan().
 
   - Beginnings of Specl specs, starting with a reasonably comprehensive
     specifications for the new APIs above.
-
-** Bug Fixes:
-
-  - The Lua implementation of yaml.load () handles multi-document
-    streams, but returns a table of documents unlike earlier releases
-    which returned just the first document.
-
-** Incompatible Changes:
 
   - C implementation of lyaml.dump has moved to Lua implementation as
     yaml.dump.
@@ -30,19 +22,9 @@ lyaml NEWS - User visible changes
   - C implementation of lyaml.load has moved to Lua implementation as
     yaml.load.
 
-  - If you only care about the first document in a stream, you can
-    support both new (multi-doc) and old (first doc only) APIs of lyaml
-    as follows:
-
-      local ok, yaml = pcall (require, "yaml")
-      if not ok then
-        yaml = require "lyaml"
-        local v3load = yaml.load
-        yaml.load = function (...) return {v3load (...)}
-      end
-
-    ...and then access the first document with `yaml.load "foo")[1]` or
-    similar.
+  - The new Lua implementation of lyaml.load () handles multi-document
+    streams, and returns a table of documents when the new second
+    argument is `true`.
 
 
 * Noteworthy changes in release 3 (2013-04-27) [beta]

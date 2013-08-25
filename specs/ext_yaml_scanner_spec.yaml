@@ -2,27 +2,27 @@ before: |
   require "spec_helper"
 
   function consume (n, str)
-    local k = lyaml.scanner (str)
+    local k = yaml.scanner (str)
     for n = 1, n do k () end
     return k
   end
 
 describe scanning:
 - it scans empty streams:
-    k = lyaml.scanner ""
+    k = yaml.scanner ""
     expect (k ().type).should_be "STREAM_START"
     expect (k ().type).should_be "STREAM_END"
     expect (k ()).should_be (nil)
     expect (k ()).should_be (nil)
 - it ignores comments: '
-    k = lyaml.scanner "# A comment\nnon-comment # trailing comment\n"
+    k = yaml.scanner "# A comment\nnon-comment # trailing comment\n"
     expect (k ().type).should_be "STREAM_START"
     expect (k ().value).should_be "non-comment"
     expect (k ().type).should_be "STREAM_END"'
 
 - context STREAM_START:
   - before:
-      k = lyaml.scanner "# no BOM"
+      k = yaml.scanner "# no BOM"
   - it is the first token:
       expect (k ().type).should_be "STREAM_START"
   - it reports token start marker:
@@ -32,12 +32,12 @@ describe scanning:
   - it uses UTF-8 by default:
       expect (k ().encoding).should_be "UTF8"
   - it recognizes UTF-16 BOM:
-      k = lyaml.scanner (BOM .. " BOM")
+      k = yaml.scanner (BOM .. " BOM")
       expect (k ().encoding).should_match "UTF16[BL]E"
 
 - context STREAM_END:
   - before:
-      for t in lyaml.scanner "nothing to see" do k = t end
+      for t in yaml.scanner "nothing to see" do k = t end
   - it is the last token:
       expect (k.type).should_be "STREAM_END"
   - it reports token start marker:

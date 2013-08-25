@@ -26,7 +26,7 @@
 ## Environment. ##
 ## ------------ ##
 
-lyaml_cpath	= $(abs_builddir)/ext/lyaml/$(objdir)/?$(shrext)
+lyaml_cpath	= $(abs_builddir)/ext/yaml/$(objdir)/?$(shrext)
 lyaml_path	= $(abs_srcdir)/lib/?.lua;$(abs_srcdir)/lib/?/init.lua
 
 LUA_ENV =						\
@@ -48,29 +48,29 @@ include specs/specs.mk
 ## Declarations. ##
 ## ------------- ##
 
-lib_LTLIBRARIES += ext/lyaml/lyaml.la
+lib_LTLIBRARIES += ext/yaml/yaml.la
 
-ext_lyaml_lyaml_la_SOURCES =				\
-	ext/lyaml/lyaml.c				\
-	ext/lyaml/emitter.c				\
-	ext/lyaml/parser.c				\
-	ext/lyaml/scanner.c				\
+ext_yaml_yaml_la_SOURCES =				\
+	ext/yaml/yaml.c					\
+	ext/yaml/emitter.c				\
+	ext/yaml/parser.c				\
+	ext/yaml/scanner.c				\
 	$(NOTHING_ELSE)
 
-ext_lyaml_lyaml_la_LDFLAGS  = -module -avoid-version
-ext_lyaml_lyaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
+ext_yaml_yaml_la_LDFLAGS  = -module -avoid-version
+ext_yaml_yaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
 
 EXTRA_DIST +=						\
-	ext/lyaml/lua52compat.h				\
-	ext/lyaml/lyaml.h				\
+	ext/yaml/lua52compat.h				\
+	ext/yaml/lyaml.h				\
 	$(NOTHING_ELSE)
 
 dist_lua_DATA	+=					\
-	lib/yaml.lua					\
+	lib/lyaml.lua					\
 	$(NOTHING_ELSE)
 
 # Point mkrockspecs at the in-tree lyaml module.
 MKROCKSPECS_ENV = $(LUA_ENV)
 
-# Make sure lyaml is built before calling mkrockspecs.
+# Make sure yaml is built before calling mkrockspecs.
 $(package_rockspec) $(scm_rockspec): $(lib_LTLIBRARIES)

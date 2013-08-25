@@ -24,7 +24,7 @@
 -- Andrew Danforth <acd@weirdness.net>
 
 
-local lyaml = require "lyaml"
+local yaml = require "yaml"
 
 
 local TAG_PREFIX = "tag:yaml.org,2002:"
@@ -146,7 +146,7 @@ local dumper_mt = {
 local function Dumper ()
   local object = {
     anchors = {},
-    emitter = lyaml.emitter (),
+    emitter = yaml.emitter (),
   }
   return setmetatable (object, dumper_mt)
 end
@@ -275,13 +275,13 @@ local parser_mt = {
 local function Parser (s)
   local object = {
     anchors = {},
-    next    = lyaml.parser (s),
+    next    = yaml.parser (s),
   }
   return setmetatable (object, parser_mt)
 end
 
 
-local function load (s)
+local function load (s, all)
   local documents = {}
   local parser    = Parser (s)
 
@@ -306,7 +306,7 @@ local function load (s)
     parser.anchors = {}
   end
 
-  return documents
+  return all and documents or documents[1]
 end
 
 
@@ -318,7 +318,7 @@ local M = {
   dump      = dump,
   load      = load,
   null      = null,
-  _VERSION  = lyaml.version,
+  _VERSION  = yaml.version,
 }
 
 return M

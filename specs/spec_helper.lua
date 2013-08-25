@@ -1,6 +1,6 @@
 local util = require "specl.util"
 
-lyaml = require "lyaml"
+yaml = require "yaml"
 
 BOM   = string.char (254, 255) -- UTF-16 Byte Order Mark
 
@@ -36,7 +36,7 @@ end
 
 -- Create a new emitter and send STREAM_START, listed events and STREAM_END.
 function emit (list)
-  local emitter = lyaml.emitter ()
+  local emitter = yaml.emitter ()
   emitter.emit {type = "STREAM_START"}
   emitevents (emitter, list)
   local _, msg = emitter.emit {type = "STREAM_END"}
@@ -45,7 +45,7 @@ end
 
 -- Create a new parser for STR, and consume the first N events.
 function consume (n, str)
-  local e = lyaml.parser (str)
+  local e = yaml.parser (str)
   for n = 1, n do e () end
   return e
 end

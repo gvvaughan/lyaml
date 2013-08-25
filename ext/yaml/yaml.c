@@ -1,5 +1,5 @@
 /*
- * lyaml.c, LibYAML binding for Lua
+ * yaml.c, LibYAML binding for Lua
  *
  * Copyright (c) 2009, Andrew Danforth <acd@weirdness.net>
  *
@@ -40,7 +40,7 @@
 
 #include "lyaml.h"
 
-#define MYNAME		"lyaml"
+#define MYNAME		"yaml"
 #define MYVERSION	MYNAME " library for " LUA_VERSION " / " VERSION
 
 #define LYAML__STR_1(_s)	(#_s + 1)
@@ -57,7 +57,7 @@ static const luaL_Reg R[] =
 };
 
 LUALIB_API int
-luaopen_lyaml (lua_State *L)
+luaopen_yaml (lua_State *L)
 {
    parser_init (L);
    scanner_init (L);

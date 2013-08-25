@@ -3,13 +3,13 @@ before:
 
 describe parsing:
 - it parses empty streams:
-    e = lyaml.parser ""
+    e = yaml.parser ""
     expect (e ().type).should_be "STREAM_START"
     expect (e ().type).should_be "STREAM_END"
     expect (e ()).should_be (nil)
     expect (e ()).should_be (nil)
 - it ignores comments: '
-    e = lyaml.parser "# A comment\nnon-comment # trailing comment\n"
+    e = yaml.parser "# A comment\nnon-comment # trailing comment\n"
     expect (e ().type).should_be "STREAM_START"
     expect (e ().type).should_be "DOCUMENT_START"
     expect (e ().value).should_be "non-comment"
@@ -17,7 +17,7 @@ describe parsing:
 
 - context STREAM_START:
   - before:
-      e = lyaml.parser "# no BOM"
+      e = yaml.parser "# no BOM"
   - it is the first event:
       expect (e ().type).should_be "STREAM_START"
   - it reports event start marker:
@@ -27,12 +27,12 @@ describe parsing:
   - it uses UTF-8 by default:
       expect (e ().encoding).should_be "UTF8"
   - it recognizes UTF-16 BOM:
-      e = lyaml.parser (BOM .. " BOM")
+      e = yaml.parser (BOM .. " BOM")
       expect (e ().encoding).should_match "UTF16[BL]E"
 
 - context STREAM_END:
   - before:
-      for t in lyaml.parser "nothing to see" do ev = t end
+      for t in yaml.parser "nothing to see" do ev = t end
   - it is the last event:
       expect (ev.type).should_be "STREAM_END"
   - it reports event start marker:

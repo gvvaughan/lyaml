@@ -29,10 +29,10 @@ SPECL_ENV = $(LUA_ENV)
 ## ------ ##
 
 specl_SPECS =						\
-	$(srcdir)/specs/ext_lyaml_emitter_spec.yaml	\
-	$(srcdir)/specs/ext_lyaml_parser_spec.yaml	\
-	$(srcdir)/specs/ext_lyaml_scanner_spec.yaml	\
-	$(srcdir)/specs/lib_yaml_spec.yaml		\
+	$(srcdir)/specs/ext_yaml_emitter_spec.yaml	\
+	$(srcdir)/specs/ext_yaml_parser_spec.yaml	\
+	$(srcdir)/specs/ext_yaml_scanner_spec.yaml	\
+	$(srcdir)/specs/lib_lyaml_spec.yaml		\
 	$(NOTHING_ELSE)
 
 EXTRA_DIST +=						\

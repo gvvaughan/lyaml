@@ -1,9 +1,9 @@
-before: |
+before:
   require "spec_helper"
 
 describe emitting:
 - it diagnoses an invalid event:
-    emitter = lyaml.emitter ()
+    emitter = yaml.emitter ()
     expect (emitter.emit "not an event").should_error "expected table"
 - it can generate an empty stream:
     pending (github_issue "2")
@@ -17,7 +17,7 @@ describe emitting:
 - context STREAM_START:
   - it diagnoses unrecognised encodings:
   - it accepts an encoding parameter:
-      expect (emitevents (lyaml.emitter (), {
+      expect (emitevents (yaml.emitter (), {
                           {type = "STREAM_START", encoding = "UTF16BE"},
                           "STREAM_END"})).
         should_equal (BOM)
