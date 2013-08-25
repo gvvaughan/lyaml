@@ -31,12 +31,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <lua.h>
 #include <lualib.h>
-#include <lauxlib.h>
-#include "lua52compat.h"
-
-#include <yaml.h>
 
 #include "lyaml.h"
 
