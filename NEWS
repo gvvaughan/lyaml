@@ -4,6 +4,9 @@ lyaml NEWS - User visible changes
 
 ** New Features:
 
+  - New lyaml.emitter API returns an object with an emit method for
+    adding events using yaml_*_event_initialize() calls.
+
   - New lyaml.parser API returns a Lua iterator that fetches the next
     event using yaml_parser_parse().
 
@@ -20,6 +23,9 @@ lyaml NEWS - User visible changes
     which returned just the first document.
 
 ** Incompatible Changes:
+
+  - C implementation of lyaml.dump has moved to Lua implementation as
+    yaml.dump.
 
   - C implementation of lyaml.load has moved to Lua implementation as
     yaml.load.

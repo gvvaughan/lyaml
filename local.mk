@@ -29,7 +29,7 @@
 lyaml_cpath	= $(abs_builddir)/ext/lyaml/$(objdir)/?$(shrext)
 lyaml_path	= $(abs_srcdir)/lib/?.lua;$(abs_srcdir)/lib/?/init.lua
 
-LUA_ENV		=					\
+LUA_ENV =						\
 	LUA_CPATH="$(lyaml_cpath);$(LUA_CPATH)"		\
 	LUA_PATH="$(lyaml_path);$(LUA_PATH)"		\
 	$(NOTHING_ELSE)
@@ -52,6 +52,7 @@ lib_LTLIBRARIES += ext/lyaml/lyaml.la
 
 ext_lyaml_lyaml_la_SOURCES =				\
 	ext/lyaml/lyaml.c				\
+	ext/lyaml/emitter.c				\
 	ext/lyaml/parser.c				\
 	ext/lyaml/scanner.c				\
 	$(NOTHING_ELSE)
@@ -59,7 +60,10 @@ ext_lyaml_lyaml_la_SOURCES =				\
 ext_lyaml_lyaml_la_LDFLAGS  = -module -avoid-version
 ext_lyaml_lyaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
 
-EXTRA_DIST      += ext/lyaml/lua52compat.h
+EXTRA_DIST +=						\
+	ext/lyaml/lua52compat.h				\
+	ext/lyaml/lyaml.h				\
+	$(NOTHING_ELSE)
 
 dist_lua_DATA	+=					\
 	lib/yaml.lua					\

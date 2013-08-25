@@ -1,6 +1,6 @@
--- YAML 1.1 spec file loader.
+-- Transform between YAML 1.1 streams and Lua table representations.
 --
--- Copyright (c) 2013, Gary V. Vaughan,
+-- Copyright (c) 2013, Gary V. Vaughan
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a
 -- copy of this software and associated documentation files (the "Software"),
@@ -20,7 +20,7 @@
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
 --
--- Portions of this software were inspired by an earlier LibYAML from
+-- Portions of this software were inspired by an earlier LibYAML binding by
 -- Andrew Danforth <acd@weirdness.net>
 
 
@@ -29,7 +29,138 @@ local lyaml = require "lyaml"
 
 local TAG_PREFIX = "tag:yaml.org,2002:"
 
-local null     = lyaml.null ()
+local null = { type = "LYAML null" }
+
+
+-- Metatable for Dumper objects.
+local dumper_mt = {
+  __index = {
+    -- Emit EVENT to the LibYAML emitter.
+    emit = function (self, event)
+	    print ("DEBUG: "..event.type)
+      return self.emitter.emit (event)
+    end,
+
+    -- Look up an anchor for a repeated document element.
+    get_anchor = function (self, value)
+      if self.anchors[value] == "??" then
+      end
+    end,
+
+    -- Dump MAP into the event stream.
+    dump_mapping = function (self, map)
+      local anchor = self:get_anchor (map)
+
+      -- XXX ??? if anchor == "" then return 1 end
+
+      self:emit {
+        type   = "MAPPING_START",
+        anchor = anchor,
+        style  = "BLOCK",
+      }
+      for k, v in pairs (map) do
+        self:dump_node (k)
+        self:dump_node (v)
+      end
+      return self:emit {type = "MAPPING_END"}
+    end,
+
+    -- Dump SEQUENCE into the event stream.
+    dump_sequence = function (self, sequence)
+      local anchor = self:get_anchor (sequence)
+
+      -- XXX ??? if anchor == "" then return 1 end
+
+      self:emit {
+        type = "SEQUENCE_START",
+        anchor = anchor,
+        style = "BLOCK",
+      }
+      for _, v in ipairs (sequence) do
+        self:dump_node (v)
+      end
+      return self:emit {type = "SEQUENCE_END"}
+    end,
+
+    -- Dump a null into the event stream.
+    dump_null = function (self)
+      return self:emit {
+        type            = "SCALAR",
+        value           = "~",
+        plain_implicit  = true,
+        quoted_implicit = true,
+        style           = "PLAIN",
+      }
+    end,
+
+    -- Dump VALUE into the event stream.
+    dump_scalar = function (self, value)
+      local itsa = type (value)
+      local style = "PLAIN"
+      if value == "true" or value == "false" or
+         value == "yes" or value == "no" or value == "~" or
+         tonumber (value) ~= nil then
+        style = "SINGLE_QUOTED"
+      elseif itsa == "number" or itsa == "boolean" then
+        value = tostring (value)
+      end
+      return self:emit {
+        type            = "SCALAR",
+        value           = value,
+        plain_implicit  = true,
+        quoted_implicit = true,
+        style           = style,
+      }
+    end,
+
+    -- Decompose NODE into a stream of events.
+    dump_node = function (self, node)
+      local itsa = type (node)
+      if itsa == "string" or itsa == "boolean" or itsa == "number" then
+        return self:dump_scalar (node)
+      elseif node == null then
+        return self:dump_null ()
+      elseif itsa == "table" and node ~= null then
+        if #node > 0 then
+          return self:dump_sequence (node)
+        else
+          return self:dump_mapping (node)
+        end
+      else -- unsupported Lua type
+        error ("cannot dump object of type '" .. itsa .. "'")
+      end
+    end,
+
+    -- Dump DOCUMENT into the event stream.
+    dump_document = function (self, document)
+      self:emit {type = "DOCUMENT_START"}
+      self:dump_node (document)
+      return self:emit {type = "DOCUMENT_END"}
+    end,
+  },
+}
+
+
+-- Emitter object constructor.
+-- TODO: find references to populate anchors table
+local function Dumper ()
+  local object = {
+    anchors = {},
+    emitter = lyaml.emitter (),
+  }
+  return setmetatable (object, dumper_mt)
+end
+
+
+local function dump (list)
+  local dumper = Dumper ()
+  dumper:emit { type = "STREAM_START", encoding = "UTF8" }
+  for _, document in ipairs (list) do
+    dumper:dump_document (document)
+  end
+  local ok, stream = dumper:emit { type = "STREAM_END" }
+  return stream
+end
 
 
 -- Metatable for Parser objects.
@@ -184,8 +315,7 @@ end
 --[[ ----------------- ]]--
 
 local M = {
-  configure = lyaml.configure,
-  dump      = lyaml.dump,
+  dump      = dump,
   load      = load,
   null      = null,
   _VERSION  = lyaml.version,

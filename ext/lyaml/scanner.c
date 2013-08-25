@@ -24,27 +24,8 @@
 
 #include <config.h>
 
-#include <lua.h>
-#include <lauxlib.h>
-#include "lua52compat.h"
+#include "lyaml.h"
 
-#include <yaml.h>
-
-/* NOTE: Make sure L is in scope before using these macros. */
-#define RAWSET_INTEGER(_k, _v)			\
-        lua_pushstring  (L, (_k));		\
-        lua_pushinteger (L, (_v));		\
-        lua_rawset      (L, -3)
-
-#define RAWSET_STRING(_k, _v)			\
-        lua_pushstring (L, (_k));		\
-        lua_pushstring (L, (_v));		\
-        lua_rawset     (L, -3)
-
-#define RAWSET_EVENTF(_k)			\
-        lua_pushstring (L, #_k);	\
-        lua_pushstring (L, EVENTF(_k));		\
-        lua_rawset     (L, -3)
 
 typedef struct {
    lua_State	 *L;
