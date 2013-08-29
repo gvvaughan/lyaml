@@ -21,10 +21,10 @@ describe emitting:
                           {type = "STREAM_START", encoding = "UTF16BE"},
                           "STREAM_END"})).
         should_equal (BOM)
- 
+
 - context STREAM_END:
   - it returns the yaml document from the preceding events:
-      expect (emit {"DOCUMENT_START", {type = "SCALAR", value = "woo!"}, 
+      expect (emit {"DOCUMENT_START", {type = "SCALAR", value = "woo!"},
                     "DOCUMENT_END"}).
         should_equal "--- woo!\n...\n"
 
