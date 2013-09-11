@@ -9,10 +9,10 @@ dnl in the Software without restriction, including without limitation the rights
 dnl to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 dnl copies of the Software, and to permit persons to whom the Software is
 dnl furnished to do so, subject to the following conditions:
-dnl 
+dnl
 dnl The above copyright notice and this permission notice shall be included in
 dnl all copies or substantial portions of the Software.
-dnl 
+dnl
 dnl THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 dnl IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 dnl FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@ dnl THE SOFTWARE.
 AC_PREREQ([2.68])
 
 dnl Initialise autoconf and automake
-AC_INIT([lyaml], [3], [http://github.com/gvvaughan/lyaml/issues])
+AC_INIT([lyaml], [4], [http://github.com/gvvaughan/lyaml/issues])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -48,6 +48,7 @@ AC_SUBST(LIBTOOL_DEPS)
 
 dnl Check for programs
 AC_PROG_CC
+AC_PATH_PROG([SPECL], [specl], [:])
 AX_PROG_LUA(5.1, 5.3)
 AX_LUA_HEADERS
 
@@ -60,6 +61,8 @@ AC_SEARCH_LIBS([yaml_document_initialize], [yaml], [], [
     AC_MSG_ERROR([Required library 'yaml' could not be found])])
 
 dnl Generate output files
+SPECL_MIN=8
+SS_CONFIG_TRAVIS([specl])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

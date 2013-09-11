@@ -1,4 +1,233 @@
+2013-09-11  Gary V. Vaughan  <gary@gnu.org>
+
+	Release version 4
+	* NEWS: Record release date.
+
+2013-08-30  Gary V. Vaughan  <gary@gnu.org>
+
+	docs: update README.
+	* README.md: Remove documentation for removed lyaml.configure
+	call, and add documentation for new yaml.emitter call.
+
+2013-08-29  Gary V. Vaughan  <gary@gnu.org>
+
+	specs: remove trailing blanks.
+	* specs/ext_yaml_emitter_spec.yaml: Remove trailing blanks.
+
+	configury: add sanity-cfg.mk.
+	* build-aux/sanity-cfg.mk: New file. Add exception to casting
+	argument to free check.
+
+	slingshot: sync with upstream.
+	* slingshot: Upgrade again now the we are maintaining API
+	compatibility in the next release of lyaml.
+	* bootstrap: Pick up fixes from latest slingshot.
+
+2013-08-25  Gary V. Vaughan  <gary@gnu.org>
+
+	slingshot: sync with upstream.
+	* slingshot: Pick up recent improvements, particularly fixed
+	compatibility with upcoming API backwards compatible lyaml 4
+	release.
+
+	ext/yaml: avoid double include of lua52compat.h.
+	* ext/yaml/yaml.c: lyaml.h already includes lua52compat.h, so no
+	need to include it again from here!
+
+	maint: maintain API backwards compatibility with legacy C implementation.
+	Make sure the old lyaml.load and lyaml.dump APIs work by switching
+	the naming of the C and lua parts of the new implementation.
+	* ext/lyaml: Rename from this...
+	* ext/yaml: ...to this.
+	* ext/lyaml/lyaml.c: Rename from this...
+	* ext/lyaml/yaml.c: ...to this.
+	* lib/yaml.lua: Rename from this...
+	* lib/lyaml.lua: ...to this.
+	* specs/ext_lyaml_emitter_spec.yaml,
+	specs/ext_lyaml_parser_spec.yaml,
+	specs/ext_lyaml_scanner_spec.yaml, specs/lib_yaml_spec.yaml:
+	Rename from these...
+	* specs/ext_yaml_emitter_spec.yaml,
+	specs/ext_yaml_parser_spec.yaml,
+	specs/ext_yaml_scanner_spec.yaml, specs/lib_lyaml_spec.yaml:
+	...to these.
+	* local.mk, specs/specs.mk, specs/spec_helper.lua: Adjust.
+	* NEWS: Remove all the incompatibility warnings, and adjust.
+
+	dump: replace C implementation with simpler Lua dump.
+	* specs/ext_lyaml_emitter_spec.yaml: Specify low level libYAML
+	emitter binding.
+	* specs/spec_helper.lua (emitevents, emit): New helper functions.
+	* specs/specs.mk (specl_SPECS): Add
+	specs/ext_lyaml_emitter_spec.yaml.
+	* ext/lyaml/lyaml.h: Factor common macros and headers into this
+	single file.
+	* ext/lyaml/parser.c, ext/lyaml/scanner.c: Adjust accordingly.
+	* ext/lyaml/lyaml.c (lua_yaml_dumper, dump_node, dump_scalar)
+	(get_yaml_anchor, dump_table, dump_array, figure_table_type)
+	(dump_null, dump_node, dump_document, append_output)
+	(find_references, Pdump): Remove.
+	* ext/lyaml/emitter.c: New file, implementing libYAML emitter
+	binding.
+	* lib/lyaml.lua (M.dump): Reimplement dumper in Lua.
+	* local.mk (ext_lyaml_lyaml_la_SOURCES): Add ext/lyaml/emitter.c.
+	(EXTRA_DIST): Add ext/lyaml/lyaml.h.
+	* NEWS: Update.
+
+2013-07-28  Gary V. Vaughan  <gary@gnu.org>
+
+	load: replace C implementation with simpler Lua load.
+	* specs/lib_yaml_spec.yaml: Specify loader behaviour.
+	* ext/lyaml/lyaml.c (Load_Set_Metatables, Load_Numeric_Scalars)
+	(Load_Nulls_As_Nil, LUAYAML_TAG_PREFIX, RETURN_ERRMSG)
+	(lua_yaml_loader, generate_error_message, delete_event, do_parse)
+	(handle_anchor, load_map, load_sequence, load_sscalar, load_alias)
+	(load_node, load, Pload): Remove.
+	(handle_config_option, R): Adjust.
+	* lib/yaml.lua: New file. Reimplement in Lua.
+	* NEWS: Update.
+
+	parser: set scalar style field.
+	* ext/lyaml/parser.c (parse_SCALAR): Set style field.
+
+	slingshot: sync with upstream.
+	* slingshot: Pick up recent improvements, particularly compatibility
+	with upcoming lyaml 4 release.
+
+	scanner: bind YAML tokenizer.
+	* specs/ext_lyaml_scanner_spec.yaml: New file.  Specify behaviour
+	of tokenizing scanner.
+	* ext/lyaml/scanner.c: New file. Implement binding of scanner.
+	* ext/lyaml/lyaml.c: Declare scanner entrypoints.
+	(R): Register new scanner method.
+	(luaopen_lyaml): Call setup for __gc scanner cleanup.
+	* local.mk (ext_lyaml_lyaml_la_SOURCES): Add ext/lyaml/scanner.c.
+	* README.md: Add instructions for using lyaml.scanner().
+	* NEWS: Update.
+
+2013-07-27  Gary V. Vaughan  <gary@gnu.org>
+
+	parser: factor out function dispatch for simple events.
+	* ext/lyaml/parser.c (parse_STREAM_END, parse_SEQUENCE_END)
+	(parse_MAPPING_END): Delete.
+	(event_iter): Generate parser_push_exenttable calls with CPP
+	instead.
+
+	parser: use valid symbols for Lua event types.
+	* ext/lyaml/parser.c: Use '_' instead of '-' so that the bare
+	event types are valid Lua symbols.
+	* specs/ext_lyaml_parser_spec.yaml: Adjust.
+
+	specs: rename parser spec file to reflect source path.
+	* specs/parser_spec.yaml: Move from here...
+	* specs/ext_lyaml_parser_spec.yaml: ...to here.
+	* specs/specs.mk (specl_SPECS): Adjust.
+
+	parser: interface cleanup.
+	* ext/lyaml/lyaml.c (parser_init): Declare this...
+	(loader_gc): ...instead of this.
+	(luaopen_lyaml): Move __gc metatable init from here...
+	* ext/lyaml/parser.c (parser_init): ...to here.
+	Also fix a typo in one metatable name reference.
+
+	maint: move lyaml extension sources to ext/lyaml subdir.
+	* lua52compat.h, lyaml.c, parser.c: Move from here...
+	* ext/lyaml/lua52compat.h, ext/lyaml/lyaml.c, ext/lyaml/parser.c:
+	...to here.
+	* local.mk (lyaml_cpath, EXTRA_DIST, lib_LTLIBRARIES): Adjust.
+	(ext_lyaml_lyaml_la_SOURCES): Compile sources as individual subdir
+	objects.
+
+	parser: factor away LYAML_STR macro.
+	* parser.c (LYAML__STR, LYAML_STR): Remove. Adjust all callers.
+
+	parser: factor away lyaml_parser.error.
+	* parser.c (lyaml_parser): Remove error field.
+	Adjust all clients.
+
+	parser: decouple from lyaml.c.
+	* parser.c (lyaml_parser, parser_delete_event)
+	(parser_generate_error_message): New functions refactored...
+	(struct lua_yaml_loader, delete_event, generate_error_message):
+	...from here.
+	Adjust all callers.
+
+2013-07-26  Gary V. Vaughan  <gary@gnu.org>
+
+	docs: add missing link, and missing space.
+	* README.md: Add missing [libtool][] destination and insert a
+	missing space.
+
+	README: improve documentation.
+	* README.md: Rewrite to provide a tiny bit more insight into how
+	to install and use lyaml.
+
+2013-07-25  Gary V. Vaughan  <gary@gnu.org>
+
+	specs: quote 5.2 illegal escapes carefully.
+	* specs/parser_spec.yaml: Use [[]] quoting to prevent Lua 5.2
+	from trying to resolve \ as an escape sequence.
+
+	travis: install specl for specificatin checks.
+	* configure.ac (AC_PATH_PROG): Fallback to : if specl is not
+	installed on the build machine.
+	* .travis.yml: Regenerate.
+
+	lyaml: bind lyaml.parser to lyaml_parser_parse.
+	* configure.ac: Require Specl.
+	(SPECL_MIN): Require at least release 8 of Specl.
+	* specs/parser_spec.yaml: Specify behaviour of new parser API.
+	* specs/spec_helper.lua: New file. Specl helper functions.
+	* specs/specs.mk: New file. Run specl checks, and distribute
+	spec files.
+	* local.mk: Include it.
+	(lyaml_cpath): Factored out of MKROCKSPECS_ENV.
+	(MKROCKSPECS_ENV, LUA_ENV): Adjust.
+	* parser.c (Pparser): New file. Implement event iterator.
+	* lyaml.c: Include it.
+	(R): Add Pparser.
+	(luaopen_lyaml): Set up _gc metatable for iterator to clean
+	up iterator memory.
+	* local.mk (EXTRA_DIST): Add parser.c.
+	* NEWS: Update.
+
+2013-07-15  Gary V. Vaughan  <gary@gnu.org>
+
+	slingshot: sync with upstream.
+	Use upstream slingshot, which prevents us requesting installation
+	of luarocks lyaml on travis before building our own lyaml.
+	* slingshot: Update.
+	* .travis.yml: Regenerate.
+
+	maint: move to self-managed slingshot.
+	* slingshot: Add as a git submodule.
+	* bootstrap.slingshot: New file, copied from slingshot.
+	* Makefile.am: Move from here...
+	* local.mk: ...to here, and adjust for slingshot.
+	* GNUmakefile, build-aux/do-release-commit-and-tag,
+	build-aux/gitlog-to-changelog, build-aux/mkrockspecs,
+	build-aux/release.mk, build-aux/rockspecs.mk, m4/ax_lua.m4,
+	m4/ax_compare_version.m4: Delete.  Slingshot takes care of these
+	files automatically.
+	* .gitignore: Update.
+	* .travis.yml: Regenerate.
+
+	maint: remove spurious trailing whitespace.
+	* README.md, bootstrap.conf, configure.ac, lyaml.c: Remove
+	spurious trailing whitespace.
+
+	lyaml: use STREQ/STRNEQ instead of !strcmp/strcmp.
+	* lyaml.c (load_scalar, lua_yaml_dumper, table_type)
+	(handle_config_options): Use GNUish STREQ/STRNEQ macros for
+	improved readability over reverse logic strcmp.
+
 2013-04-27  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: post-release administrivia.
+	* configure.ac (AC_INIT): Bump to release 4.
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* ./Makefile.am (old_NEWS_hash): Auto-update.
 
 	Release version 3
 	* NEWS: Record release date.
@@ -15,10 +244,10 @@
 	* lyaml-rockspec.lua: Remove.  No longer used.
 
 	configury: rockspecs depend on lyaml.
-	* Makeflie.am: Make sure lyaml is built before calling mkrockspecs.
+	* Makefile.am: Make sure lyaml is built before calling mkrockspecs.
 
 	maint: Move distribution rules into release.mk.
-	* Makeflie.am: Move distribution rules from here...
+	* Makefile.am: Move distribution rules from here...
 	* build-aux/release.mk: ...to here.
 	* build-aux/rockspecs.mk (EXTRA_DIST): Add mkrockspecs script,
 	and rockspec_conf.

@@ -3,12 +3,12 @@ language: erlang
 
 env:
   global:
-    - PACKAGE=lyaml
+    - PACKAGE=@PACKAGE@
     - ROCKSPEC=$PACKAGE-git-1.rockspec
     - LUAROCKS_CONFIG=build-aux/luarocks-config.lua
     - LUAROCKS_BASE=luarocks-2.0.13
     - LUAROCKS="$LUA $HOME/bin/luarocks"
-    - GENDOC=luarocks/bin/
+    - GENDOC=luarocks/bin/@GENDOC@
     - SPECL=bin/specl
   matrix:
     - LUA=lua5.1             LUA_INCDIR=/usr/include/lua5.1
@@ -25,11 +25,11 @@ install:
   - sudo apt-get install lua5.2
   - sudo apt-get install liblua5.2-dev
   # Luadoc and Ldoc work best on Travis with Lua 5.1.
-  # sudo apt-get install luarocks
-  # sudo luarocks install
-  # mkdir -p luarocks/bin
-  # sed 's|^exec "[^"]*"|exec lua5.1|' `which ` > $GENDOC
-  # chmod a+rx $GENDOC
+  @GENDOC_FALSE@ sudo apt-get install luarocks
+  @GENDOC_FALSE@ sudo luarocks install @GENDOC@
+  @GENDOC_FALSE@ mkdir -p luarocks/bin
+  @GENDOC_FALSE@ sed 's|^exec "[^"]*"|exec lua5.1|' `which @GENDOC@` > $GENDOC
+  @GENDOC_FALSE@ chmod a+rx $GENDOC
   # Install a recent luarocks release locally for everything else.
   - wget http://luarocks.org/releases/$LUAROCKS_BASE.tar.gz
   - tar zxvpf $LUAROCKS_BASE.tar.gz
@@ -50,7 +50,7 @@ script:
   # Set Lua and Shell paths up for local luarocks tree.
   - eval `$LUAROCKS path`
   - export PATH=`pwd`/luarocks/bin:$PATH
-  - $LUAROCKS install specl;
+  @EXTRA_ROCKS@
   - make rockspecs LUAROCKS="$LUAROCKS" V=1
     || { $LUAROCKS path; cat $ROCKSPEC; }
   # LuaRocks make will fail if dependencies are missing.

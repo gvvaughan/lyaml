@@ -1,5 +1,32 @@
 lyaml NEWS - User visible changes
 
+* Noteworthy changes in release 4 (2013-09-11) [beta]
+
+** New Features:
+
+  - New yaml.emitter API returns an object with an emit method for
+    adding events using yaml_*_event_initialize() calls.
+
+  - New yaml.parser API returns a Lua iterator that fetches the next
+    event using yaml_parser_parse().
+
+  - New yaml.scanner API returns a Lua iterator that fetches the next
+    token using yaml_parser_scan().
+
+  - Beginnings of Specl specs, starting with a reasonably comprehensive
+    specifications for the new APIs above.
+
+  - C implementation of lyaml.dump has moved to Lua implementation as
+    yaml.dump.
+
+  - C implementation of lyaml.load has moved to Lua implementation as
+    yaml.load.
+
+  - The new Lua implementation of lyaml.load () handles multi-document
+    streams, and returns a table of documents when the new second
+    argument is `true`.
+
+
 * Noteworthy changes in release 3 (2013-04-27) [beta]
 
 ** This release is functionally identical to the last.

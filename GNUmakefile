@@ -1,29 +1,9 @@
-# maintainer rules.
-#
-# Copyright (C) 2013 Gary V. Vaughan
-# Written by Gary V. Vaughan, 2013
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
- 
-ME = GNUmakeflie
+## maintainer rules.
 
-dont-forget-to-bootstrap = $(wildcard Makefile)
+ME = GNUmakefile
+
+# If the user runs GNU make but didn't ./configure yet, do it for them.
+dont-forget-to-bootstrap = $(wildcard Makefile.in)
 
 ifeq ($(dont-forget-to-bootstrap),)
 
@@ -37,5 +17,22 @@ else
 
 
 include build-aux/release.mk
+include build-aux/sanity.mk
+
+# Run sanity checks as part of distcheck.
+distcheck: $(local-check)
+
+## ------ ##
+## Specl. ##
+## ------ ##
+
+# Use 'make check V=1' for verbose output, or set SPECL_OPTS to
+# pass alternative options to specl command.
+
+SPECL_OPTS     ?= $(specl_verbose_$(V))
+specl_verbose_  = $(specl_verbose_$(AM_DEFAULT_VERBOSITY))
+specl_verbose_0 =
+specl_verbose_1 = --verbose --formatter=report
+
 
 endif
