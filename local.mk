@@ -39,7 +39,7 @@ LUA_ENV =						\
 ## Bootstrap. ##
 ## ---------- ##
 
-old_NEWS_hash   = 6ce65f1c2b9efaf308946bbbca9d5b89
+old_NEWS_hash   = dab71a2961efb85ecb38d5a1c8b1c07c
 
 include specs/specs.mk
 
