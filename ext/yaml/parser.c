@@ -388,7 +388,7 @@ Pparser (lua_State *L)
 
    /* requires a single string type argument */
    luaL_argcheck (L, lua_isstring (L, 1), 1, "must provide a string argument");
-   str = lua_tostring (L, 1);
+   str = (const unsigned char *) lua_tostring (L, 1);
 
    /* create a user datum to store the parser */
    parser = (lyaml_parser *) lua_newuserdata (L, sizeof (*parser));

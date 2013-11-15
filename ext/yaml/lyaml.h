@@ -41,27 +41,31 @@
 #define STRNEQ strcmp
 #endif
 
-/* NOTE: Make sure L is in scope before using these macros. */
+/* NOTE: Make sure L is in scope before using these macros.
+         lua_pushyamlstr casts away the impedance mismatch between Lua's
+	 signed char APIs and libYAML's unsigned char APIs. */
+
+#define lua_pushyamlstr(_s) lua_pushstring (L, (char *)(_s))
 
 #define RAWSET_BOOLEAN(_k, _v)				\
-        lua_pushstring  (L, (_k));			\
+        lua_pushyamlstr (_k);				\
         lua_pushboolean (L, (_v) != 0);			\
         lua_rawset      (L, -3)
 
 #define RAWSET_INTEGER(_k, _v)				\
-        lua_pushstring  (L, (_k));			\
+        lua_pushyamlstr (_k);				\
         lua_pushinteger (L, (_v));			\
         lua_rawset      (L, -3)
 
 #define RAWSET_STRING(_k, _v)				\
-        lua_pushstring (L, (_k));			\
-        lua_pushstring (L, (_v));			\
-        lua_rawset     (L, -3)
+        lua_pushyamlstr (_k);				\
+        lua_pushyamlstr (_v);				\
+        lua_rawset      (L, -3)
 
 #define RAWSET_EVENTF(_k)				\
-        lua_pushstring (L, #_k);			\
-        lua_pushstring (L, EVENTF(_k));			\
-        lua_rawset     (L, -3)
+        lua_pushstring  (L, #_k);			\
+        lua_pushyamlstr (EVENTF(_k));			\
+        lua_rawset      (L, -3)
 
 
 /* NOTE: Make sure L is in scope before using these macros.
@@ -119,7 +123,7 @@
 	lua_pushstring (L, _s);				\
 	lua_rawget     (L, -2);				\
 	if (!lua_isnil (L, -1)) {			\
-	   _v = strdup (lua_tostring (L, -1));		\
+	   _v = (yaml_char_t *) strdup (lua_tostring (L, -1)); \
 	} else { _v = NULL; }
 
 #define RAWGET_PUSHTABLE(_k)						\

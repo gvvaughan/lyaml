@@ -2,6 +2,11 @@ lyaml NEWS - User visible changes
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Build:
+
+  - Significantly reduced pointer mismatch warnings from modern GNU
+    compilers.
+
 
 * Noteworthy changes in release 4 (2013-09-11) [beta]
 
