@@ -43,5 +43,6 @@ build-aux/release.mk
 build-aux/rockspecs.mk
 build-aux/sanity.mk
 build-aux/specl.mk
+build-aux/update-copyright
 m4/
 travis.yml.in

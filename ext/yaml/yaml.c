@@ -1,7 +1,8 @@
 /*
  * yaml.c, LibYAML binding for Lua
+ * Written by Andrew Danforth, 2009
  *
- * Copyright (c) 2009, Andrew Danforth <acd@weirdness.net>
+ * Copyright (c) 2009, 2014 Andrew Danforth
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

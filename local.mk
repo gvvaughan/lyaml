@@ -1,6 +1,6 @@
 # Non-recursive Make rules.
 #
-# Copyright (C) 2013 Gary V. Vaughan
+# Copyright (C) 2013-2014 Gary V. Vaughan
 # Written by Gary V. Vaughan, 2013
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,6 +40,11 @@ LUA_ENV =						\
 ## ---------- ##
 
 old_NEWS_hash   = dab71a2961efb85ecb38d5a1c8b1c07c
+
+update_copyright_env = \
+	UPDATE_COPYRIGHT_HOLDER='(Gary V. Vaughan|Andrew Danforth)' \
+	UPDATE_COPYRIGHT_USE_INTERVALS=1 \
+	UPDATE_COPYRIGHT_FORCE=1
 
 include specs/specs.mk
 
