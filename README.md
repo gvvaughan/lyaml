@@ -28,7 +28,6 @@ where [YAML] explicitly supports `null` values (and keys!).  Lyaml
 will retain [YAML] `null` values as `lyaml.null ()` by default,
 though it is straight forward to wrap the low level APIs to use `nil`,
 subject to the usual caveats of how nil values work in [Lua] tables.
-loading.
 
 
 ### Low Level APIs
