@@ -2,6 +2,7 @@ LYAML
 =====
 
 [![travis-ci status](https://secure.travis-ci.org/gvvaughan/lyaml.png)](http://travis-ci.org/gvvaughan/lyaml/builds)
+[![Stories in Ready](https://badge.waffle.io/gvvaughan/lyaml.png?label=ready&title=Ready)](https://waffle.io/gvvaughan/lyaml)
 
 [LibYAML] binding for [Lua], with a fast C implementation
 for converting between [%YAML 1.1][yaml11] and [Lua] tables,
