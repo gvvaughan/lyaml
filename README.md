@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/gvvaughan/lyaml.png?label=ready&title=Ready)](https://waffle.io/gvvaughan/lyaml)
 LYAML
 =====
 
