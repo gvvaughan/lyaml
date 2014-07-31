@@ -91,7 +91,7 @@ There's no need to download an [lyaml] release, or clone the git repo,
 unless you want to modify the code.  If you use [LuaRocks], you can
 use it to install the latest release from its repository:
 
-    luarocks install lyaml
+    luarocks --server=http://rocks.moonscript.org install lyaml
 
 Or from the rockspec in a release tarball:
 
