@@ -128,7 +128,7 @@ local dumper_mt = {
           return self:dump_mapping (node)
         end
       else -- unsupported Lua type
-        error ("cannot dump object of type '" .. itsa .. "'")
+        error ("cannot dump object of type '" .. itsa .. "'", 2)
       end
     end,
 
@@ -172,6 +172,12 @@ local parser_mt = {
       return tostring (self.event.type)
     end,
 
+    -- Raise a parse error.
+    error = function (self, errmsg)
+      error (self.mark.line .. ":" .. self.mark.column ..
+             ": " .. errmsg, 0)
+    end,
+
     -- Save node in the anchor table for reference in future ALIASes.
     add_anchor = function (self, node)
       if self.event.anchor ~= nil then
@@ -181,8 +187,16 @@ local parser_mt = {
 
     -- Fetch the next event.
     parse = function (self)
-      self.event = self.next ()
-      -- TODO: report parser problems here
+      local ok, event = pcall (self.next)
+      if not ok then
+	-- if ok is nil, then event is a parser error from libYAML
+	self:error (event:gsub (" at document: .*$", ""))
+      end
+      self.event = event
+      self.mark  = {
+	line     = tostring (self.event.start_mark.line + 1),
+	column   = tostring (self.event.start_mark.column + 1),
+      }
       return self:type ()
     end,
 
@@ -193,9 +207,9 @@ local parser_mt = {
       while true do
         local key = self:load_node ()
         if key == nil then break end
-        local value = self:load_node ()
-        if key == nil then
-          error ("unexpected " .. self:type () .. "event")
+        local value, event = self:load_node ()
+        if value == nil then
+          self:error ("unexpected " .. self:type () .. "event")
         end
         map[key] = value
       end
@@ -246,7 +260,7 @@ local parser_mt = {
     load_alias = function (self)
       local anchor = self.event.anchor
       if self.anchors[anchor] == nil then
-        error ("invalid reference: " .. tostring (anchor))
+        self:error ("invalid reference: " .. tostring (anchor))
       end
       return self.anchors[anchor]
     end,
@@ -257,14 +271,14 @@ local parser_mt = {
         ALIAS          = self.load_alias,
         MAPPING_START  = self.load_map,
         SEQUENCE_START = self.load_sequence,
-        MAPPING_END    = function () return nil end,
-        SEQUENCE_END   = function () return nil end,
-        DOCUMENT_END   = function () return nil end,
+        MAPPING_END    = function () end,
+        SEQUENCE_END   = function () end,
+        DOCUMENT_END   = function () end,
       }
 
       local event = self:parse ()
       if dispatch[event] == nil then
-        error ("invalid event: " .. self:type ())
+        self:error ("invalid event: " .. self:type ())
       end
      return dispatch[event] (self)
     end,
@@ -276,6 +290,7 @@ local parser_mt = {
 local function Parser (s)
   local object = {
     anchors = {},
+    mark    = { line = "0", column = "0" },
     next    = yaml.parser (s),
   }
   return setmetatable (object, parser_mt)
@@ -287,7 +302,7 @@ local function load (s, all)
   local parser    = Parser (s)
 
   if parser:parse () ~= "STREAM_START" then
-    error ("expecting STREAM_START event, but got " .. parser:type ())
+    error ("expecting STREAM_START event, but got " .. parser:type (), 2)
   end
 
   while parser:parse () ~= "STREAM_END" do
@@ -297,7 +312,7 @@ local function load (s, all)
     end
 
     if parser:parse () ~= "DOCUMENT_END" then
-      error ("expecting DOCUMENT_END event, but got " .. parser:type ())
+      error ("expecting DOCUMENT_END event, but got " .. parser:type (), 2)
     end
 
     -- save document
