@@ -1,4 +1,7 @@
-local util = require "specl.util"
+local std = require "specl.std"
+
+package.path  = std.package.normalize ("lib/?.lua", package.path)
+package.cpath = std.package.normalize ("ext/yaml/.libs/?.so;ext/yaml/_libs/?.dll", package.cpath)
 
 yaml = require "yaml"
 
@@ -8,7 +11,7 @@ BOM   = string.char (254, 255) -- UTF-16 Byte Order Mark
 table.unpack = table.unpack or unpack
 
 function dump (e)
-  print (util.prettytostring (e))
+  print (std.string.prettytostring (e))
 end
 
 function github_issue (n)
