@@ -12,11 +12,11 @@ specify loading:
     expect (lyaml.load "# A comment\nnon-comment # trailing comment\n").
       to_equal { "non-comment" }'
 - it diagnoses unexpected events: '
-    expect (lyaml.load "...").to_raise "1:1: did not find expected node content"
+    expect (lyaml.load "...").to_error "1:1: did not find expected node content"
     expect (lyaml.load "---\n...\ngarbage\n").
-      to_raise "2:1: did not find expected <document start>"
+      to_error "2:1: did not find expected <document start>"
     expect (lyaml.load " *ALIAS").
-      to_raise "1:2: invalid reference: ALIAS"'
+      to_error "1:2: invalid reference: ALIAS"'
 
 - describe documents:
   - it lyaml.loads an empty document:
