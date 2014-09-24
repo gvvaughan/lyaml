@@ -53,8 +53,8 @@ script:
   - eval `$LUAROCKS path`
   - export PATH=`pwd`/luarocks/bin:$PATH
 
-  # Install extra rocks into $LUAROCKS_CONFIG rocks tree.
-  - $LUAROCKS install specl;
+  # Install development Specl for features required by lyaml
+  - $LUAROCKS install https://raw.githubusercontent.com/gvvaughan/specl/release/specl-git-1.rockspec
 
   # Make git rockspec for this lyaml
   - make rockspecs LUAROCKS="$LUAROCKS" V=1
