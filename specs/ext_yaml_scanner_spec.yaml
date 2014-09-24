@@ -114,7 +114,7 @@ specify scanning:
                       "rbi:\n" ..
                       "- *SS\n" ..
                       "- Ken Griffey")
-  - it recognizes an alias token:
+  - it recognizes an anchor token:
       expect (filter (k (), "type", "value")).
         to_equal {type = "ANCHOR", value = "SS"}
   - it reports token start marker:

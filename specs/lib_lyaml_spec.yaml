@@ -15,11 +15,22 @@ specify loading:
 - describe documents:
   - it lyaml.loads an empty document:
       expect (lyaml.load "---").to_equal {""}
+      expect (lyaml.load "---\n").to_equal {""}
       expect (lyaml.load "---\n...").to_equal {""}
+      expect (lyaml.load "---\n...\n").to_equal {""}
   - it lyaml.loads multiple documents:
       expect (lyaml.load "one\n---\ntwo").to_equal {"one", "two"}
+      expect (lyaml.load "---\none\n---\ntwo").to_equal {"one", "two"}
+      expect (lyaml.load "one\n...\n---\ntwo\n...").to_equal {"one", "two"}
+      expect (lyaml.load "---\none\n...\n---\ntwo\n...").to_equal {"one", "two"}
   - it reports an empty document:
-      expect (lyaml.load "---\n---\ntwo\n---\n").
+      expect (lyaml.load "---\n---\ntwo\n---").
+        to_equal {"", "two", ""}
+      expect (lyaml.load "---\n...\n---\ntwo\n---").
+        to_equal {"", "two", ""}
+      expect (lyaml.load "---\n...\n---\ntwo\n...\n---").
+        to_equal {"", "two", ""}
+      expect (lyaml.load "---\n...\n---\ntwo\n...\n---\n...").
         to_equal {"", "two", ""}
 
 - describe version directive:
@@ -91,7 +102,7 @@ specify loading:
        expect (lyaml.load "{null: ~, boolean: yes, number: 3.14}").
          to_equal {{null = lyaml.null, boolean = true, number = 3.14}}'
 
-- describe anchors:
+- describe anchors and aliases:
    - it resolves scalar anchors: '
        expect (lyaml.load "anchor: &SS Sammy Sosa\nalias: *SS").
          to_equal {{anchor = "Sammy Sosa", alias = "Sammy Sosa"}}'
