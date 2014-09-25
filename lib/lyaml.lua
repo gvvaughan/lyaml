@@ -38,7 +38,6 @@ local dumper_mt = {
   __index = {
     -- Emit EVENT to the LibYAML emitter.
     emit = function (self, event)
-	    print ("DEBUG: "..event.type)
       return self.emitter.emit (event)
     end,
 
