@@ -99,7 +99,7 @@ local dumper_mt = {
       local style = "PLAIN"
       if value == "true" or value == "false" or
          value == "yes" or value == "no" or value == "~" or
-         tonumber (value) ~= nil then
+         (type (value) ~= "number" and tonumber (value) ~= nil) then
         style = "SINGLE_QUOTED"
       elseif itsa == "number" or itsa == "boolean" then
         value = tostring (value)

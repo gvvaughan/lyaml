@@ -9,6 +9,9 @@ lyaml NEWS - User visible changes
 
 ** Bugs fixed:
 
+  - `yaml.emitter` no longer emits numbers in SINGLE_QUOTE style by
+    default.
+
   - `yaml.emitter ().emit` returns error strings correctly for invalid
     STREAM_START encoding, and MAPPING_START, SEQUENCE_START & SCALAR
     style fields.

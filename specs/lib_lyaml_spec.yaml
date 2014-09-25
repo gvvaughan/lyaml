@@ -5,118 +5,165 @@ before: |
   lyaml.legacy = lyaml.load
   lyaml.load = function (stream) return lyaml.legacy (stream, true) end
 
-specify loading:
-- it loads an empty stream:
-    expect (lyaml.load "").to_equal {}
-- it ignores comments: '
-    expect (lyaml.load "# A comment\nnon-comment # trailing comment\n").
-      to_equal { "non-comment" }'
-- it diagnoses unexpected events: '
-    expect (lyaml.load "...").to_error "1:1: did not find expected node content"
-    expect (lyaml.load "---\n...\ngarbage\n").
-      to_error "2:1: did not find expected <document start>"
-    expect (lyaml.load " *ALIAS").
-      to_error "1:2: invalid reference: ALIAS"'
+specify lyaml:
+- describe dumping:
+  - context streams:
+    - it writes an empty stream:
+        expect (lyaml.dump {}).to_equal ""
 
-- describe documents:
-  - it lyaml.loads an empty document:
-      expect (lyaml.load "---").to_equal {""}
-      expect (lyaml.load "---\n").to_equal {""}
-      expect (lyaml.load "---\n...").to_equal {""}
-      expect (lyaml.load "---\n...\n").to_equal {""}
-  - it lyaml.loads multiple documents:
-      expect (lyaml.load "one\n---\ntwo").to_equal {"one", "two"}
-      expect (lyaml.load "---\none\n---\ntwo").to_equal {"one", "two"}
-      expect (lyaml.load "one\n...\n---\ntwo\n...").to_equal {"one", "two"}
-      expect (lyaml.load "---\none\n...\n---\ntwo\n...").to_equal {"one", "two"}
-  - it reports an empty document:
-      expect (lyaml.load "---\n---\ntwo\n---").
-        to_equal {"", "two", ""}
-      expect (lyaml.load "---\n...\n---\ntwo\n---").
-        to_equal {"", "two", ""}
-      expect (lyaml.load "---\n...\n---\ntwo\n...\n---").
-        to_equal {"", "two", ""}
-      expect (lyaml.load "---\n...\n---\ntwo\n...\n---\n...").
-        to_equal {"", "two", ""}
+  - context documents:
+    - it writes an empty document:
+        expect (lyaml.dump {""}).to_match "^%-%-%-%s*\n%.%.%.%s*$"
+    - it writes consecutive documents:
+        expect (lyaml.dump {"one", "two"}).
+          to_match "^%-%-%-%s+one%s*\n%.%.%.%s*\n%-%-%-%s+two%s*\n%.%.%.%s*$"
 
-- describe version directive:
-  - it recognizes version number:
-      expect (lyaml.load "%YAML 1.1\n---").to_equal {""}
-  - it diagneses missing document start:
-      expect (lyaml.load "%YAML 1.1").
-        to_error "expected <document start>"
-  - it diagnoses unsupported version:
-      expect (lyaml.load "%YAML 2.0\n---").
-        to_error "incompatible YAML document"
+  - context scalars:
+    - it writes null:
+        expect (lyaml.dump {"~"}).to_be "--- '~'\n...\n"
+        pending "wtf?"
+        expect (lyaml.dump {lyaml.null}).to_be "--- ~\n...\n"
+    - it writes booleans:
+        expect (lyaml.dump {"true"}).to_be "--- 'true'\n...\n"
+        expect (lyaml.dump {"yes"}).to_be "--- 'yes'\n...\n"
+        expect (lyaml.dump {"false"}).to_be "--- 'false'\n...\n"
+        expect (lyaml.dump {"no"}).to_be "--- 'no'\n...\n"
+        expect (lyaml.dump {true}).to_be "--- true\n...\n"
+        expect (lyaml.dump {false}).to_be "--- false\n...\n"
+    - it writes numbers:
+        expect (lyaml.dump {"123"}).to_be "--- '123'\n...\n"
+        expect (lyaml.dump {"12.3"}).to_be "--- '12.3'\n...\n"
+        expect (lyaml.dump {123}).to_be "--- 123\n...\n"
+        expect (lyaml.dump {12.3}).to_be "--- 12.3\n...\n"
+    - it writes strings:
+        expect (lyaml.dump {"a string"}).to_be "--- a string\n...\n"
+        expect (lyaml.dump {"'a string'"}).to_be "--- '''a string'''\n...\n"
 
-- describe tag directive:
-  - it recognizes primary tag directive: '
-      expect (lyaml.load ("%TAG ! tag:yaml.org,2002:\n" ..
-                         "---\n" ..
-                         "!bool untrue")).to_equal {false}'
-  - it recognizes secondary tag directive: '
-      expect (lyaml.load ("%TAG !! tag:ben-kiki.org,2000:\n" ..
-                         "---\n" ..
-                         "!!bool untrue")).to_equal {"untrue"}'
-  - it recognizes named tag directive: '
-      expect (lyaml.load ("%TAG !bkk! tag:ben-kiki.org,2000:\n" ..
-                         "---\n" ..
-                         "!bkk!bool untrue")).to_equal {"untrue"}'
-  - it diagnoses undefined tag handles: '
-      expect (lyaml.load ("!bkk!bool untrue")).
-        to_error "undefined tag handle"'
+  - context sequences:
+    - it writes a sequence:
+        expect (lyaml.dump {{1, 2, 3}}).to_contain "- 1\n- 2\n- 3"
 
-- describe scalars:
-  - it recognizes null: '
-      expect (lyaml.load "~").to_equal {lyaml.null}'
-  - it recognizes booleans: '
-      expect (lyaml.load "yes").to_equal {true}
-      expect (lyaml.load "true").to_equal {true}
-      expect (lyaml.load "false").to_equal {false}
-      expect (lyaml.load "no").to_equal {false}'
-  - it recognizes numbers:
-      expect (lyaml.load "123").to_equal {123}
-      expect (lyaml.load "12.3").to_equal {12.3}
-  - it recognizes strings:
-      expect (lyaml.load "a string").to_equal {"a string"}
+  - context mappings:
+    - it writes a mapping: |
+        expect (lyaml.dump {{a=1, b=2, c=3}}).
+          to_contain.all_of {"a: 1", "b: 2", "c: 3"}
 
-  - context global tags:
-    - it recognizes !!bool:
-        expect (lyaml.load "!!bool true").to_equal {true}
-        expect (lyaml.load "!!bool yes").to_equal {true}
-        expect (lyaml.load "!!bool no").to_equal {false}
-        expect (lyaml.load "!!bool false").to_equal {false}
-        expect (lyaml.load "!!bool garbage").to_equal {false}
-    - it recognizes !!int:
-        expect (lyaml.load "!!int 42").to_equal {42}
-    - it recognizes !!float:
-        expect (lyaml.load "!!float 3.141592").to_equal {3.141592}
+  - context anchors and aliases:
 
-- describe sequences:
-   - it recognizes block sequences:
-       expect (lyaml.load "- ~\n- true\n- 42").
-         to_equal {{lyaml.null, true, 42}}
-   - it recognizes flow sequences:
-       expect (lyaml.load "[~, true, 42]").
-         to_equal {{lyaml.null, true, 42}}
 
-- describe mapping:
-   - it recognizes block mapping: '
-       expect (lyaml.load "null: ~\nboolean: yes\nnumber: 3.14").
-         to_equal {{null = lyaml.null, boolean = true, number = 3.14}}'
-   - it recognizes flow mapping: '
-       expect (lyaml.load "{null: ~, boolean: yes, number: 3.14}").
-         to_equal {{null = lyaml.null, boolean = true, number = 3.14}}'
+- describe loading:
+  - it loads an empty stream:
+      expect (lyaml.load "").to_equal {}
+  - it ignores comments: '
+      expect (lyaml.load "# A comment\nnon-comment # trailing comment\n").
+        to_equal { "non-comment" }'
+  - it diagnoses unexpected events: '
+      expect (lyaml.load "...").to_error "1:1: did not find expected node content"
+      expect (lyaml.load "---\n...\ngarbage\n").
+        to_error "2:1: did not find expected <document start>"
+      expect (lyaml.load " *ALIAS").
+        to_error "1:2: invalid reference: ALIAS"'
 
-- describe anchors and aliases:
-   - it resolves scalar anchors: '
-       expect (lyaml.load "anchor: &SS Sammy Sosa\nalias: *SS").
-         to_equal {{anchor = "Sammy Sosa", alias = "Sammy Sosa"}}'
-   - it resolves sequence anchors: '
-       expect (lyaml.load "anchor: &SEQ [Mark McGwire, Sammy Sosa]\nalias: *SEQ").
-         to_equal {{anchor = {"Mark McGwire", "Sammy Sosa"},
-                        alias  = {"Mark McGwire", "Sammy Sosa"}}}'
-   - it resolves mapping anchors: '
-       expect (lyaml.load "anchor: &MAP {Mark McGwire: 65, Sammy Sosa: 63}\nalias: *MAP").
-         to_equal {{anchor = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63},
-                        alias  = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63}}}'
+  - context documents:
+    - it lyaml.loads an empty document:
+        expect (lyaml.load "---").to_equal {""}
+        expect (lyaml.load "---\n").to_equal {""}
+        expect (lyaml.load "---\n...").to_equal {""}
+        expect (lyaml.load "---\n...\n").to_equal {""}
+    - it lyaml.loads multiple documents:
+        expect (lyaml.load "one\n---\ntwo").to_equal {"one", "two"}
+        expect (lyaml.load "---\none\n---\ntwo").to_equal {"one", "two"}
+        expect (lyaml.load "one\n...\n---\ntwo\n...").to_equal {"one", "two"}
+        expect (lyaml.load "---\none\n...\n---\ntwo\n...").to_equal {"one", "two"}
+    - it reports an empty document:
+        expect (lyaml.load "---\n---\ntwo\n---").
+          to_equal {"", "two", ""}
+        expect (lyaml.load "---\n...\n---\ntwo\n---").
+          to_equal {"", "two", ""}
+        expect (lyaml.load "---\n...\n---\ntwo\n...\n---").
+          to_equal {"", "two", ""}
+        expect (lyaml.load "---\n...\n---\ntwo\n...\n---\n...").
+          to_equal {"", "two", ""}
+
+  - context version directive:
+    - it recognizes version number:
+        expect (lyaml.load "%YAML 1.1\n---").to_equal {""}
+    - it diagneses missing document start:
+        expect (lyaml.load "%YAML 1.1").
+          to_error "expected <document start>"
+    - it diagnoses unsupported version:
+        expect (lyaml.load "%YAML 2.0\n---").
+          to_error "incompatible YAML document"
+
+  - context tag directive:
+    - it recognizes primary tag directive: '
+        expect (lyaml.load ("%TAG ! tag:yaml.org,2002:\n" ..
+                           "---\n" ..
+                           "!bool untrue")).to_equal {false}'
+    - it recognizes secondary tag directive: '
+        expect (lyaml.load ("%TAG !! tag:ben-kiki.org,2000:\n" ..
+                           "---\n" ..
+                           "!!bool untrue")).to_equal {"untrue"}'
+    - it recognizes named tag directive: '
+        expect (lyaml.load ("%TAG !bkk! tag:ben-kiki.org,2000:\n" ..
+                           "---\n" ..
+                           "!bkk!bool untrue")).to_equal {"untrue"}'
+    - it diagnoses undefined tag handles: '
+        expect (lyaml.load ("!bkk!bool untrue")).
+          to_error "undefined tag handle"'
+
+  - context scalars:
+    - it recognizes null: '
+        expect (lyaml.load "~").to_equal {lyaml.null}'
+    - it recognizes booleans: '
+        expect (lyaml.load "yes").to_equal {true}
+        expect (lyaml.load "true").to_equal {true}
+        expect (lyaml.load "false").to_equal {false}
+        expect (lyaml.load "no").to_equal {false}'
+    - it recognizes numbers:
+        expect (lyaml.load "123").to_equal {123}
+        expect (lyaml.load "12.3").to_equal {12.3}
+    - it recognizes strings:
+        expect (lyaml.load "a string").to_equal {"a string"}
+        expect (lyaml.load "'''a string'''").to_equal {"'a string'"}
+
+    - context global tags:
+      - it recognizes !!bool:
+          expect (lyaml.load "!!bool true").to_equal {true}
+          expect (lyaml.load "!!bool yes").to_equal {true}
+          expect (lyaml.load "!!bool no").to_equal {false}
+          expect (lyaml.load "!!bool false").to_equal {false}
+          expect (lyaml.load "!!bool garbage").to_equal {false}
+      - it recognizes !!int:
+          expect (lyaml.load "!!int 42").to_equal {42}
+      - it recognizes !!float:
+          expect (lyaml.load "!!float 3.141592").to_equal {3.141592}
+
+  - context sequences:
+     - it recognizes block sequences:
+         expect (lyaml.load "- ~\n- true\n- 42").
+           to_equal {{lyaml.null, true, 42}}
+     - it recognizes flow sequences:
+         expect (lyaml.load "[~, true, 42]").
+           to_equal {{lyaml.null, true, 42}}
+
+  - context mapping:
+     - it recognizes block mapping: '
+         expect (lyaml.load "null: ~\nboolean: yes\nnumber: 3.14").
+           to_equal {{null = lyaml.null, boolean = true, number = 3.14}}'
+     - it recognizes flow mapping: '
+         expect (lyaml.load "{null: ~, boolean: yes, number: 3.14}").
+           to_equal {{null = lyaml.null, boolean = true, number = 3.14}}'
+
+  - context anchors and aliases:
+     - it resolves scalar anchors: '
+         expect (lyaml.load "anchor: &SS Sammy Sosa\nalias: *SS").
+           to_equal {{anchor = "Sammy Sosa", alias = "Sammy Sosa"}}'
+     - it resolves sequence anchors: '
+         expect (lyaml.load "anchor: &SEQ [Mark McGwire, Sammy Sosa]\nalias: *SEQ").
+           to_equal {{anchor = {"Mark McGwire", "Sammy Sosa"},
+                          alias  = {"Mark McGwire", "Sammy Sosa"}}}'
+     - it resolves mapping anchors: '
+         expect (lyaml.load "anchor: &MAP {Mark McGwire: 65, Sammy Sosa: 63}\nalias: *MAP").
+           to_equal {{anchor = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63},
+                      alias  = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63}}}'
