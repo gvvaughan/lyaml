@@ -30,7 +30,11 @@ local yaml = require "yaml"
 
 local TAG_PREFIX = "tag:yaml.org,2002:"
 
-local null = { type = "LYAML null" }
+local null = setmetatable ({}, { _type = "LYAML null" })
+
+local function isnull (x)
+  return (getmetatable (x) or {})._type == "LYAML null"
+end
 
 
 -- Metatable for Dumper objects.
@@ -116,11 +120,11 @@ local dumper_mt = {
     -- Decompose NODE into a stream of events.
     dump_node = function (self, node)
       local itsa = type (node)
-      if itsa == "string" or itsa == "boolean" or itsa == "number" then
-        return self:dump_scalar (node)
-      elseif node == null then
+      if isnull (node) then
         return self:dump_null ()
-      elseif itsa == "table" and node ~= null then
+      elseif itsa == "string" or itsa == "boolean" or itsa == "number" then
+        return self:dump_scalar (node)
+      elseif itsa == "table" then
         if #node > 0 then
           return self:dump_sequence (node)
         else

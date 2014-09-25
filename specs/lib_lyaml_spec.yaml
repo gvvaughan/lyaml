@@ -20,9 +20,8 @@ specify lyaml:
 
   - context scalars:
     - it writes null:
-        expect (lyaml.dump {"~"}).to_be "--- '~'\n...\n"
-        pending "wtf?"
         expect (lyaml.dump {lyaml.null}).to_be "--- ~\n...\n"
+        expect (lyaml.dump {"~"}).to_be "--- '~'\n...\n"
     - it writes booleans:
         expect (lyaml.dump {"true"}).to_be "--- 'true'\n...\n"
         expect (lyaml.dump {"yes"}).to_be "--- 'yes'\n...\n"
