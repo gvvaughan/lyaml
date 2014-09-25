@@ -1,7 +1,21 @@
 local std = require "specl.std"
 
-package.path  = std.package.normalize ("lib/?.lua", package.path)
-package.cpath = std.package.normalize ("ext/yaml/.libs/?.so;ext/yaml/_libs/?.dll", package.cpath)
+local top_srcdir = os.getenv "top_srcdir" or "."
+local top_builddir = os.getenv "top_builddir" or "."
+
+package.path  = std.package.normalize (
+                  top_builddir .. "/lib/?.lua",
+                  top_srcdir .. "/lib/?.lua",
+                  package.path
+                )
+
+package.cpath = std.package.normalize (
+                  top_builddir .. "/ext/yaml/.libs/?.so",
+                  top_builddir .. "/ext/yaml/_libs/?.dll",
+                  top_srcdir .. "/ext/yaml/.libs/?.so",
+                  top_srcdir .. "/ext/yaml/_libs/?.dll",
+                  package.cpathi
+                )
 
 yaml = require "yaml"
 

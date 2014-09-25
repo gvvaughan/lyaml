@@ -17,13 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## ------------ ##
-## Environment. ##
-## ------------ ##
-
-SPECL_ENV = $(LUA_ENV)
-
-
 ## ------ ##
 ## Specs. ##
 ## ------ ##
