@@ -1,4 +1,185 @@
+2014-09-25  Gary V. Vaughan  <gary@gnu.org>
+
+	Release version 5
+	* NEWS: Record release date.
+
+	lyaml: implement anchor matching in lyaml.dump ().
+	Closes #2.
+	* specs/lib_lyaml_spec.yaml (anchors and aliases): Specify correct
+	behaviours when replacing anchor matches with YAML anchor and
+	alias syntax.
+	* lib/lyaml.lua (dumper_mt.get_anchor): Move matched anchor to new
+	aliased property.
+	(dumper_mt.get_alias): Look up already matched anchor in aliased
+	property.
+	(dumper_mt.dump_alias): Emit an ALIAS event.
+	(dumper_mt.dump_mapping, dumper_mt.dump_sequence)
+	(dumper_mt.dump_scalar): Look up anchor with `get_anchor`, and
+	replace event with ALIAS if match found with `get_alias`.
+	* NEWS: Update.
+
+	emitter: emit lyaml.null nodes correctly.
+	* specs/lib_lyaml_spec.yaml (scalars): Remove pending call.
+	* lib/lyaml.lua (null): Put null singleton identifier in its own
+	metatable.
+	(isnull): Predicate function for detecting null nodes.
+	(dump_node): Use it to dump nulls correctly.
+
+	emitter: don't output numbers in SINGLE_QUOTED style.
+	* specs/lib_lyaml_spec.yaml (loading): Indent another level...
+	(lyaml): ...move under new top level.
+	(dumping): Specify behaviour for emitting table elements.
+	* lib/lyaml.lua (dumper_mt.dump_scalar): Use PLAIN style unless
+	a string would convert to a number, and then SINGLE_QUOTED style.
+	* NEWS: Update.
+
+	specl: sync with upstream slingshot for SPECL_ENV improvements.
+	* slingshot: Sync with upstream.
+	* specs/specs.mk: Simplify accordingly.
+	* specs/spec_helper.lua (package.path, package.cpath): Set
+	according to slingshot recommendations.  `make distcheck` works
+	again now, even when Specl (>=13) is using a different lyaml
+	release from the system directories.
+
+	maint: remove debug statement.
+	* lib/lyaml.lua (dumper_mt.emit): Remove debug statement.
+
+	emitter: propagate errors correctly.
+	* specs/ext_yaml_emitter_spec.yaml: Specify error messages are
+	propagated correctly.
+	* ext/yaml/emitter.c (emit_STREAM_START, emit_MAPPING_START)
+	(emit_SEQUENCE_START, emit_SCALAR): Push error messages onto the
+	errbuff stack.
+	* NEWS: Update.
+
+2014-09-24  Gary V. Vaughan  <gary@gnu.org>
+
+	travis: revert to specl-12 features.
+	* specs/lib_lyaml_spec.yaml (loading): to_raise is a v13 matcher,
+	but v13 is not released yet. Use to_error for v12 compatibility.
+	* .travis.yml: Regenerate.
+
+	travis: install specl github master.
+	* .travis.yml (script): Install Specl from github master, to
+	satisfy new features used by yaml specs.
+
+	lyaml: improve parser error handling.
+	Fix a TODO in the lyaml parser.
+	* specs/lib_lyaml_spec.yaml (loading): Specify line and column
+	prefixed error behaviours.
+	* lib/lyaml.lua (Parser): Initialise line and column.
+	(parser_mt.error): Raise an error with line and column prefixed.
+	(parser_mt.parse): Capture libYAML event errors, and forward them
+	to parser_mt.errer.
+	Update 1-based line and column markers from 0-based libYAML event
+	markers.
+	(parser_mt.loadalias): Raise errors with parser_mt.error.
+
+	specs: set package paths for specl auto-discovery.
+	* specs/spec_helper.lua (package.path, package.cpath): Add build
+	directories.
+	(dump): Call prettytostring from correct module table.
+
+	specs: small improvements in descriptions and examples.
+	* specs/ext_yaml_scanner_spec.yaml (scanning): Fix a typo.
+	* specs/lib_lyaml_spec.yaml (describe documents): Add more
+	variations.
+	(describe anchors): Rename from this...
+	(describe anchors and aliases): ...to this.
+
+	refactor: modernize specs for prettiest colors from report formatter.
+	* specs/ext_yaml_emitter_spec.yaml, specs/ext_yaml_parser_spec.yaml,
+	specs/ext_yaml_scanner_spec.yaml, specs/lib_lyaml_spec.yaml: Use
+	`to_` matchers rather than `should_` matchers throughout.
+	Use specify:describe:context:it hierarchy consistently throughout.
+	Remove redundant `require "spec_helper"` blocks.
+
+	slingshot: sync with upstream for slack support.
+	* slingshot: Sync with upstream.
+	* .slackid: New file with slack notification id.
+	* .travis.yml: Regenerate.
+
+2014-07-31  Gary V. Vaughan  <gary@gnu.org>
+
+	slingshot: sync with upstream for upload and moonscript support.
+	* slingshot: Sync with upstream.
+	* bootstrap.conf (slingshot_files): Delete removed
+	ax_compare_version.m4.
+	* README.md (Installation): Show moonscript rocks repo.
+	* .travis.yml: Regenerate.
+
+	    Signed-off-by: Gary V. Vaughan <gary@gnu.org>
+
+2014-07-17  Gary V. Vaughan  <gary@gnu.org>
+
+	Merge branch 'waffle-iron-master'
+
+2014-07-17  Making GitHub Delicious.  <iron@waffle.io>
+
+	add waffle.io badge
+
+2014-05-21  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: fix a README typo.
+	* README.md: Remove a spurious word.
+
+	configury: update bootstrap script from slingshot.
+	* bootstrap: Sync with slingshot.
+
+	slingshot: sync with upstream.
+	* slingshot: Sync with upstream for grep GNUism fix.
+	* bootstrap.conf (buildreq): Don't set a git version number, or
+	else `GIT=true ./bootstrap` doesn't work.
+	* .travis.yml: Regenerate.
+
+2014-01-05  Gary V. Vaughan  <gary@gnu.org>
+
+	slingshot: sync with upstream.
+	Fix the annoying contest.sed file dropping bug.
+	* slingshot: Sync with upstream.
+	* bootstrap: Sync with slingshot.
+
+2014-01-04  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: update copyright notices to include 2014.
+	* .x-upate-copyright: New file. Exclude files not owned by this
+	project from update-copyright rules.
+	* local.mk (update_copyright_env): Set appropriately.
+	* configure.ac, ext/yaml/emitter.c, ext/yaml/lyaml.h,
+	ext/yaml/parser.c, ext/yaml/scanner.c, ext/yaml/yaml.c,
+	lib/lyaml.lua, local.mk: Bump copyright year.
+	* .gitignore: Update.
+
+	slingshot: sync from upstream, and simplify accordingly.
+	* slingshot: Sync with upstream.
+	* bootstrap: Update from slingshot.
+	* bootstrap.slingshot: Remove. No longer required.
+	* bootstrap.conf: Remove bootstrap slingshot source boilerplate.
+	(func_ensure_changelog): Remove.  Automated by slingshot now.
+	* configure.ac (AM_INIT_AUTOMAKE): Remove 'foreign'.
+	* COPYING: New file, with MIT License, to avoid Autotools
+	copying over a standard GPLv3 COPYING boilerplate.
+	* .travis.yml: Regenerate.
+
+2013-11-15  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: prevent pointer type mismatch warnings.
+	* ext/yaml/lyaml.h (lua_pushyamlstr): Cast away the impedence
+	mismatch between Lua API 'unsigned char *' strings and libYAML
+	API 'yaml_char_t *' strings.
+	(RAWSET_BOOLEAN, RAWSET_INTEGER, RAWSET_STRING, RAWSET_EVENTF)
+	(RAWGETS_STRDUP): Use lua_pushyamlstr to avoid compiler warnings.
+	* ext/yaml/parser.c (Pparser): Cast away type differences.
+	* ext/yaml/scanner.c (Pscanner): Likewise.
+	* NEWS: Update.
+
 2013-09-11  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: post-release administrivia.
+	* configure.ac (AC_INIT): Bump revision to 5.
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* local.mk (old_NEWS_hash): Auto-update.
 
 	Release version 4
 	* NEWS: Record release date.

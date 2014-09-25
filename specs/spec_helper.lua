@@ -1,4 +1,21 @@
-local util = require "specl.util"
+local std = require "specl.std"
+
+local top_srcdir = os.getenv "top_srcdir" or "."
+local top_builddir = os.getenv "top_builddir" or "."
+
+package.path  = std.package.normalize (
+                  top_builddir .. "/lib/?.lua",
+                  top_srcdir .. "/lib/?.lua",
+                  package.path
+                )
+
+package.cpath = std.package.normalize (
+                  top_builddir .. "/ext/yaml/.libs/?.so",
+                  top_builddir .. "/ext/yaml/_libs/?.dll",
+                  top_srcdir .. "/ext/yaml/.libs/?.so",
+                  top_srcdir .. "/ext/yaml/_libs/?.dll",
+                  package.cpathi
+                )
 
 yaml = require "yaml"
 
@@ -8,7 +25,7 @@ BOM   = string.char (254, 255) -- UTF-16 Byte Order Mark
 table.unpack = table.unpack or unpack
 
 function dump (e)
-  print (util.prettytostring (e))
+  print (std.string.prettytostring (e))
 end
 
 function github_issue (n)

@@ -4,7 +4,7 @@
 # terms of the MIT license reproduced below.
 
 # ==================================================================== #
-# Copyright (C) 2013 Gary V. Vaughan                                   #
+# Copyright (C) 2013-2014 Gary V. Vaughan                              #
 #                                                                      #
 # Permission is hereby granted, free of charge, to any person          #
 # obtaining a copy of this software and associated documentation       #
@@ -33,18 +33,17 @@
 ## Specl. ##
 ## ------ ##
 
+SPECL_ENV +=						\
+	LUA='$(LUA)'					\
+	abs_top_builddir='$(abs_top_builddir)'		\
+	abs_top_srcdir='$(abs_top_srcdir)'		\
+	top_builddir='$(top_builddir)'			\
+	top_srcdir='$(top_srcdir)'			\
+	$(NOTHING_ELSE)
+
 check_local += specl-check-local
 specl-check-local: $(specl_SPECS)
-	@v=`$(SPECL) --version | sed -e 's|^.* ||' -e 1q`;		\
-	if test "$$v" -lt "$(SPECL_MIN)"; then				\
-	  printf "%s%s\n%s\n"						\
-	    "ERROR: Specl version $$v is too old,"			\
-	    " please upgrade to at least version $(SPECL_MIN),"		\
-	    "ERROR: and rerun \`make check\`";				\
-	  exit 1;							\
-	else								\
-	  $(SPECL_ENV) $(SPECL) $(SPECL_OPTS) $(specl_SPECS);		\
-	fi
+	$(SPECL_ENV) $(SPECL) $(SPECL_OPTS) $(specl_SPECS)
 
 
 ## ------------- ##

@@ -1,6 +1,7 @@
 -- Transform between YAML 1.1 streams and Lua table representations.
+-- Written by Gary V. Vaughan, 2013
 --
--- Copyright (c) 2013, Gary V. Vaughan
+-- Copyright (c) 2013-2014 Gary V. Vaughan
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a
 -- copy of this software and associated documentation files (the "Software"),
@@ -29,7 +30,11 @@ local yaml = require "yaml"
 
 local TAG_PREFIX = "tag:yaml.org,2002:"
 
-local null = { type = "LYAML null" }
+local null = setmetatable ({}, { _type = "LYAML null" })
+
+local function isnull (x)
+  return (getmetatable (x) or {})._type == "LYAML null"
+end
 
 
 -- Metatable for Dumper objects.
@@ -37,25 +42,41 @@ local dumper_mt = {
   __index = {
     -- Emit EVENT to the LibYAML emitter.
     emit = function (self, event)
-	    print ("DEBUG: "..event.type)
       return self.emitter.emit (event)
     end,
 
     -- Look up an anchor for a repeated document element.
     get_anchor = function (self, value)
-      if self.anchors[value] == "??" then
+      local r = self.anchors[value]
+      if r then
+	self.aliased[value], self.anchors[value] = self.anchors[value], nil
       end
+      return r
+    end,
+
+    -- Look up an already anchored repeated document element.
+    get_alias = function (self, value)
+      return self.aliased[value]
+    end,
+
+    -- Dump ALIAS into the event stream.
+    dump_alias = function (self, alias)
+      return self:emit {
+	type   = "ALIAS",
+	anchor = alias,
+      }
     end,
 
     -- Dump MAP into the event stream.
     dump_mapping = function (self, map)
-      local anchor = self:get_anchor (map)
-
-      -- XXX ??? if anchor == "" then return 1 end
+      local alias = self:get_alias (map)
+      if alias then
+	return self:dump_alias (alias)
+      end
 
       self:emit {
         type   = "MAPPING_START",
-        anchor = anchor,
+        anchor = self:get_anchor (map),
         style  = "BLOCK",
       }
       for k, v in pairs (map) do
@@ -67,13 +88,14 @@ local dumper_mt = {
 
     -- Dump SEQUENCE into the event stream.
     dump_sequence = function (self, sequence)
-      local anchor = self:get_anchor (sequence)
-
-      -- XXX ??? if anchor == "" then return 1 end
+      local alias = self:get_alias (sequence)
+      if alias then
+	return self:dump_alias (alias)
+      end
 
       self:emit {
         type = "SEQUENCE_START",
-        anchor = anchor,
+        anchor = self:get_anchor (sequence),
         style = "BLOCK",
       }
       for _, v in ipairs (sequence) do
@@ -95,17 +117,24 @@ local dumper_mt = {
 
     -- Dump VALUE into the event stream.
     dump_scalar = function (self, value)
+      local alias = self:get_alias (value)
+      if alias then
+	return self:dump_alias (alias)
+      end
+
+      local anchor = self:get_anchor (value)
       local itsa = type (value)
       local style = "PLAIN"
       if value == "true" or value == "false" or
          value == "yes" or value == "no" or value == "~" or
-         tonumber (value) ~= nil then
+         (type (value) ~= "number" and tonumber (value) ~= nil) then
         style = "SINGLE_QUOTED"
       elseif itsa == "number" or itsa == "boolean" then
         value = tostring (value)
       end
       return self:emit {
         type            = "SCALAR",
+	anchor          = anchor,
         value           = value,
         plain_implicit  = true,
         quoted_implicit = true,
@@ -116,18 +145,18 @@ local dumper_mt = {
     -- Decompose NODE into a stream of events.
     dump_node = function (self, node)
       local itsa = type (node)
-      if itsa == "string" or itsa == "boolean" or itsa == "number" then
-        return self:dump_scalar (node)
-      elseif node == null then
+      if isnull (node) then
         return self:dump_null ()
-      elseif itsa == "table" and node ~= null then
+      elseif itsa == "string" or itsa == "boolean" or itsa == "number" then
+        return self:dump_scalar (node)
+      elseif itsa == "table" then
         if #node > 0 then
           return self:dump_sequence (node)
         else
           return self:dump_mapping (node)
         end
       else -- unsupported Lua type
-        error ("cannot dump object of type '" .. itsa .. "'")
+        error ("cannot dump object of type '" .. itsa .. "'", 2)
       end
     end,
 
@@ -142,20 +171,22 @@ local dumper_mt = {
 
 
 -- Emitter object constructor.
--- TODO: find references to populate anchors table
-local function Dumper ()
+local function Dumper (anchors)
+  local t = {}
+  for k, v in pairs (anchors or {}) do t[v] = k end
   local object = {
-    anchors = {},
+    anchors = t,
+    aliased = {},
     emitter = yaml.emitter (),
   }
   return setmetatable (object, dumper_mt)
 end
 
 
-local function dump (list)
-  local dumper = Dumper ()
+local function dump (documents, anchors)
+  local dumper = Dumper (anchors)
   dumper:emit { type = "STREAM_START", encoding = "UTF8" }
-  for _, document in ipairs (list) do
+  for _, document in ipairs (documents) do
     dumper:dump_document (document)
   end
   local ok, stream = dumper:emit { type = "STREAM_END" }
@@ -171,6 +202,12 @@ local parser_mt = {
       return tostring (self.event.type)
     end,
 
+    -- Raise a parse error.
+    error = function (self, errmsg)
+      error (self.mark.line .. ":" .. self.mark.column ..
+             ": " .. errmsg, 0)
+    end,
+
     -- Save node in the anchor table for reference in future ALIASes.
     add_anchor = function (self, node)
       if self.event.anchor ~= nil then
@@ -180,8 +217,16 @@ local parser_mt = {
 
     -- Fetch the next event.
     parse = function (self)
-      self.event = self.next ()
-      -- TODO: report parser problems here
+      local ok, event = pcall (self.next)
+      if not ok then
+	-- if ok is nil, then event is a parser error from libYAML
+	self:error (event:gsub (" at document: .*$", ""))
+      end
+      self.event = event
+      self.mark  = {
+	line     = tostring (self.event.start_mark.line + 1),
+	column   = tostring (self.event.start_mark.column + 1),
+      }
       return self:type ()
     end,
 
@@ -192,9 +237,9 @@ local parser_mt = {
       while true do
         local key = self:load_node ()
         if key == nil then break end
-        local value = self:load_node ()
-        if key == nil then
-          error ("unexpected " .. self:type () .. "event")
+        local value, event = self:load_node ()
+        if value == nil then
+          self:error ("unexpected " .. self:type () .. "event")
         end
         map[key] = value
       end
@@ -245,7 +290,7 @@ local parser_mt = {
     load_alias = function (self)
       local anchor = self.event.anchor
       if self.anchors[anchor] == nil then
-        error ("invalid reference: " .. tostring (anchor))
+        self:error ("invalid reference: " .. tostring (anchor))
       end
       return self.anchors[anchor]
     end,
@@ -256,14 +301,14 @@ local parser_mt = {
         ALIAS          = self.load_alias,
         MAPPING_START  = self.load_map,
         SEQUENCE_START = self.load_sequence,
-        MAPPING_END    = function () return nil end,
-        SEQUENCE_END   = function () return nil end,
-        DOCUMENT_END   = function () return nil end,
+        MAPPING_END    = function () end,
+        SEQUENCE_END   = function () end,
+        DOCUMENT_END   = function () end,
       }
 
       local event = self:parse ()
       if dispatch[event] == nil then
-        error ("invalid event: " .. self:type ())
+        self:error ("invalid event: " .. self:type ())
       end
      return dispatch[event] (self)
     end,
@@ -275,6 +320,7 @@ local parser_mt = {
 local function Parser (s)
   local object = {
     anchors = {},
+    mark    = { line = "0", column = "0" },
     next    = yaml.parser (s),
   }
   return setmetatable (object, parser_mt)
@@ -286,7 +332,7 @@ local function load (s, all)
   local parser    = Parser (s)
 
   if parser:parse () ~= "STREAM_START" then
-    error ("expecting STREAM_START event, but got " .. parser:type ())
+    error ("expecting STREAM_START event, but got " .. parser:type (), 2)
   end
 
   while parser:parse () ~= "STREAM_END" do
@@ -296,7 +342,7 @@ local function load (s, all)
     end
 
     if parser:parse () ~= "DOCUMENT_END" then
-      error ("expecting DOCUMENT_END event, but got " .. parser:type ())
+      error ("expecting DOCUMENT_END event, but got " .. parser:type (), 2)
     end
 
     -- save document

@@ -1,7 +1,8 @@
 /*
  * emitter.c, LibYAML emitter binding for Lua
+ * Written by Gary V. Vaughan, 2013
  *
- * Copyright (c) 2013, Gary V. Vaughan <gary@vaughan.pe>
+ * Copyright (c) 2013-2014 Gary V. Vaughan
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -59,8 +60,9 @@ emit_STREAM_START (lua_State *L, lyaml_emitter *emitter)
    if MENTRY( UTF16BE	) else
    {
       emitter->error++;
-      lua_pushfstring (L, "invalid stream encoding '%s'", encoding);
-      lua_insert (L, -2);
+      luaL_addsize (&emitter->errbuff,
+                    sprintf (luaL_prepbuffer (&emitter->errbuff),
+                             "invalid stream encoding '%s'", encoding));
    }
 #undef MENTRY
 
@@ -177,8 +179,9 @@ emit_MAPPING_START (lua_State *L, lyaml_emitter *emitter)
    if MENTRY( FLOW	) else
    {
       emitter->error++;
-      lua_pushfstring (L, "invalid mapping style '%s'", style);
-      lua_insert (L, -2);
+      luaL_addsize (&emitter->errbuff,
+                    sprintf (luaL_prepbuffer (&emitter->errbuff),
+                             "invalid mapping style '%s'", style));
    }
 #undef MENTRY
 
@@ -219,8 +222,9 @@ emit_SEQUENCE_START (lua_State *L, lyaml_emitter *emitter)
    if MENTRY( FLOW	) else
    {
       emitter->error++;
-      lua_pushfstring (L, "invalid sequence style '%s'", style);
-      lua_insert (L, -2);
+      luaL_addsize (&emitter->errbuff,
+                    sprintf (luaL_prepbuffer (&emitter->errbuff),
+                             "invalid sequence style '%s'", style));
    }
 #undef MENTRY
 
@@ -264,8 +268,9 @@ emit_SCALAR (lua_State *L, lyaml_emitter *emitter)
    if MENTRY( FOLDED		) else
    {
       emitter->error++;
-      lua_pushfstring (L, "invalid scalar style '%s'", style);
-      lua_insert (L, -2);
+      luaL_addsize (&emitter->errbuff,
+                    sprintf (luaL_prepbuffer (&emitter->errbuff),
+                             "invalid scalar style '%s'", style));
    }
 #undef MENTRY
 

@@ -1,7 +1,7 @@
 dnl configure.ac
-dnl
-dnl Copyright (C) 2013 Gary V. Vaughan
 dnl Written by Gary V. Vaughan, 2013
+dnl
+dnl Copyright (C) 2013-2014 Gary V. Vaughan
 dnl
 dnl Permission is hereby granted, free of charge, to any person obtaining a copy
 dnl of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,14 @@ dnl THE SOFTWARE.
 AC_PREREQ([2.68])
 
 dnl Initialise autoconf and automake
-AC_INIT([lyaml], [4], [http://github.com/gvvaughan/lyaml/issues])
+AC_INIT([lyaml], [5], [http://github.com/gvvaughan/lyaml/issues])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
 AS_BOX([Configuring AC_PACKAGE_TARNAME AC_PACKAGE_VERSION])
 echo
 
-AM_INIT_AUTOMAKE([-Wall foreign subdir-objects])
+AM_INIT_AUTOMAKE([-Wall subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 dnl required by automake 1.12.x, not available in 1.10.x
