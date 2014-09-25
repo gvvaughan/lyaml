@@ -48,6 +48,21 @@ specify lyaml:
           to_contain.all_of {"a: 1", "b: 2", "c: 3"}
 
   - context anchors and aliases:
+    - before:
+        anchors = {
+          MAP = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63},
+          SEQ = {"Mark McGwire", "Sammy Sosa"},
+        }
+    - it writes scalar anchors: '
+        anchors = { SS  = "Sammy Sosa" }
+        expect (lyaml.dump ({{{anchor = anchors.SS}, {alias = anchors.SS}}}, anchors)).
+          to_contain "- anchor: &SS Sammy Sosa\n- alias: *SS\n"'
+    - it writes sequence anchors: '
+         expect (lyaml.dump ({{{anchor = anchors.SEQ}, {alias = anchors.SEQ}}}, anchors)).
+           to_contain "\n- anchor: &SEQ\n  - Mark McGwire\n  - Sammy Sosa\n- alias: *SEQ\n"'
+    - it writes mapping anchors: '
+         expect (lyaml.dump ({{{anchor = anchors.MAP}, {alias = anchors.MAP}}}, anchors)).
+           to_match "\n%- anchor: &MAP\n    %w+ %w+: %d+\n    %w+ %w+: %d+\n%- alias: %*MAP\n"'
 
 
 - describe loading:

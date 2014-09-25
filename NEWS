@@ -7,7 +7,16 @@ lyaml NEWS - User visible changes
   - Significantly reduced pointer mismatch warnings from modern GNU
     compilers.
 
-** Bugs fixed:
+** New Features:
+
+  - `lyaml.dump` now takes a second argument containing a table of
+    potential anchor values in `ANCHOR_NAME = { "match", "elements" }`
+    pairs format.  The first time any are matched in the table being
+    dumped, they are preceded by `&ANCHOR_NAME` in the output YAML
+    document; subsequent matches are not written out in full, but
+    shortened to the appropriate `*ANCHOR_NAME` alias.
+
+** Bugs Fixed:
 
   - `yaml.emitter` no longer emits numbers in SINGLE_QUOTE style by
     default.

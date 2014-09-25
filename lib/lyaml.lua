@@ -47,19 +47,36 @@ local dumper_mt = {
 
     -- Look up an anchor for a repeated document element.
     get_anchor = function (self, value)
-      if self.anchors[value] == "??" then
+      local r = self.anchors[value]
+      if r then
+	self.aliased[value], self.anchors[value] = self.anchors[value], nil
       end
+      return r
+    end,
+
+    -- Look up an already anchored repeated document element.
+    get_alias = function (self, value)
+      return self.aliased[value]
+    end,
+
+    -- Dump ALIAS into the event stream.
+    dump_alias = function (self, alias)
+      return self:emit {
+	type   = "ALIAS",
+	anchor = alias,
+      }
     end,
 
     -- Dump MAP into the event stream.
     dump_mapping = function (self, map)
-      local anchor = self:get_anchor (map)
-
-      -- XXX ??? if anchor == "" then return 1 end
+      local alias = self:get_alias (map)
+      if alias then
+	return self:dump_alias (alias)
+      end
 
       self:emit {
         type   = "MAPPING_START",
-        anchor = anchor,
+        anchor = self:get_anchor (map),
         style  = "BLOCK",
       }
       for k, v in pairs (map) do
@@ -71,13 +88,14 @@ local dumper_mt = {
 
     -- Dump SEQUENCE into the event stream.
     dump_sequence = function (self, sequence)
-      local anchor = self:get_anchor (sequence)
-
-      -- XXX ??? if anchor == "" then return 1 end
+      local alias = self:get_alias (sequence)
+      if alias then
+	return self:dump_alias (alias)
+      end
 
       self:emit {
         type = "SEQUENCE_START",
-        anchor = anchor,
+        anchor = self:get_anchor (sequence),
         style = "BLOCK",
       }
       for _, v in ipairs (sequence) do
@@ -99,6 +117,12 @@ local dumper_mt = {
 
     -- Dump VALUE into the event stream.
     dump_scalar = function (self, value)
+      local alias = self:get_alias (value)
+      if alias then
+	return self:dump_alias (alias)
+      end
+
+      local anchor = self:get_anchor (value)
       local itsa = type (value)
       local style = "PLAIN"
       if value == "true" or value == "false" or
@@ -110,6 +134,7 @@ local dumper_mt = {
       end
       return self:emit {
         type            = "SCALAR",
+	anchor          = anchor,
         value           = value,
         plain_implicit  = true,
         quoted_implicit = true,
@@ -146,20 +171,22 @@ local dumper_mt = {
 
 
 -- Emitter object constructor.
--- TODO: find references to populate anchors table
-local function Dumper ()
+local function Dumper (anchors)
+  local t = {}
+  for k, v in pairs (anchors or {}) do t[v] = k end
   local object = {
-    anchors = {},
+    anchors = t,
+    aliased = {},
     emitter = yaml.emitter (),
   }
   return setmetatable (object, dumper_mt)
 end
 
 
-local function dump (list)
-  local dumper = Dumper ()
+local function dump (documents, anchors)
+  local dumper = Dumper (anchors)
   dumper:emit { type = "STREAM_START", encoding = "UTF8" }
-  for _, document in ipairs (list) do
+  for _, document in ipairs (documents) do
     dumper:dump_document (document)
   end
   local ok, stream = dumper:emit { type = "STREAM_END" }
