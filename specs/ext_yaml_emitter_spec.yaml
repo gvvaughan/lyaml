@@ -13,6 +13,10 @@ specify emitting:
 
 - describe STREAM_START:
   - it diagnoses unrecognised encodings:
+      expect (emitevents (yaml.emitter (), {
+                          {type = "STREAM_START", encoding = "notexists"},
+                          "STREAM_END"})).
+       to_error "invalid stream encoding 'notexists'"
   - it accepts an encoding parameter:
       expect (emitevents (yaml.emitter (), {
                           {type = "STREAM_START", encoding = "UTF16BE"},
@@ -75,6 +79,10 @@ specify emitting:
                     "MAPPING_END", "DOCUMENT_END"}).
         to_contain "&foo"
   - it diagnoses unrecognised styles:
+      expect (emit {"DOCUMENT_START",
+                    {type = "MAPPING_START", style = "notexists"},
+                    "MAPPING_END", "DOCUMENT_END"}).
+        to_error "invalid mapping style 'notexists'"
   - it understands block style: '
       expect (emit {"DOCUMENT_START",
                     {type = "MAPPING_START", style = "BLOCK"},
@@ -116,6 +124,10 @@ specify emitting:
                     "SEQUENCE_END", "DOCUMENT_END"}).
         to_contain "&foo"
   - it diagnoses unrecognised styles:
+      expect (emit {"DOCUMENT_START",
+                    {type = "SEQUENCE_START", style = "notexists"},
+                    "SEQUENCE_END", "DOCUMENT_END"}).
+        to_error "invalid sequence style 'notexists'"
   - it understands block style:
       expect (emit {"DOCUMENT_START",
                     {type = "SEQUENCE_START", style = "BLOCK"},
@@ -157,6 +169,10 @@ specify emitting:
                     "DOCUMENT_END"}).
         to_contain "boo"
   - it diagnoses unrecognised styles:
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "notexists", value = "foo"},
+                    "DOCUMENT_END"}).
+        to_error "invalid scalar style 'notexists'"
   - it understands plain style:
       expect (emit {"DOCUMENT_START",
                     {type = "SCALAR", style = "PLAIN", value = "boo"},

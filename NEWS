@@ -7,6 +7,12 @@ lyaml NEWS - User visible changes
   - Significantly reduced pointer mismatch warnings from modern GNU
     compilers.
 
+** Bugs fixed:
+
+  - `yaml.emitter ().emit` returns error strings correctly for invalid
+    STREAM_START encoding, and MAPPING_START, SEQUENCE_START & SCALAR
+    style fields.
+
 
 * Noteworthy changes in release 4 (2013-09-11) [beta]
 

@@ -60,8 +60,9 @@ emit_STREAM_START (lua_State *L, lyaml_emitter *emitter)
    if MENTRY( UTF16BE	) else
    {
       emitter->error++;
-      lua_pushfstring (L, "invalid stream encoding '%s'", encoding);
-      lua_insert (L, -2);
+      luaL_addsize (&emitter->errbuff,
+                    sprintf (luaL_prepbuffer (&emitter->errbuff),
+                             "invalid stream encoding '%s'", encoding));
    }
 #undef MENTRY
 
@@ -178,8 +179,9 @@ emit_MAPPING_START (lua_State *L, lyaml_emitter *emitter)
    if MENTRY( FLOW	) else
    {
       emitter->error++;
-      lua_pushfstring (L, "invalid mapping style '%s'", style);
-      lua_insert (L, -2);
+      luaL_addsize (&emitter->errbuff,
+                    sprintf (luaL_prepbuffer (&emitter->errbuff),
+                             "invalid mapping style '%s'", style));
    }
 #undef MENTRY
 
@@ -220,8 +222,9 @@ emit_SEQUENCE_START (lua_State *L, lyaml_emitter *emitter)
    if MENTRY( FLOW	) else
    {
       emitter->error++;
-      lua_pushfstring (L, "invalid sequence style '%s'", style);
-      lua_insert (L, -2);
+      luaL_addsize (&emitter->errbuff,
+                    sprintf (luaL_prepbuffer (&emitter->errbuff),
+                             "invalid sequence style '%s'", style));
    }
 #undef MENTRY
 
@@ -265,8 +268,9 @@ emit_SCALAR (lua_State *L, lyaml_emitter *emitter)
    if MENTRY( FOLDED		) else
    {
       emitter->error++;
-      lua_pushfstring (L, "invalid scalar style '%s'", style);
-      lua_insert (L, -2);
+      luaL_addsize (&emitter->errbuff,
+                    sprintf (luaL_prepbuffer (&emitter->errbuff),
+                             "invalid scalar style '%s'", style));
    }
 #undef MENTRY
 
