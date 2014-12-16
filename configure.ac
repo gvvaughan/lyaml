@@ -49,7 +49,7 @@ AC_SUBST(LIBTOOL_DEPS)
 dnl Check for programs
 AC_PROG_CC
 AC_PATH_PROG([SPECL], [specl], [:])
-AX_PROG_LUA(5.1, 5.3)
+AX_PROG_LUA(5.1, 5.4)
 AX_LUA_HEADERS
 
 dnl Check for header files
