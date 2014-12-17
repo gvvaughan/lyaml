@@ -39,7 +39,7 @@ LUA_ENV =						\
 ## Bootstrap. ##
 ## ---------- ##
 
-old_NEWS_hash   = 703831a9204e7435c5058c25ec8a969c
+old_NEWS_hash   = b667324440e79a1456e87fdff38811f7
 
 update_copyright_env = \
 	UPDATE_COPYRIGHT_HOLDER='(Gary V. Vaughan|Andrew Danforth)' \
