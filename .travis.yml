@@ -2,10 +2,10 @@ language: c
 
 env:
   global:
-    - COMPILE="libtool --mode=compile --tag=CC gcc"
+    - COMPILE="libtool --quiet --mode=compile --tag=CC gcc"
     - CFLAGS="-O2 -Wall -DLUA_COMPAT_ALL -DLUA_USE_LINUX"
     - INSTALL="libtool --mode=install install -p"
-    - LINK="libtool --mode=link --tag=CC gcc"
+    - LINK="libtool --quiet --mode=link --tag=CC gcc"
     - LIBS="-lm -Wl,-E -ldl -lreadline"
 
     - ROCKSPEC=lyaml-git-1.rockspec
@@ -45,7 +45,7 @@ before_install:
   # Unpack, compile and install Lua.
   - 'if test luajit = "$LUA"; then
       curl http://luajit.org/download/LuaJIT-2.0.3.tar.gz | tar xz;
-      cd luajit-2.0.3;
+      cd LuaJIT-2.0.3;
       make && sudo make install;
     else
       for src in src/*.c; do
