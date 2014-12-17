@@ -1,3 +1,59 @@
+2014-12-17  Gary V. Vaughan  <gary@gnu.org>
+
+	Release version 5.1.0
+	* NEWS: Record release date.
+
+	configury: remove references to lua52compat.h.
+	* local.mk (EXTRA_DIST): Remove ext/yaml/luacompat.h.
+
+	slingshot: sync with upstream, for release fixes.
+	* slingshot: Sync with upstream.
+
+	slingshot: sync with upstream, for release fixes.
+	* slingshot: Sync with upstream.
+
+	maint: bump release revision to 5.1.0.
+	* configure.ac (AC_INIT): Bump release revision to 5.1.0.
+	* NEWS: Update.
+
+	slingshot: sync with upstream, for travis fixes.
+	* slingshot: Sync with upstream.
+	* .travis.yml: Regenerate.
+
+	slingshot: sync with upstream, for luajit fixes.
+	* slingshot: Sync with upstream.
+	* .travis.yml: Regenerate.
+
+	slingshot: sync with upstream, for travis.yml bugfixes.
+	* slingshot: Sync with upstream.
+	* .travis.yml: Regenerate.
+
+	slingshot: sync with upstream, for Lua 5.3 support.
+	* slingshot: Sync with upstream.
+	* bootstrap: Update to latest slingshot bootstrap.
+	* .travis.yml: Regenerate.
+
+	maint: preliminary Lua 5.3.0 compatibility.
+	* slingshot: Sync with upstream for Lua 5.3 compatibility.
+	* configure.ac (AX_PROG_LUA): Accept Lua 5.3 interpreters.
+	* ext/yaml/lua52compat.h: Remove.
+	* ext/yaml/lyaml.h (lua_objlen, lua_strlen, luaL_openlib)
+	(luaL_register): Lua 5.2 and 5.3 compatibility definitions.
+	* .travis.yml: Regenerate.
+
+2014-12-16  Gary V. Vaughan  <gary@gnu.org>
+
+	configury: adopt semantic versioning.
+	* configure.ac (AC_INIT): Bump version to 6.0.0.
+
+2014-09-26  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: post-release administrivia.
+	* configure.ac (AC_INIT): Bump release version to 6.
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* ./local.mk (old_NEWS_hash): Auto-update.
+
 2014-09-25  Gary V. Vaughan  <gary@gnu.org>
 
 	Release version 5

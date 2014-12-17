@@ -24,7 +24,7 @@ dnl THE SOFTWARE.
 AC_PREREQ([2.68])
 
 dnl Initialise autoconf and automake
-AC_INIT([lyaml], [5], [http://github.com/gvvaughan/lyaml/issues])
+AC_INIT([lyaml], [5.1.0], [http://github.com/gvvaughan/lyaml/issues])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -49,7 +49,7 @@ AC_SUBST(LIBTOOL_DEPS)
 dnl Check for programs
 AC_PROG_CC
 AC_PATH_PROG([SPECL], [specl], [:])
-AX_PROG_LUA(5.1, 5.3)
+AX_PROG_LUA(5.1, 5.4)
 AX_LUA_HEADERS
 
 dnl Check for header files

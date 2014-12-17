@@ -39,7 +39,7 @@ LUA_ENV =						\
 ## Bootstrap. ##
 ## ---------- ##
 
-old_NEWS_hash   = dab71a2961efb85ecb38d5a1c8b1c07c
+old_NEWS_hash   = 703831a9204e7435c5058c25ec8a969c
 
 update_copyright_env = \
 	UPDATE_COPYRIGHT_HOLDER='(Gary V. Vaughan|Andrew Danforth)' \
@@ -66,7 +66,6 @@ ext_yaml_yaml_la_LDFLAGS  = -module -avoid-version
 ext_yaml_yaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
 
 EXTRA_DIST +=						\
-	ext/yaml/lua52compat.h				\
 	ext/yaml/lyaml.h				\
 	$(NOTHING_ELSE)
 

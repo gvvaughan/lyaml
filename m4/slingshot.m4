@@ -27,7 +27,7 @@ AC_DEFUN([SS_CONFIG_TRAVIS], [
       *" $_ss_rock;"*) ;; # ignore duplicates
       *)
         test "x$PACKAGE_NAME" != "x$_ss_rock" \
-            && EXTRA_ROCKS="$EXTRA_ROCKS"' $LUAROCKS install '"$_ss_rock;"
+            && EXTRA_ROCKS="$EXTRA_ROCKS"' sudo luarocks install '"$_ss_rock;"
         ;;
     esac
   done

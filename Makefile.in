@@ -500,9 +500,9 @@ SPECL_ENV = LUA='$(LUA)' abs_top_builddir='$(abs_top_builddir)' \
 ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS = $(LUA_INCLUDE)
 EXTRA_DIST = $(srcdir)/specs/spec_helper.lua $(NOTHING_ELSE) \
-	$(specl_SPECS) $(NOTHING_ELSE) ext/yaml/lua52compat.h \
-	ext/yaml/lyaml.h $(NOTHING_ELSE) $(mkrockspecs) \
-	$(package_rockspec) $(rockspec_conf) $(NOTHING_ELSE)
+	$(specl_SPECS) $(NOTHING_ELSE) ext/yaml/lyaml.h \
+	$(NOTHING_ELSE) $(mkrockspecs) $(package_rockspec) \
+	$(rockspec_conf) $(NOTHING_ELSE)
 EXTRA_LTLIBRARIES = 
 CLEANFILES = 
 DISTCLEANFILES = $(luarocks_config) $(NOTHING_ELSE)
@@ -524,7 +524,7 @@ LUA_ENV = \
 	LUA_PATH="$(lyaml_path);$(LUA_PATH)"		\
 	$(NOTHING_ELSE)
 
-old_NEWS_hash = dab71a2961efb85ecb38d5a1c8b1c07c
+old_NEWS_hash = 703831a9204e7435c5058c25ec8a969c
 update_copyright_env = \
 	UPDATE_COPYRIGHT_HOLDER='(Gary V. Vaughan|Andrew Danforth)' \
 	UPDATE_COPYRIGHT_USE_INTERVALS=1 \
