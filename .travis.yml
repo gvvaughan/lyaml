@@ -90,10 +90,13 @@ before_install:
 install:
   - sudo luarocks install specl;
 
-  # Make git rockspec
+  # Initial bootstrap to generate Makefile for rockspecs.
+  - ./bootstrap
+  - ./configure LUA="$LUA"
   - make rockspecs V=1
     || cat $ROCKSPEC
 
+  # Rerun bootstrap automatically from git rockspec.
   - sudo luarocks make $ROCKSPEC LUA="$LUA"
 
 
