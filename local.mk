@@ -66,7 +66,6 @@ ext_yaml_yaml_la_LDFLAGS  = -module -avoid-version
 ext_yaml_yaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
 
 EXTRA_DIST +=						\
-	ext/yaml/lua52compat.h				\
 	ext/yaml/lyaml.h				\
 	$(NOTHING_ELSE)
 
