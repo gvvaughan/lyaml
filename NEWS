@@ -2,6 +2,10 @@ lyaml NEWS - User visible changes
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** New Features:
+
+  - Lua 5.3.0 compatibility.
+
 
 * Noteworthy changes in release 5 (2014-09-25) [beta]
 
