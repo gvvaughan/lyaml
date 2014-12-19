@@ -3397,7 +3397,6 @@ slingshot_copy_files ()
       $require_slingshot_submodule
 
       # Make sure we have the latest mkrockspecs
-      ( cd slingshot && ./bootstrap; )
       make -C slingshot build-aux/mkrockspecs
 
       # Update in-tree links.
