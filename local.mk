@@ -39,7 +39,7 @@ LUA_ENV =						\
 ## Bootstrap. ##
 ## ---------- ##
 
-old_NEWS_hash   = 703831a9204e7435c5058c25ec8a969c
+old_NEWS_hash   = d41d8cd98f00b204e9800998ecf8427e
 
 update_copyright_env = \
 	UPDATE_COPYRIGHT_HOLDER='(Gary V. Vaughan|Andrew Danforth)' \
@@ -53,7 +53,7 @@ include specs/specs.mk
 ## Declarations. ##
 ## ------------- ##
 
-lib_LTLIBRARIES += ext/yaml/yaml.la
+luaexec_LTLIBRARIES += ext/yaml/yaml.la
 
 ext_yaml_yaml_la_SOURCES =				\
 	ext/yaml/yaml.c					\

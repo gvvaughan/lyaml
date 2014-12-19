@@ -1,4 +1,39 @@
+2014-12-19  Gary V. Vaughan  <gary@gnu.org>
+
+	Release version 5.1.1
+	* NEWS.md: Record release date.
+
+	slingshot: sync with upstream, for release fixes.
+	* slingshot: Sync with upstream.
+
+	slingshot: sync with upstream, for rebootstrap subproject fix.
+	* slingshot: Sync with upstream.
+	* bootstrap: Update from slingshot.
+
+2014-12-18  Gary V. Vaughan  <gary@gnu.org>
+
+	slingshot: sync with upstream, for luaexec_LTLIBRARIES support.
+	Close #5.
+	* slingshot: Sync with upstream.
+	* bootstrap: Update from slingshot.
+	* .travis.yml: Regenerate.
+	* local.mk (lib_LTLIBRARIES): Rename from this...
+	(luaexec_LTLIBRARIES): ...to this.
+	(old_NEWS_hash): Update.
+	* NEWS: Move from here...
+	* NEWS.md: ...to here.  Reformat and update.
+	* .gitignore: Add NEWS.
+
+	configury: bump release number to 5.1.1.
+	* configure.ac (AC_INIT): Bump release number to 5.1.1.
+	* NEWS: Update.
+
 2014-12-17  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: post-release administrivia.
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* ./local.mk (old_NEWS_hash): Auto-update.
 
 	Release version 5.1.0
 	* NEWS: Record release date.
