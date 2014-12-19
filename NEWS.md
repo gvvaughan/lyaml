@@ -1,6 +1,6 @@
 # lyaml NEWS - User visible changes
 
-## Noteworthy changes in release ?.? (????-??-??) [?]
+## Noteworthy changes in release 5.1.1 (2014-12-19) [stable]
 
 ### Bugs Fixed
 
