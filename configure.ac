@@ -61,8 +61,6 @@ AC_SEARCH_LIBS([yaml_document_initialize], [yaml], [], [
     AC_MSG_ERROR([Required library 'yaml' could not be found])])
 
 dnl Generate output files
-SPECL_MIN=8
-SS_CONFIG_TRAVIS([specl])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
