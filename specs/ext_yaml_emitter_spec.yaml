@@ -1,7 +1,7 @@
 specify emitting:
 - it diagnoses an invalid event:
     emitter = yaml.emitter ()
-    expect (emitter.emit "not an event").to_error "expected table"
+    expect (emitter.emit "not an event").to_raise "expected table"
 - it can generate an empty stream:
     pending (github_issue "2")
     expect (emit {
@@ -16,7 +16,7 @@ specify emitting:
       expect (emitevents (yaml.emitter (), {
                           {type = "STREAM_START", encoding = "notexists"},
                           "STREAM_END"})).
-       to_error "invalid stream encoding 'notexists'"
+       to_raise "invalid stream encoding 'notexists'"
   - it accepts an encoding parameter:
       expect (emitevents (yaml.emitter (), {
                           {type = "STREAM_START", encoding = "UTF16BE"},
@@ -82,7 +82,7 @@ specify emitting:
       expect (emit {"DOCUMENT_START",
                     {type = "MAPPING_START", style = "notexists"},
                     "MAPPING_END", "DOCUMENT_END"}).
-        to_error "invalid mapping style 'notexists'"
+        to_raise "invalid mapping style 'notexists'"
   - it understands block style: '
       expect (emit {"DOCUMENT_START",
                     {type = "MAPPING_START", style = "BLOCK"},
@@ -127,7 +127,7 @@ specify emitting:
       expect (emit {"DOCUMENT_START",
                     {type = "SEQUENCE_START", style = "notexists"},
                     "SEQUENCE_END", "DOCUMENT_END"}).
-        to_error "invalid sequence style 'notexists'"
+        to_raise "invalid sequence style 'notexists'"
   - it understands block style:
       expect (emit {"DOCUMENT_START",
                     {type = "SEQUENCE_START", style = "BLOCK"},
@@ -172,23 +172,47 @@ specify emitting:
       expect (emit {"DOCUMENT_START",
                     {type = "SCALAR", style = "notexists", value = "foo"},
                     "DOCUMENT_END"}).
-        to_error "invalid scalar style 'notexists'"
+        to_raise "invalid scalar style 'notexists'"
   - it understands plain style:
       expect (emit {"DOCUMENT_START",
                     {type = "SCALAR", style = "PLAIN", value = "boo"},
                     "DOCUMENT_END"}).
         to_contain "boo\n"
   - it understands single quoted style:
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "SINGLE_QUOTED", value = "bar"},
+                    "DOCUMENT_END"}).
+        to_contain "'bar'\n"
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "SINGLE_QUOTED", value = "bar'"},
+                    "DOCUMENT_END"}).
+        to_contain "'bar'''\n"
   - it understands double quoted style:
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "DOUBLE_QUOTED", value = "baz"},
+                    "DOCUMENT_END"}).
+        to_contain '"baz"\n'
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "DOUBLE_QUOTED", value = '"baz"'},
+                    "DOCUMENT_END"}).
+        to_contain ([["\"baz\""]] .. "\n")
   - it understands literal style:
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "LITERAL", value = "quux"},
+                    "DOCUMENT_END"}).
+        to_contain "|-\n  quux\n"
   - it understands folded style:
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "FOLDED", value = "thud"},
+                    "DOCUMENT_END"}).
+        to_contain ">-\n  thud\n"
 
 - describe ALIAS:
   - it diagnoses missing anchor parameter:
   - it diagnoses non-alphanumeric anchor characters:
       expect (emit {"DOCUMENT_START", {type = "ALIAS", anchor = "woo!"},
                     "DOCUMENT_END"}).
-        to_error "must contain alphanumerical characters only"
+        to_raise "must contain alphanumerical characters only"
   - it accepts an anchor parameter:
       expect (emit {"DOCUMENT_START", "SEQUENCE_START",
                     {type = "SCALAR", anchor = "woo",  value = "hoo"},
