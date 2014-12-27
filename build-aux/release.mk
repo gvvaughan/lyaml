@@ -229,6 +229,12 @@ vc-diff-check:
 news-check-lines-spec ?= 3
 news-check-regexp ?= '^\#\#.* $(VERSION_REGEXP) \($(today)\)'
 
+NEWS:
+	$(AM_V_GEN)if test -f NEWS.md; then ln -s NEWS.md NEWS;		\
+	elif test -f NEWS.rst; then ln -s NEWS.rst NEWS;		\
+	elif test -f NEWS.txt; then ln -s NEWS.txt NEWS;		\
+	fi
+
 news-check: NEWS
 	$(AM_V_GEN)if $(SED) -n $(news-check-lines-spec)p $<		\
 	    | $(EGREP) $(news-check-regexp) >/dev/null; then		\
@@ -239,7 +245,7 @@ news-check: NEWS
 	fi
 
 .PHONY: release-commit
-release-commit:
+release-commit: NEWS
 	$(AM_V_GEN)cd $(srcdir)						\
 	  && $(_build-aux)/do-release-commit-and-tag			\
 	       -C $(abs_builddir) $(VERSION) $(RELEASE_TYPE)
@@ -263,7 +269,7 @@ release-prep: $(scm_rockspec)
 	$(AM_V_at)$(MAKE) update-old-NEWS-hash
 	$(AM_V_at)perl -pi						\
 	  -e '$$. == 3 and print "$(gl_noteworthy_news_)\n\n\n"'	\
-	  $(srcdir)/NEWS
+	  `readlink $(srcdir)/NEWS 2>/dev/null || echo $(srcdir)/NEWS`
 	$(AM_V_at)msg=$$($(emit-commit-log)) || exit 1;			\
 	cd $(srcdir) && $(GIT) commit -s -m "$$msg" -a
 	@echo '**** Release announcement in ~/announce-$(my_distdir)'
@@ -297,7 +303,7 @@ _PRE	= "    https://raw.githubusercontent"
 _POST	= "/release-v$(VERSION)/$(PACKAGE)-$(VERSION)-$(rockspec_revision).rockspec"
 GITHUB_ROCKSPEC	= (source.url:gsub ("^git://github", $(_PRE)):gsub ("%.git$$", $(_POST)))
 
-announcement: NEWS rockspecs
+announcement: NEWS
 # Not $(AM_V_GEN) since the output of this command serves as
 # announcement message: else, it would start with " GEN announcement".
 	$(AM_V_at)printf '%s\n'						\

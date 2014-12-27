@@ -24,7 +24,7 @@ dnl THE SOFTWARE.
 AC_PREREQ([2.68])
 
 dnl Initialise autoconf and automake
-AC_INIT([lyaml], [5.1.1], [http://github.com/gvvaughan/lyaml/issues])
+AC_INIT([lyaml], [5.1.2], [http://github.com/gvvaughan/lyaml/issues])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -61,8 +61,6 @@ AC_SEARCH_LIBS([yaml_document_initialize], [yaml], [], [
     AC_MSG_ERROR([Required library 'yaml' could not be found])])
 
 dnl Generate output files
-SPECL_MIN=8
-SS_CONFIG_TRAVIS([specl])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

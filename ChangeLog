@@ -1,4 +1,40 @@
+2014-12-27  Gary V. Vaughan  <gary@gnu.org>
+
+	Release version 5.1.2
+	* NEWS.md: Record release date.
+
+	slingshot: sync with upstream for release fixes.
+
+	configury: bump version number to 5.1.2,
+	* configure.ac (AC_INIT): Bump version number to 5.1.2,
+
+	maint: update NEWS.
+
+	slingshot: sync with upstream for travis configure warning bug.
+	* slingshot: Sync with upstream.
+	* bootstrap.conf (require_bootstrap_uptodate): Remove.  Slingshot
+	bootstrap now handles out of date bootstrap scripts properly.
+	(slingshot_files): Remove slingshot.m4.
+	* configure.ac (SPECL_MIN): Remove.
+	(SS_CONFIG_TRAVIS): Remove. Move extra rocks from here...
+	* bootstrap.conf (travis_extra_rocks): ...to here.
+	* bootstrap: Regenerate.
+
+2014-12-24  Gary V. Vaughan  <gary@gnu.org>
+
+	specs: add some pending emit examples.
+	* specs/ext_yaml_emitter_spec.yaml (emitting): Add some pending
+	emit examples.
+
 2014-12-19  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: insert missing NEWS.md release header.
+	* NEWS: Add missing header.
+
+	maint: post-release administrivia.
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* ./local.mk (old_NEWS_hash): Auto-update.
 
 	Release version 5.1.1
 	* NEWS.md: Record release date.
