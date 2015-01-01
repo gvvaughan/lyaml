@@ -26,6 +26,7 @@
 /docs
 /libtool
 /lyaml-*.rockspec
+!/lyaml-git-*.rockspec
 /lyaml-*.tar.gz
 /stamp-h1
 GNUmakefile
