@@ -1,7 +1,7 @@
 # Slingshot release rules for GNU Make.
 
 # ======================================================================
-# Copyright (C) 2001-2014 Free Software Foundation, Inc.
+# Copyright (C) 2001-2015 Free Software Foundation, Inc.
 # Originally by Jim Meyering, Simon Josefsson, Eric Blake,
 #               Akim Demaille, Gary V. Vaughan, and others.
 # This version by Gary V. Vaughan, 2013.
@@ -228,6 +228,8 @@ vc-diff-check:
 # If you want to search only lines 1-10, use "1,10".
 news-check-lines-spec ?= 3
 news-check-regexp ?= '^\#\#.* $(VERSION_REGEXP) \($(today)\)'
+
+Makefile.in: NEWS
 
 NEWS:
 	$(AM_V_GEN)if test -f NEWS.md; then ln -s NEWS.md NEWS;		\

@@ -16,7 +16,7 @@
 
 # Non-recursive Make rules.
 #
-# Copyright (C) 2013-2014 Gary V. Vaughan
+# Copyright (C) 2013-2015 Gary V. Vaughan
 # Written by Gary V. Vaughan, 2013
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@
 
 # Non-recursive Make rules.
 #
-# Copyright (C) 2013-2014 Gary V. Vaughan
+# Copyright (C) 2013-2015 Gary V. Vaughan
 # Written by Gary V. Vaughan, 2013
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -57,7 +57,7 @@
 
 # Lyaml Specl make rules.
 #
-# Copyright (c) 2013-2014 Gary V. Vaughan
+# Copyright (c) 2013-2015 Gary V. Vaughan
 # Written by Gary V. Vaughan, 2013
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -79,7 +79,7 @@
 # terms of the MIT license reproduced below.
 
 # ==================================================================== #
-# Copyright (C) 2013-2014 Gary V. Vaughan                              #
+# Copyright (C) 2013-2015 Gary V. Vaughan                              #
 #                                                                      #
 # Permission is hereby granted, free of charge, to any person          #
 # obtaining a copy of this software and associated documentation       #
@@ -110,7 +110,7 @@
 # terms of the MIT license reproduced below.
 
 # ==================================================================== #
-# Copyright (C) 2013-2014 Reuben Thomas and Gary V. Vaughan                 #
+# Copyright (C) 2013-2015 Reuben Thomas and Gary V. Vaughan                 #
 #                                                                      #
 # Permission is hereby granted, free of charge, to any person          #
 # obtaining a copy of this software and associated documentation       #

@@ -1,7 +1,7 @@
 dnl configure.ac
 dnl Written by Gary V. Vaughan, 2013
 dnl
-dnl Copyright (C) 2013-2014 Gary V. Vaughan
+dnl Copyright (C) 2013-2015 Gary V. Vaughan
 dnl
 dnl Permission is hereby granted, free of charge, to any person obtaining a copy
 dnl of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ dnl THE SOFTWARE.
 AC_PREREQ([2.68])
 
 dnl Initialise autoconf and automake
-AC_INIT([lyaml], [5.1.2], [http://github.com/gvvaughan/lyaml/issues])
+AC_INIT([lyaml], [5.1.3], [http://github.com/gvvaughan/lyaml/issues])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 

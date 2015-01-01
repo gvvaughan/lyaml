@@ -1,7 +1,7 @@
 -- Transform between YAML 1.1 streams and Lua table representations.
 -- Written by Gary V. Vaughan, 2013
 --
--- Copyright (c) 2013-2014 Gary V. Vaughan
+-- Copyright (c) 2013-2015 Gary V. Vaughan
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a
 -- copy of this software and associated documentation files (the "Software"),
@@ -204,8 +204,8 @@ local parser_mt = {
 
     -- Raise a parse error.
     error = function (self, errmsg)
-      error (self.mark.line .. ":" .. self.mark.column ..
-             ": " .. errmsg, 0)
+      error (string.format ("%d:%d: %s", self.mark.line,
+                            self.mark.column, errmsg), 0)
     end,
 
     -- Save node in the anchor table for reference in future ALIASes.
@@ -224,8 +224,8 @@ local parser_mt = {
       end
       self.event = event
       self.mark  = {
-	line     = tostring (self.event.start_mark.line + 1),
-	column   = tostring (self.event.start_mark.column + 1),
+	line     = self.event.start_mark.line + 1,
+	column   = self.event.start_mark.column + 1,
       }
       return self:type ()
     end,
@@ -320,7 +320,7 @@ local parser_mt = {
 local function Parser (s)
   local object = {
     anchors = {},
-    mark    = { line = "0", column = "0" },
+    mark    = { line = 0, column = 0 },
     next    = yaml.parser (s),
   }
   return setmetatable (object, parser_mt)
