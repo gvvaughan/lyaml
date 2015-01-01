@@ -98,6 +98,14 @@ install:
        sudo luarocks install --server=http://rocks.moonscript.org/manifests/gvvaughan $rock;
     done'
 
+  # Fudge timestamps on release branches.
+  - 'if test -f configure; then
+      test -f aclocal.m4 && touch aclocal.m4;
+      sleep 1; touch Makefile.in;
+      sleep 1; test -f config.h.in && touch config.h.in;
+      sleep 1; touch configure;
+    fi'
+
   # Build from rockspec.
   - export ROCKSPEC=@PACKAGE@-@VERSION@-1.rockspec
   - 'test -f "$ROCKSPEC" || ROCKSPEC=@PACKAGE@-git-1.rockspec'
@@ -109,14 +117,7 @@ install:
 
 
 script:
-  - 'if test -f configure; then
-      touch aclocal.m4;
-      sleep 1; touch Makefile.in;
-      sleep 1; touch config.h.in;
-      sleep 1; touch configure;
-    else
-      ./bootstrap --verbose;
-    fi'
+  - test -f configure || ./bootstrap --verbose
   - test -f Makefile || ./configure --disable-silent-rules LUA="$LUA"
   - make
   - make check V=1

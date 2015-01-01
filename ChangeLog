@@ -1,5 +1,34 @@
 2015-01-01  Gary V. Vaughan  <gary@gnu.org>
 
+	Release version 5.1.4
+	* NEWS.md: Record release date.
+
+	configure: add ansicolors to travis_extra_rocks.
+	* bootstrap.conf (travis_extra_rocks): Add ansicolors for color
+	specl output.
+	* .travis.yml: Regenerate.
+
+	slingshot: sync with upstream, for travis improvements.
+	* slingshot: Sync with upstream.
+	* .travis.yml: Regenerate.
+
+	configury: bump release version to 5.1.4.
+	* configure.ac (AC_INIT): Bump release version to 5.1.4.
+
+	maint: update NEWS.
+	* NEWS.md: Add missing sections.
+
+	maint: commit git rockspec to master branch.
+	* .gitignore: Allow git rockspecs.
+	* lyaml-git-1.rockspec: New file.
+
+	travis: move timestamp fudger to before rockspec make.
+
+	maint: post-release administrivia.
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* ./local.mk (old_NEWS_hash): Auto-update.
+
 	Release version 5.1.3
 	* NEWS.md: Record release date.
 
