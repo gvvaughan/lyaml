@@ -2,8 +2,12 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+  - This release is functionally identical to the last.
+
 
 ## Noteworthy changes in release 5.1.3 (2015-01-01) [stable]
+
+  - This release is functionally identical to the last.
 
 
 ## Noteworthy changes in release 5.1.2 (2014-12-27) [stable]
