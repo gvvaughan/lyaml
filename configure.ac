@@ -1,7 +1,7 @@
 dnl configure.ac
 dnl Written by Gary V. Vaughan, 2013
 dnl
-dnl Copyright (C) 2013-2014 Gary V. Vaughan
+dnl Copyright (C) 2013-2015 Gary V. Vaughan
 dnl
 dnl Permission is hereby granted, free of charge, to any person obtaining a copy
 dnl of this software and associated documentation files (the "Software"), to deal
