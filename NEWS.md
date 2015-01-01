@@ -1,5 +1,8 @@
 # lyaml NEWS - User visible changes
 
+## Noteworthy changes in release ?.? (????-??-??) [?]
+
+
 ## Noteworthy changes in release 5.1.3 (2015-01-01) [stable]
 
 
