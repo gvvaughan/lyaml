@@ -131,6 +131,8 @@ local dumper_mt = {
         style = "SINGLE_QUOTED"
       elseif itsa == "number" or itsa == "boolean" then
         value = tostring (value)
+      elseif itsa == "string" and string.find (value, "\n") then
+        style = "LITERAL"
       end
       return self:emit {
         type            = "SCALAR",

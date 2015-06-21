@@ -2,6 +2,35 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### Bug fixes
+
+  - Multi-line strings were previously being dumped using single quotes
+    which caused the dumped YAML to break.
+
+    For example, { foo = "a\nmultiline\nstring" } would get dumped as:
+
+    ```yaml
+    foo: 'a
+
+    multiline
+
+    string'
+    ```
+
+    Note the extra line-breaks in between each line. This also causes
+    YAML parsing to fail (since the blank lines didn't have the expected
+    indentation).
+
+    This patch fixes the dump to use the YAML literal syntax for any
+    multi-line strings so the same example gets dumped as:
+
+    ```yaml
+    foo: |-
+      a
+      multiline
+      string
+    ```
+
 
 ## Noteworthy changes in release 5.1.4 (2015-01-01) [stable]
 
