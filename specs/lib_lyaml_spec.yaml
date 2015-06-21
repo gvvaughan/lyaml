@@ -37,6 +37,7 @@ specify lyaml:
     - it writes strings:
         expect (lyaml.dump {"a string"}).to_be "--- a string\n...\n"
         expect (lyaml.dump {"'a string'"}).to_be "--- '''a string'''\n...\n"
+        expect (lyaml.dump {"a\nmultiline\nstring"}).to_be "--- |-\n  a\n  multiline\n  string\n...\n"
 
   - context sequences:
     - it writes a sequence:
@@ -140,6 +141,7 @@ specify lyaml:
     - it recognizes strings:
         expect (lyaml.load "a string").to_equal {"a string"}
         expect (lyaml.load "'''a string'''").to_equal {"'a string'"}
+        expect (lyaml.load "|-\n  a\n  multiline\n  string").to_equal {"a\nmultiline\nstring"}
 
     - context global tags:
       - it recognizes !!bool:
