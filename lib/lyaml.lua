@@ -310,13 +310,62 @@ local parser_mt = {
       if tonumber (value) then return sign * tonumber (value) end
 
       -- sexagesimal, for times and angles, e.g. 190:20:30.15
-      if value:match "^[0-9]+:[0-5]?[0-9][:0-9_%.]*$" then
-	local float, first, rest = 0, "", value:gsub ("_", "")
+      if value:match "^[0-9]+:[0-5]?[0-9][:0-9%.]*$" then
+	local float, first, rest = 0, "", value
 	repeat
 	  first, rest = rest:match "^([0-9]+):(.+)$"
 	  float = float * 60 + tonumber (first)
         until (rest:match ":") == nil
 	return sign * (float * 60 + tonumber (rest))
+      end
+    end,
+
+    -- Construct a Lua integer from the current event, or return nil.
+    load_int = function (self)
+      local value = self.event.value
+
+      local sign = 1
+      if (value:match "^%+") then
+	value = (value:match "^%+(.*)$")
+      elseif (value:match "^%-") then
+	sign, value = -1, (value:match "^%-(.*)$")
+      end
+
+      value = value:gsub ("_", "")
+      if value == "0" then return sign * 0 end
+
+      -- binary, e.g. 0b1010_0111_0100_1010_1110
+      if value:match "^0b[01]+$" then
+        local int, first, rest = 0, "", value:match "^0b(.*)$"
+        repeat
+          first, rest = rest:match "^(.)(.*)$"
+          int = int * 2 + tonumber (first)
+        until rest == ""
+        return sign * int
+      end
+
+      -- octal, e.g. 0247
+      if value:match "^0[0-7]+$" then
+        local int, first, rest = 0, "", value:match "0(.*)$"
+        repeat
+          first, rest = rest:match "^(.)(.*)$"
+          int = int * 8 + tonumber (first)
+        until rest == ""
+        return sign * int
+      end
+
+      -- take care of decimal and 0x prefix hexadecimal
+      local int = tonumber (value)
+      if int and int % 1 == 0 then return sign * int end
+
+      -- sexagesimal, for times and angles, e.g. 190:20:30
+      if value:match "^[0-9]+:[0-5]?[0-9][:0-9]*$" then
+	local int, first, rest = 0, "", value
+	repeat
+	  first, rest = rest:match "^([0-9]+):(.+)$"
+	  int = int * 60 + tonumber (first)
+        until (rest:match ":") == nil
+	return sign * (int * 60 + tonumber (rest))
       end
     end,
 
@@ -333,7 +382,7 @@ local parser_mt = {
 	elseif tag == "null" then
 	  value = null
         elseif tag == "int" then
-          value = tonumber (value)
+          value = self:load_int ()
 	  if not value then
             self:error ("invalid %s value: '%s'",
                         self.event.tag, self.event.value)
@@ -361,12 +410,12 @@ local parser_mt = {
           value = true
         elseif isfalsey[value] then
           value = false
-        elseif tonumber (value) then
-          value = tonumber (value)
 	else
           local float = self:load_float ()
 	  if float then value = 0.0 + float end
         end
+	local int = self:load_int ()
+	if int then value = int end
       end
       self:add_anchor (value)
       return value

@@ -57,8 +57,13 @@
     YAML document, or an implicit float value, according to
     [the specification][floatspec].
 
+  - `lyaml.load` now correctly reads a !!int tagged scalar from a
+    YAML document, or an implicit integer value, according to
+    [the specification][intspec].
+
 [boolspec]:  http://yaml.org/type/bool.html
 [floatspec]: http://yaml.org/type/float.html
+[intspec]:   http://yaml.org/type/int.html
 [nullspec]:  http://yaml.org/type/null.html
 
 

@@ -139,11 +139,21 @@ specify lyaml:
         expect (lyaml.load "true").to_equal {true}
         expect (lyaml.load "false").to_equal {false}
         expect (lyaml.load "no").to_equal {false}'
-    - it recognizes numbers:
-        expect (lyaml.load "123").to_equal {123}
+    - it recognizes integers:
+        expect (lyaml.load "0b0010_1001_1010").to_equal {666}
+        expect (lyaml.load "+0b001_010_011_010").to_equal {666}
+        expect (lyaml.load "-0b0010_1001_1010").to_equal {-666}
+        expect (lyaml.load "0_1232").to_equal {666}
+        expect (lyaml.load "-01232").to_equal {-666}
+        expect (lyaml.load "666").to_equal {666}
+        expect (lyaml.load "0x29a").to_equal {666}
+        expect (lyaml.load "-0x29a").to_equal {-666}
+        expect (lyaml.load "12_345_678").to_equal {12345678}
+        expect (lyaml.load "11:6").to_equal {666}
+    - it recognizes floats:
         expect (lyaml.load "12.3").to_equal {12.3}
-        expect (lyaml.load "685_230.15e+03").to_equal {685230150}
         expect (lyaml.load "685.230_15e+03").to_equal {685230.15}
+        expect (lyaml.load "685_230.15e+03").to_equal {685230150.0}
         expect (lyaml.load "12_345_678.9").to_equal {12345678.9}
         expect (lyaml.load "11:6.777").to_equal {666.777}
         expect (lyaml.load ".Inf").to_equal {math.huge}
@@ -167,15 +177,11 @@ specify lyaml:
           expect (lyaml.load '!!bool false').to_equal {false}
           expect (lyaml.load '!!bool garbage').
             to_raise "invalid tag:yaml.org,2002:bool value: 'garbage'"
-      - it recognizes !!int: |
-          expect (lyaml.load '!!int 42').to_equal {42}
-          expect (lyaml.load '!!int "42"').to_equal {42}
-          expect (lyaml.load '!!int garbage').
-            to_raise "invalid tag:yaml.org,2002:int value: 'garbage'"
       - it recognizes !!float: |
           expect (lyaml.load '!!float 42').to_equal {42.0}
           expect (lyaml.load '!!float "42"').to_equal {42.0}
           expect (lyaml.load '!!float +42').to_equal {42.0}
+          expect (lyaml.load '!!float 12.3').to_equal {12.3}
           expect (lyaml.load '!!float -3.141592').to_equal {-3.141592}
           expect (lyaml.load '!!float 685_230.15e+03').to_equal {685230150.0}
           expect (lyaml.load '!!float +685.230_15e+03').to_equal {685230.15}
@@ -187,6 +193,22 @@ specify lyaml:
           expect (nant[1]).not_to_equal (nant[1])
           expect (lyaml.load '!!float garbage').
             to_raise "invalid tag:yaml.org,2002:float value: 'garbage'"
+      - it recognizes !!int: |
+          expect (lyaml.load '!!int 0b0010_1001_1010').to_equal {666}
+          expect (lyaml.load '!!int "+0b001_010_011_010"').to_equal {666}
+          expect (lyaml.load '!!int -0b0010_1001_1010').to_equal {-666}
+          expect (lyaml.load '!!int 0_1232').to_equal {666}
+          expect (lyaml.load '!!int "-01232"').to_equal {-666}
+          expect (lyaml.load '!!int 666').to_equal {666}
+          expect (lyaml.load '!!int 0668').to_equal {668}
+          expect (lyaml.load '!!int "0x29a"').to_equal {666}
+          expect (lyaml.load '!!int -0x29a').to_equal {-666}
+          expect (lyaml.load '!!int 12_345_678').to_equal {12345678}
+          expect (lyaml.load '!!int 11:6').to_equal {666}
+          expect (lyaml.load '!!int 12.3').
+            to_raise "invalid tag:yaml.org,2002:int value: '12.3'"
+          expect (lyaml.load '!!int garbage').
+            to_raise "invalid tag:yaml.org,2002:int value: 'garbage'"
 
   - context sequences:
      - it recognizes block sequences:
