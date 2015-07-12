@@ -144,6 +144,8 @@ specify lyaml:
         expect (lyaml.load "|-\n  a\n  multiline\n  string").to_equal {"a\nmultiline\nstring"}
 
     - context global tags:
+      - it recognizes !!null:
+          expect (lyaml.load "!!null").to_equal {lyaml.null}
       - it recognizes !!bool:
           expect (lyaml.load "!!bool true").to_equal {true}
           expect (lyaml.load "!!bool yes").to_equal {true}

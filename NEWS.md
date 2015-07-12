@@ -31,6 +31,10 @@
       string
     ```
 
+  - `lyaml.load` now correctly reads the !!null tag in a YAML
+    document as an `lyaml.null` reference, identical to the "~"
+    shorthand syntax.
+
 
 ## Noteworthy changes in release 5.1.4 (2015-01-01) [stable]
 

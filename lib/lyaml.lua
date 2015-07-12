@@ -268,6 +268,8 @@ local parser_mt = {
         tag = tag:match ("^" .. TAG_PREFIX .. "(.*)$")
         if tag == "str" then
           -- value is already a string
+	elseif tag == "null" then
+	  value = null
         elseif tag == "int" or tag == "float" then
           value = tonumber (value)
         elseif tag == "bool" then
