@@ -195,6 +195,19 @@ local function dump (documents, anchors)
   return stream
 end
 
+local istruthy = {
+  y = true, Y = true, yes = true, Yes = true, YES = true,
+  ["true"] = true, True = true, TRUE = true,
+  on = true, On = true, ON = true,
+}
+
+
+local isfalsey = {
+  n = true, N = true, no = true, No = true, NO = true,
+  ["false"] = true, False = true, FALSE = true,
+  off = true, Off = true, OFF = true,
+}
+
 
 -- Metatable for Parser objects.
 local parser_mt = {
@@ -273,14 +286,14 @@ local parser_mt = {
         elseif tag == "int" or tag == "float" then
           value = tonumber (value)
         elseif tag == "bool" then
-          value = (value == "true" or value == "yes")
+          value = istruthy[value] == true
         end
       elseif self.event.style == "PLAIN" then
         if value == "~" then
           value = null
-        elseif value == "true" or value == "yes" then
+        elseif istruthy[value] then
           value = true
-        elseif value == "false" or value == "no" then
+        elseif isfalsey[value] then
           value = false
         else
           local number = tonumber (value)

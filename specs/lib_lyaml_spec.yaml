@@ -147,11 +147,13 @@ specify lyaml:
       - it recognizes !!null:
           expect (lyaml.load "!!null").to_equal {lyaml.null}
       - it recognizes !!bool:
-          expect (lyaml.load "!!bool true").to_equal {true}
-          expect (lyaml.load "!!bool yes").to_equal {true}
-          expect (lyaml.load "!!bool no").to_equal {false}
-          expect (lyaml.load "!!bool false").to_equal {false}
-          expect (lyaml.load "!!bool garbage").to_equal {false}
+          expect (lyaml.load '!!bool true').to_equal {true}
+          expect (lyaml.load '!!bool "yes"').to_equal {true}
+          expect (lyaml.load '!!bool Y').to_equal {true}
+          expect (lyaml.load '!!bool N').to_equal {false}
+          expect (lyaml.load '!!bool "no"').to_equal {false}
+          expect (lyaml.load '!!bool false').to_equal {false}
+          expect (lyaml.load '!!bool garbage').to_equal {false}
       - it recognizes !!int:
           expect (lyaml.load "!!int 42").to_equal {42}
       - it recognizes !!float:
