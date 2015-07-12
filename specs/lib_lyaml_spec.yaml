@@ -32,8 +32,12 @@ specify lyaml:
     - it writes numbers:
         expect (lyaml.dump {"123"}).to_be "--- '123'\n...\n"
         expect (lyaml.dump {"12.3"}).to_be "--- '12.3'\n...\n"
+        expect (lyaml.dump {"0/0"}).to_be "--- 0/0\n...\n"
         expect (lyaml.dump {123}).to_be "--- 123\n...\n"
         expect (lyaml.dump {12.3}).to_be "--- 12.3\n...\n"
+        expect (lyaml.dump {0/0}).to_be "--- .nan\n...\n"
+        expect (lyaml.dump {math.huge}).to_be "--- .inf\n...\n"
+        expect (lyaml.dump {-math.huge}).to_be "--- -.inf\n...\n"
     - it writes strings:
         expect (lyaml.dump {"a string"}).to_be "--- a string\n...\n"
         expect (lyaml.dump {"'a string'"}).to_be "--- '''a string'''\n...\n"
@@ -114,7 +118,7 @@ specify lyaml:
     - it recognizes primary tag directive: '
         expect (lyaml.load ("%TAG ! tag:yaml.org,2002:\n" ..
                            "---\n" ..
-                           "!bool untrue")).to_equal {false}'
+                           "!bool N")).to_equal {false}'
     - it recognizes secondary tag directive: '
         expect (lyaml.load ("%TAG !! tag:ben-kiki.org,2000:\n" ..
                            "---\n" ..
@@ -138,6 +142,14 @@ specify lyaml:
     - it recognizes numbers:
         expect (lyaml.load "123").to_equal {123}
         expect (lyaml.load "12.3").to_equal {12.3}
+        expect (lyaml.load "685_230.15e+03").to_equal {685230150}
+        expect (lyaml.load "685.230_15e+03").to_equal {685230.15}
+        expect (lyaml.load "12_345_678.9").to_equal {12345678.9}
+        expect (lyaml.load "11:6.777").to_equal {666.777}
+        expect (lyaml.load ".Inf").to_equal {math.huge}
+        expect (lyaml.load "-.inf").to_equal {-math.huge}
+        nant = lyaml.load ".NaN"
+        expect (nant[1]).not_to_equal (nant[1])
     - it recognizes strings:
         expect (lyaml.load "a string").to_equal {"a string"}
         expect (lyaml.load "'''a string'''").to_equal {"'a string'"}
@@ -146,18 +158,35 @@ specify lyaml:
     - context global tags:
       - it recognizes !!null:
           expect (lyaml.load "!!null").to_equal {lyaml.null}
-      - it recognizes !!bool:
+      - it recognizes !!bool: |
           expect (lyaml.load '!!bool true').to_equal {true}
           expect (lyaml.load '!!bool "yes"').to_equal {true}
           expect (lyaml.load '!!bool Y').to_equal {true}
           expect (lyaml.load '!!bool N').to_equal {false}
           expect (lyaml.load '!!bool "no"').to_equal {false}
           expect (lyaml.load '!!bool false').to_equal {false}
-          expect (lyaml.load '!!bool garbage').to_equal {false}
-      - it recognizes !!int:
-          expect (lyaml.load "!!int 42").to_equal {42}
-      - it recognizes !!float:
-          expect (lyaml.load "!!float 3.141592").to_equal {3.141592}
+          expect (lyaml.load '!!bool garbage').
+            to_raise "invalid tag:yaml.org,2002:bool value: 'garbage'"
+      - it recognizes !!int: |
+          expect (lyaml.load '!!int 42').to_equal {42}
+          expect (lyaml.load '!!int "42"').to_equal {42}
+          expect (lyaml.load '!!int garbage').
+            to_raise "invalid tag:yaml.org,2002:int value: 'garbage'"
+      - it recognizes !!float: |
+          expect (lyaml.load '!!float 42').to_equal {42.0}
+          expect (lyaml.load '!!float "42"').to_equal {42.0}
+          expect (lyaml.load '!!float +42').to_equal {42.0}
+          expect (lyaml.load '!!float -3.141592').to_equal {-3.141592}
+          expect (lyaml.load '!!float 685_230.15e+03').to_equal {685230150.0}
+          expect (lyaml.load '!!float +685.230_15e+03').to_equal {685230.15}
+          expect (lyaml.load '!!float 12_345_678.9').to_equal {12345678.9}
+          expect (lyaml.load '!!float -0:3:11:6.777').to_equal {-11466.777}
+          expect (lyaml.load '!!float .Inf').to_equal {math.huge}
+          expect (lyaml.load '!!float -.inf').to_equal {-math.huge}
+          nant = lyaml.load '!!float .NaN'
+          expect (nant[1]).not_to_equal (nant[1])
+          expect (lyaml.load '!!float garbage').
+            to_raise "invalid tag:yaml.org,2002:float value: 'garbage'"
 
   - context sequences:
      - it recognizes block sequences:

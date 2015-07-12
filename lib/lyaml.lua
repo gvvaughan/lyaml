@@ -129,6 +129,12 @@ local dumper_mt = {
          value == "yes" or value == "no" or value == "~" or
          (type (value) ~= "number" and tonumber (value) ~= nil) then
         style = "SINGLE_QUOTED"
+      elseif value == math.huge then
+	value = ".inf"
+      elseif value == -math.huge then
+	value = "-.inf"
+      elseif value ~= value then
+	value = ".nan"
       elseif itsa == "number" or itsa == "boolean" then
         value = tostring (value)
       elseif itsa == "string" and string.find (value, "\n") then
@@ -209,6 +215,16 @@ local isfalsey = {
 }
 
 
+local isnan = {
+  [".nan"] = true, [".NaN"] = true, [".NAN"] = true,
+}
+
+
+local isinf = {
+  [".inf"] = true, [".Inf"] = true, [".INF"] = true,
+}
+
+
 -- Metatable for Parser objects.
 local parser_mt = {
   __index = {
@@ -218,9 +234,9 @@ local parser_mt = {
     end,
 
     -- Raise a parse error.
-    error = function (self, errmsg)
-      error (string.format ("%d:%d: %s", self.mark.line,
-                            self.mark.column, errmsg), 0)
+    error = function (self, errmsg, ...)
+      error (string.format ("%d:%d: " .. errmsg, self.mark.line,
+                            self.mark.column, ...), 0)
     end,
 
     -- Save node in the anchor table for reference in future ALIASes.
@@ -254,7 +270,7 @@ local parser_mt = {
         if key == nil then break end
         local value, event = self:load_node ()
         if value == nil then
-          self:error ("unexpected " .. self:type () .. "event")
+          self:error ("unexpected %s event", self:type ())
         end
         map[key] = value
       end
@@ -273,21 +289,71 @@ local parser_mt = {
       return sequence
     end,
 
+    -- Construct a Lua float from the current event, or return nil.
+    load_float = function (self)
+      local value = self.event.value
+
+      if tonumber (value) then return tonumber (value) end
+
+      if isnan[value] then return 0/0 end
+
+      local sign = 1
+      if (value:match "^%+") then
+	value = (value:match "^%+(.*)$")
+      elseif (value:match "^%-") then
+	sign, value = -1, (value:match "^%-(.*)$")
+      end
+
+      if isinf[value] then return sign * math.huge end
+
+      value = value:gsub ("_", "")
+      if tonumber (value) then return sign * tonumber (value) end
+
+      -- sexagesimal, for times and angles, e.g. 190:20:30.15
+      if value:match "^[0-9]+:[0-5]?[0-9][:0-9_%.]*$" then
+	local float, first, rest = 0, "", value:gsub ("_", "")
+	repeat
+	  first, rest = rest:match "^([0-9]+):(.+)$"
+	  float = float * 60 + tonumber (first)
+        until (rest:match ":") == nil
+	return sign * (float * 60 + tonumber (rest))
+      end
+    end,
+
     -- Construct a primitive type from the current event.
     load_scalar = function (self)
       local value = self.event.value
       local tag   = self.event.tag
+
+      -- Explicitly tagged values.
       if tag then
         tag = tag:match ("^" .. TAG_PREFIX .. "(.*)$")
         if tag == "str" then
           -- value is already a string
 	elseif tag == "null" then
 	  value = null
-        elseif tag == "int" or tag == "float" then
+        elseif tag == "int" then
           value = tonumber (value)
+	  if not value then
+            self:error ("invalid %s value: '%s'",
+                        self.event.tag, self.event.value)
+	  end
+        elseif tag == "float" then
+	  value = self:load_float ()
+	  if not value then
+            self:error ("invalid %s value: '%s'",
+	                self.event.tag, self.event.value)
+	  end
+	  value = 0.0 + value
         elseif tag == "bool" then
+	  if istruthy[value] == isfalsey[value] then
+            self:error ("invalid %s value: '%s'",
+	                self.event.tag, self.event.value)
+	  end
           value = istruthy[value] == true
         end
+
+      -- Otherwise, implicit conversion according to value content.
       elseif self.event.style == "PLAIN" then
         if value == "~" then
           value = null
@@ -295,9 +361,11 @@ local parser_mt = {
           value = true
         elseif isfalsey[value] then
           value = false
-        else
-          local number = tonumber (value)
-          if number then value = number end
+        elseif tonumber (value) then
+          value = tonumber (value)
+	else
+          local float = self:load_float ()
+	  if float then value = 0.0 + float end
         end
       end
       self:add_anchor (value)
@@ -307,7 +375,7 @@ local parser_mt = {
     load_alias = function (self)
       local anchor = self.event.anchor
       if self.anchors[anchor] == nil then
-        self:error ("invalid reference: " .. tostring (anchor))
+        self:error ("invalid reference: %s", tostring (anchor))
       end
       return self.anchors[anchor]
     end,
@@ -325,7 +393,7 @@ local parser_mt = {
 
       local event = self:parse ()
       if dispatch[event] == nil then
-        self:error ("invalid event: " .. self:type ())
+        self:error ("invalid event: %s", self:type ())
       end
      return dispatch[event] (self)
     end,

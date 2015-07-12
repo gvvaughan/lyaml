@@ -33,26 +33,33 @@
 
   - `lyaml.load` now correctly reads the !!null tag in a YAML
     document as an `lyaml.null` reference, identical to the "~"
-    shorthand syntax.
+    shorthand syntax, according to [the specification][nullspec].
 
   - `lyaml.load` now correctly reads a !!bool tagged scalar from a
-    YAML document, according to [the specification][boolspec].
+    YAML document, or an implicit bool value, according to
+    [the specification][boolspec].
 
     ```yaml
     %TAG ! tag:yaml.org,2002:
     ---
     truthy:
-      - !!bool Y
-      - !!bool y
-      - !!bool True
-      - !!bool "on"
+      - !bool Y
+      - !bool y
+      - !bool True
+      - !bool "on"
     falsey:
-      - !!bool n
-      - !!bool OFF
-      - !!bool garbage
+      - !bool n
+      - !bool OFF
+      - !bool garbage
     ```
 
-[boolspec]: http://yaml.org/type/bool.html
+  - `lyaml.load` now correctly reads a !!float tagged scalar from a
+    YAML document, or an implicit float value, according to
+    [the specification][floatspec].
+
+[boolspec]:  http://yaml.org/type/bool.html
+[floatspec]: http://yaml.org/type/float.html
+[nullspec]:  http://yaml.org/type/null.html
 
 
 ## Noteworthy changes in release 5.1.4 (2015-01-01) [stable]
