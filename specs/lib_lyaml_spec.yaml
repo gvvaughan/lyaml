@@ -71,170 +71,198 @@ specify lyaml:
 
 
 - describe loading:
+  - before:
+      fn = lyaml.load
+
   - it loads an empty stream:
-      expect (lyaml.load "").to_equal {}
+      expect (fn "").to_equal {}
   - it ignores comments: '
-      expect (lyaml.load "# A comment\nnon-comment # trailing comment\n").
+      expect (fn "# A comment\nnon-comment # trailing comment\n").
         to_equal { "non-comment" }'
   - it diagnoses unexpected events: '
-      expect (lyaml.load "...").to_error "1:1: did not find expected node content"
-      expect (lyaml.load "---\n...\ngarbage\n").
+      expect (fn "...").to_error "1:1: did not find expected node content"
+      expect (fn "---\n...\ngarbage\n").
         to_error "2:1: did not find expected <document start>"
-      expect (lyaml.load " *ALIAS").
+      expect (fn " *ALIAS").
         to_error "1:2: invalid reference: ALIAS"'
 
   - context documents:
     - it lyaml.loads an empty document:
-        expect (lyaml.load "---").to_equal {""}
-        expect (lyaml.load "---\n").to_equal {""}
-        expect (lyaml.load "---\n...").to_equal {""}
-        expect (lyaml.load "---\n...\n").to_equal {""}
+        expect (fn "---").to_equal {""}
+        expect (fn "---\n").to_equal {""}
+        expect (fn "---\n...").to_equal {""}
+        expect (fn "---\n...\n").to_equal {""}
     - it lyaml.loads multiple documents:
-        expect (lyaml.load "one\n---\ntwo").to_equal {"one", "two"}
-        expect (lyaml.load "---\none\n---\ntwo").to_equal {"one", "two"}
-        expect (lyaml.load "one\n...\n---\ntwo\n...").to_equal {"one", "two"}
-        expect (lyaml.load "---\none\n...\n---\ntwo\n...").to_equal {"one", "two"}
+        expect (fn "one\n---\ntwo").to_equal {"one", "two"}
+        expect (fn "---\none\n---\ntwo").to_equal {"one", "two"}
+        expect (fn "one\n...\n---\ntwo\n...").to_equal {"one", "two"}
+        expect (fn "---\none\n...\n---\ntwo\n...").to_equal {"one", "two"}
     - it reports an empty document:
-        expect (lyaml.load "---\n---\ntwo\n---").
+        expect (fn "---\n---\ntwo\n---").
           to_equal {"", "two", ""}
-        expect (lyaml.load "---\n...\n---\ntwo\n---").
+        expect (fn "---\n...\n---\ntwo\n---").
           to_equal {"", "two", ""}
-        expect (lyaml.load "---\n...\n---\ntwo\n...\n---").
+        expect (fn "---\n...\n---\ntwo\n...\n---").
           to_equal {"", "two", ""}
-        expect (lyaml.load "---\n...\n---\ntwo\n...\n---\n...").
+        expect (fn "---\n...\n---\ntwo\n...\n---\n...").
           to_equal {"", "two", ""}
 
   - context version directive:
     - it recognizes version number:
-        expect (lyaml.load "%YAML 1.1\n---").to_equal {""}
+        expect (fn "%YAML 1.1\n---").to_equal {""}
     - it diagneses missing document start:
-        expect (lyaml.load "%YAML 1.1").
+        expect (fn "%YAML 1.1").
           to_error "expected <document start>"
     - it diagnoses unsupported version:
-        expect (lyaml.load "%YAML 2.0\n---").
+        expect (fn "%YAML 2.0\n---").
           to_error "incompatible YAML document"
 
   - context tag directive:
     - it recognizes primary tag directive: '
-        expect (lyaml.load ("%TAG ! tag:yaml.org,2002:\n" ..
+        expect (fn ("%TAG ! tag:yaml.org,2002:\n" ..
                            "---\n" ..
                            "!bool N")).to_equal {false}'
     - it recognizes secondary tag directive: '
-        expect (lyaml.load ("%TAG !! tag:ben-kiki.org,2000:\n" ..
+        expect (fn ("%TAG !! tag:ben-kiki.org,2000:\n" ..
                            "---\n" ..
                            "!!bool untrue")).to_equal {"untrue"}'
     - it recognizes named tag directive: '
-        expect (lyaml.load ("%TAG !bkk! tag:ben-kiki.org,2000:\n" ..
+        expect (fn ("%TAG !bkk! tag:ben-kiki.org,2000:\n" ..
                            "---\n" ..
                            "!bkk!bool untrue")).to_equal {"untrue"}'
     - it diagnoses undefined tag handles: '
-        expect (lyaml.load ("!bkk!bool untrue")).
+        expect (fn ("!bkk!bool untrue")).
           to_error "undefined tag handle"'
 
   - context scalars:
     - it recognizes null: '
-        expect (lyaml.load "~").to_equal {lyaml.null}'
+        expect (fn "~").to_equal {lyaml.null}'
     - it recognizes booleans: '
-        expect (lyaml.load "yes").to_equal {true}
-        expect (lyaml.load "true").to_equal {true}
-        expect (lyaml.load "false").to_equal {false}
-        expect (lyaml.load "no").to_equal {false}'
+        expect (fn "yes").to_equal {true}
+        expect (fn "true").to_equal {true}
+        expect (fn "false").to_equal {false}
+        expect (fn "no").to_equal {false}'
     - it recognizes integers:
-        expect (lyaml.load "0b0010_1001_1010").to_equal {666}
-        expect (lyaml.load "+0b001_010_011_010").to_equal {666}
-        expect (lyaml.load "-0b0010_1001_1010").to_equal {-666}
-        expect (lyaml.load "0_1232").to_equal {666}
-        expect (lyaml.load "-01232").to_equal {-666}
-        expect (lyaml.load "666").to_equal {666}
-        expect (lyaml.load "0x29a").to_equal {666}
-        expect (lyaml.load "-0x29a").to_equal {-666}
-        expect (lyaml.load "12_345_678").to_equal {12345678}
-        expect (lyaml.load "11:6").to_equal {666}
+        expect (fn "0b0010_1001_1010").to_equal {666}
+        expect (fn "+0b001_010_011_010").to_equal {666}
+        expect (fn "-0b0010_1001_1010").to_equal {-666}
+        expect (fn "0_1232").to_equal {666}
+        expect (fn "-01232").to_equal {-666}
+        expect (fn "666").to_equal {666}
+        expect (fn "0x29a").to_equal {666}
+        expect (fn "-0x29a").to_equal {-666}
+        expect (fn "12_345_678").to_equal {12345678}
+        expect (fn "11:6").to_equal {666}
     - it recognizes floats:
-        expect (lyaml.load "12.3").to_equal {12.3}
-        expect (lyaml.load "685.230_15e+03").to_equal {685230.15}
-        expect (lyaml.load "685_230.15e+03").to_equal {685230150.0}
-        expect (lyaml.load "12_345_678.9").to_equal {12345678.9}
-        expect (lyaml.load "11:6.777").to_equal {666.777}
-        expect (lyaml.load ".Inf").to_equal {math.huge}
-        expect (lyaml.load "-.inf").to_equal {-math.huge}
-        nant = lyaml.load ".NaN"
+        expect (fn "12.3").to_equal {12.3}
+        expect (fn "685.230_15e+03").to_equal {685230.15}
+        expect (fn "685_230.15e+03").to_equal {685230150.0}
+        expect (fn "12_345_678.9").to_equal {12345678.9}
+        expect (fn "11:6.777").to_equal {666.777}
+        expect (fn ".Inf").to_equal {math.huge}
+        expect (fn "-.inf").to_equal {-math.huge}
+        nant = fn ".NaN"
         expect (nant[1]).not_to_equal (nant[1])
     - it recognizes strings:
-        expect (lyaml.load "a string").to_equal {"a string"}
-        expect (lyaml.load "'''a string'''").to_equal {"'a string'"}
-        expect (lyaml.load "|-\n  a\n  multiline\n  string").to_equal {"a\nmultiline\nstring"}
+        expect (fn "a string").to_equal {"a string"}
+        expect (fn "'''a string'''").to_equal {"'a string'"}
+        expect (fn "|-\n  a\n  multiline\n  string").to_equal {"a\nmultiline\nstring"}
 
     - context global tags:
       - it recognizes !!null:
-          expect (lyaml.load "!!null").to_equal {lyaml.null}
+          expect (fn "!!null").to_equal {lyaml.null}
       - it recognizes !!bool: |
-          expect (lyaml.load '!!bool true').to_equal {true}
-          expect (lyaml.load '!!bool "yes"').to_equal {true}
-          expect (lyaml.load '!!bool Y').to_equal {true}
-          expect (lyaml.load '!!bool N').to_equal {false}
-          expect (lyaml.load '!!bool "no"').to_equal {false}
-          expect (lyaml.load '!!bool false').to_equal {false}
-          expect (lyaml.load '!!bool garbage').
+          expect (fn '!!bool true').to_equal {true}
+          expect (fn '!!bool "yes"').to_equal {true}
+          expect (fn '!!bool Y').to_equal {true}
+          expect (fn '!!bool N').to_equal {false}
+          expect (fn '!!bool "no"').to_equal {false}
+          expect (fn '!!bool false').to_equal {false}
+          expect (fn '!!bool garbage').
             to_raise "invalid tag:yaml.org,2002:bool value: 'garbage'"
       - it recognizes !!float: |
-          expect (lyaml.load '!!float 42').to_equal {42.0}
-          expect (lyaml.load '!!float "42"').to_equal {42.0}
-          expect (lyaml.load '!!float +42').to_equal {42.0}
-          expect (lyaml.load '!!float 12.3').to_equal {12.3}
-          expect (lyaml.load '!!float -3.141592').to_equal {-3.141592}
-          expect (lyaml.load '!!float 685_230.15e+03').to_equal {685230150.0}
-          expect (lyaml.load '!!float +685.230_15e+03').to_equal {685230.15}
-          expect (lyaml.load '!!float 12_345_678.9').to_equal {12345678.9}
-          expect (lyaml.load '!!float -0:3:11:6.777').to_equal {-11466.777}
-          expect (lyaml.load '!!float .Inf').to_equal {math.huge}
-          expect (lyaml.load '!!float -.inf').to_equal {-math.huge}
-          nant = lyaml.load '!!float .NaN'
+          expect (fn '!!float 42').to_equal {42.0}
+          expect (fn '!!float "42"').to_equal {42.0}
+          expect (fn '!!float +42').to_equal {42.0}
+          expect (fn '!!float 12.3').to_equal {12.3}
+          expect (fn '!!float -3.141592').to_equal {-3.141592}
+          expect (fn '!!float 685_230.15e+03').to_equal {685230150.0}
+          expect (fn '!!float +685.230_15e+03').to_equal {685230.15}
+          expect (fn '!!float 12_345_678.9').to_equal {12345678.9}
+          expect (fn '!!float -0:3:11:6.777').to_equal {-11466.777}
+          expect (fn '!!float .Inf').to_equal {math.huge}
+          expect (fn '!!float -.inf').to_equal {-math.huge}
+          nant = fn '!!float .NaN'
           expect (nant[1]).not_to_equal (nant[1])
-          expect (lyaml.load '!!float garbage').
+          expect (fn '!!float garbage').
             to_raise "invalid tag:yaml.org,2002:float value: 'garbage'"
       - it recognizes !!int: |
-          expect (lyaml.load '!!int 0b0010_1001_1010').to_equal {666}
-          expect (lyaml.load '!!int "+0b001_010_011_010"').to_equal {666}
-          expect (lyaml.load '!!int -0b0010_1001_1010').to_equal {-666}
-          expect (lyaml.load '!!int 0_1232').to_equal {666}
-          expect (lyaml.load '!!int "-01232"').to_equal {-666}
-          expect (lyaml.load '!!int 666').to_equal {666}
-          expect (lyaml.load '!!int 0668').to_equal {668}
-          expect (lyaml.load '!!int "0x29a"').to_equal {666}
-          expect (lyaml.load '!!int -0x29a').to_equal {-666}
-          expect (lyaml.load '!!int 12_345_678').to_equal {12345678}
-          expect (lyaml.load '!!int 11:6').to_equal {666}
-          expect (lyaml.load '!!int 12.3').
+          expect (fn '!!int 0b0010_1001_1010').to_equal {666}
+          expect (fn '!!int "+0b001_010_011_010"').to_equal {666}
+          expect (fn '!!int -0b0010_1001_1010').to_equal {-666}
+          expect (fn '!!int 0_1232').to_equal {666}
+          expect (fn '!!int "-01232"').to_equal {-666}
+          expect (fn '!!int 666').to_equal {666}
+          expect (fn '!!int 0668').to_equal {668}
+          expect (fn '!!int "0x29a"').to_equal {666}
+          expect (fn '!!int -0x29a').to_equal {-666}
+          expect (fn '!!int 12_345_678').to_equal {12345678}
+          expect (fn '!!int 11:6').to_equal {666}
+          expect (fn '!!int 12.3').
             to_raise "invalid tag:yaml.org,2002:int value: '12.3'"
-          expect (lyaml.load '!!int garbage').
+          expect (fn '!!int garbage').
             to_raise "invalid tag:yaml.org,2002:int value: 'garbage'"
 
   - context sequences:
      - it recognizes block sequences:
-         expect (lyaml.load "- ~\n- true\n- 42").
+         expect (fn "- ~\n- true\n- 42").
            to_equal {{lyaml.null, true, 42}}
      - it recognizes flow sequences:
-         expect (lyaml.load "[~, true, 42]").
+         expect (fn "[~, true, 42]").
            to_equal {{lyaml.null, true, 42}}
-
-  - context mapping:
-     - it recognizes block mapping: '
-         expect (lyaml.load "null: ~\nboolean: yes\nnumber: 3.14").
-           to_equal {{null = lyaml.null, boolean = true, number = 3.14}}'
-     - it recognizes flow mapping: '
-         expect (lyaml.load "{null: ~, boolean: yes, number: 3.14}").
-           to_equal {{null = lyaml.null, boolean = true, number = 3.14}}'
 
   - context anchors and aliases:
      - it resolves scalar anchors: '
-         expect (lyaml.load "anchor: &SS Sammy Sosa\nalias: *SS").
+         expect (fn "anchor: &SS Sammy Sosa\nalias: *SS").
            to_equal {{anchor = "Sammy Sosa", alias = "Sammy Sosa"}}'
      - it resolves sequence anchors: '
-         expect (lyaml.load "anchor: &SEQ [Mark McGwire, Sammy Sosa]\nalias: *SEQ").
+         expect (fn "anchor: &SEQ [Mark McGwire, Sammy Sosa]\nalias: *SEQ").
            to_equal {{anchor = {"Mark McGwire", "Sammy Sosa"},
                           alias  = {"Mark McGwire", "Sammy Sosa"}}}'
      - it resolves mapping anchors: '
-         expect (lyaml.load "anchor: &MAP {Mark McGwire: 65, Sammy Sosa: 63}\nalias: *MAP").
+         expect (fn "anchor: &MAP {Mark McGwire: 65, Sammy Sosa: 63}\nalias: *MAP").
            to_equal {{anchor = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63},
                       alias  = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63}}}'
+
+  - context mapping:
+     - it recognizes block mapping: |
+         expect (fn "null: ~\nboolean: yes\nnumber: 3.14").
+           to_equal {{null = lyaml.null, boolean = true, number = 3.14}}
+     - it recognizes flow mapping: |
+         expect (fn "{null: ~, boolean: yes, number: 3.14}").
+           to_equal {{null = lyaml.null, boolean = true, number = 3.14}}
+     - it supports merge keys:
+         - before: |
+             YAML = '- &MERGE {x: 1, "y": 2}\n- &OVERRIDE {x: 0, z: 2}\n'
+         - context with invalid merge event: |
+             expect (fn ('-\n  !!merge : {x: 1, "y": 2}\n  z: 3')).
+               to_raise "invalid 'tag:yaml.org,2002:merge' event: MAPPING_START"
+             expect (fn ('-\n  <<: {x: 1, "y": 2}\n  z: 3')).
+               to_raise "invalid '<<' event: MAPPING_START"
+         - context with invalid merge alias: |
+             expect (fn (YAML .. '-\n  !!merge : [*MERGE, OVERRIDE]')).
+               to_raise "invalid 'tag:yaml.org,2002:merge' alias: OVERRIDE"
+             expect (fn (YAML .. '-\n  <<: [*MERGE, OVERRIDE]')).
+               to_raise "invalid '<<' alias: OVERRIDE"
+         - context with an alias: |
+             expect (fn (YAML .. '-\n  !!merge : *MERGE\n  z: 3')).
+               to_equal {{{x=1, y=2}, {x=0, z=2}, {x=1, y=2, z=3}}}
+             expect (fn (YAML .. '-\n  <<: *MERGE\n  z: 3')).
+               to_equal {{{x=1, y=2}, {x=0, z=2}, {x=1, y=2, z=3}}}
+         # Leftmost map takes precedence, but original map values trump
+         # even that!
+         - context with an alias sequence: |
+             expect (fn (YAML .. '-\n  !!merge : [*MERGE, *OVERRIDE]\n  z: 3')).
+               to_equal {{{x=1, y=2}, {x=0, z=2}, {x=1, y=2, z=3}}}
+             expect (fn (YAML .. '-\n  <<: [*MERGE, *OVERRIDE]\n  z: 3')).
+               to_equal {{{x=1, y=2}, {x=0, z=2}, {x=1, y=2, z=3}}}

@@ -2,6 +2,58 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### New Features
+
+  - `lyaml.load` now correctly reads a !!bool tagged scalar from a
+    YAML document, or an implicit bool value, according to
+    [the specification][boolspec].
+
+    ```yaml
+    %TAG ! tag:yaml.org,2002:
+    ---
+    truthy:
+      - !bool Y
+      - !bool y
+      - !bool True
+      - !bool "on"
+    falsey:
+      - !bool n
+      - !bool OFF
+      - !bool garbage
+    ```
+
+  - `lyaml.load` now correctly reads a !!float tagged scalar from a
+    YAML document, or an implicit float value, according to
+    [the specification][floatspec].
+
+  - `lyaml.load` now correctly reads a !!int tagged scalar from a
+    YAML document, or an implicit integer value, according to
+    [the specification][intspec].
+
+  - `lyaml.load` now supports the !!merge key type according to
+    [the specification][mergespec].
+
+    ```yaml
+    - &MERGE { x: 1, y: 2 }
+    - &OVERRIDE { x: 0, z: 1 }
+    -
+      << : [&MERGE, &OVERRIDE]
+      z: 3
+    ```
+
+    The anchored tables remain in the document too, so this results in
+    the following Lua table:
+
+    ```lua
+    {                           -- START_STREAM
+      {                         -- START_DOCUMENT
+        { x = 1, y = 2 },       -- MERGE
+        { x = 0, z = 1 },       -- OVERRIDE
+        { x = 1, y = 2, z = 3}, -- <<<
+      }                         -- END_DOCUMENT
+    }                           -- END_STREAM
+    ```
+
 ### Bug fixes
 
   - Multi-line strings were previously being dumped using single quotes
@@ -35,35 +87,10 @@
     document as an `lyaml.null` reference, identical to the "~"
     shorthand syntax, according to [the specification][nullspec].
 
-  - `lyaml.load` now correctly reads a !!bool tagged scalar from a
-    YAML document, or an implicit bool value, according to
-    [the specification][boolspec].
-
-    ```yaml
-    %TAG ! tag:yaml.org,2002:
-    ---
-    truthy:
-      - !bool Y
-      - !bool y
-      - !bool True
-      - !bool "on"
-    falsey:
-      - !bool n
-      - !bool OFF
-      - !bool garbage
-    ```
-
-  - `lyaml.load` now correctly reads a !!float tagged scalar from a
-    YAML document, or an implicit float value, according to
-    [the specification][floatspec].
-
-  - `lyaml.load` now correctly reads a !!int tagged scalar from a
-    YAML document, or an implicit integer value, according to
-    [the specification][intspec].
-
 [boolspec]:  http://yaml.org/type/bool.html
 [floatspec]: http://yaml.org/type/float.html
 [intspec]:   http://yaml.org/type/int.html
+[mergespec]: http://yaml.org/type/merge.html
 [nullspec]:  http://yaml.org/type/null.html
 
 

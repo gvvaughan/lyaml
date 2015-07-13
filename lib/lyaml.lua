@@ -261,18 +261,50 @@ local parser_mt = {
       return self:type ()
     end,
 
+    -- Merge map aliases into the current map.
+    merge_map = function (self, map, tag)
+      local event = self:parse ()
+      if event == "ALIAS" then
+	for k, v in pairs (self:load_alias ()) do
+	  if map[k] == nil then map[k] = v end
+        end
+      elseif event == "SEQUENCE_START" then
+        while true do
+          local event = self:parse ()
+          if event == "SEQUENCE_END" then break end
+	  if event == "ALIAS" then
+	    for k, v in pairs (self:load_alias ()) do
+	      if map[k] == nil then map[k] = v end
+            end
+          elseif event == "SCALAR" then
+            self:error ("invalid '%s' alias: %s", tag, self.event.value)
+	  else
+            self:error ("invalid '%s' event: %s", tag, self:type ())
+          end
+        end
+      else
+        self:error ("invalid '%s' event: %s", tag, self:type ())
+      end
+    end,
+
     -- Construct a Lua hash table from following events.
     load_map = function (self)
       local map = {}
       self:add_anchor (map)
       while true do
         local key = self:load_node ()
+        local tag = self.event.tag
+	if tag then tag = tag:match ("^" .. TAG_PREFIX .. "(.*)$") end
         if key == nil then break end
-        local value, event = self:load_node ()
-        if value == nil then
-          self:error ("unexpected %s event", self:type ())
-        end
-        map[key] = value
+	if key == "<<" or tag == "merge" then
+	  self:merge_map (map, self.event.tag or "<<")
+	else
+          local value, event = self:load_node ()
+          if value == nil then
+            self:error ("unexpected %s event", self:type ())
+          end
+          map[key] = value
+	end
       end
       return map
     end,
