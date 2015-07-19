@@ -127,7 +127,8 @@ local dumper_mt = {
       local style = "PLAIN"
       if value == "true" or value == "false" or
          value == "yes" or value == "no" or value == "~" or
-         (type (value) ~= "number" and tonumber (value) ~= nil) then
+         (type (value) ~= "number" and tonumber (value) ~= nil) or
+         value == "" then
         style = "SINGLE_QUOTED"
       elseif value == math.huge then
 	value = ".inf"
@@ -437,6 +438,8 @@ local parser_mt = {
       -- Otherwise, implicit conversion according to value content.
       elseif self.event.style == "PLAIN" then
         if value == "~" then
+          value = null
+        elseif value == "" then
           value = null
         elseif istruthy[value] then
           value = true
