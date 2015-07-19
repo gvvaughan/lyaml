@@ -19,10 +19,61 @@ and [%YAML 1.1][yaml11] format strings.
 
 ```lua
 local lyaml   = require "lyaml"
-local t       = lyaml.load (YAML-STRING)
+local t       = lyaml.load (YAML-STRING, MULTI-DOC-BOOL [false])
 local yamlstr = lyaml.dump (LUA-TABLE)
 local null    = lyaml.null ()
 ```
+
+#### `lyaml.load`
+
+`lyaml.load` accepts a YAML string for parsing. If the YAML string contains
+multiple documents, only the first document will be returned by default. To
+return multiple documents as a table, pass `true` for the second argument.
+
+```lua
+lyaml.load("foo: bar")
+-- { foo = "bar" }
+
+lyaml.load("foo: bar", true)
+-- { { foo = "bar" } }
+
+multi_doc_yaml = [[
+---
+one
+...
+---
+two
+...
+]]
+
+lyaml.load(multi_doc_yaml)
+-- "one"
+
+lyaml.load(multi_doc_yaml, true)
+-- { "one", "two" }
+```
+
+#### `lyaml.dump`
+
+`lyaml.dump` accepts a table of values to dump. Each value in the table
+represents a single YAML document. To dump a table of lua values this means the
+table must be wrapped in another table (the outer table represents the YAML
+documents, the inner table is the data to dump).
+
+```lua
+lyaml.dump({ { foo = "bar" } })
+-- ---
+-- foo: bar
+-- ...
+
+lyaml.dump({ "one", "two" })
+-- --- one
+-- ...
+-- --- two
+-- ...
+```
+
+#### Nil Values
 
 [Lua] tables treat `nil` valued keys as if they were not there,
 where [YAML] explicitly supports `null` values (and keys!).  Lyaml
