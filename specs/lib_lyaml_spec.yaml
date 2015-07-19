@@ -13,7 +13,7 @@ specify lyaml:
 
   - context documents:
     - it writes an empty document:
-        expect (lyaml.dump {""}).to_match "^%-%-%-%s*\n%.%.%.%s*$"
+        expect (lyaml.dump {""}).to_match "^%-%-%-%s*''\n%.%.%.%s*$"
     - it writes consecutive documents:
         expect (lyaml.dump {"one", "two"}).
           to_match "^%-%-%-%s+one%s*\n%.%.%.%s*\n%-%-%-%s+two%s*\n%.%.%.%s*$"
@@ -42,6 +42,7 @@ specify lyaml:
         expect (lyaml.dump {"a string"}).to_be "--- a string\n...\n"
         expect (lyaml.dump {"'a string'"}).to_be "--- '''a string'''\n...\n"
         expect (lyaml.dump {"a\nmultiline\nstring"}).to_be "--- |-\n  a\n  multiline\n  string\n...\n"
+        expect (lyaml.dump {""}).to_be "--- ''\n...\n"
 
   - context sequences:
     - it writes a sequence:
@@ -49,8 +50,8 @@ specify lyaml:
 
   - context mappings:
     - it writes a mapping: |
-        expect (lyaml.dump {{a=1, b=2, c=3}}).
-          to_contain.all_of {"a: 1", "b: 2", "c: 3"}
+        expect (lyaml.dump {{a=1, b=2, c=3, d=""}}).
+          to_contain.all_of {"a: 1", "b: 2", "c: 3", "d: ''"}
 
   - context anchors and aliases:
     - before:
@@ -88,10 +89,10 @@ specify lyaml:
 
   - context documents:
     - it lyaml.loads an empty document:
-        expect (fn "---").to_equal {""}
-        expect (fn "---\n").to_equal {""}
-        expect (fn "---\n...").to_equal {""}
-        expect (fn "---\n...\n").to_equal {""}
+        expect (fn "---").to_equal {lyaml.null}
+        expect (fn "---\n").to_equal {lyaml.null}
+        expect (fn "---\n...").to_equal {lyaml.null}
+        expect (fn "---\n...\n").to_equal {lyaml.null}
     - it lyaml.loads multiple documents:
         expect (fn "one\n---\ntwo").to_equal {"one", "two"}
         expect (fn "---\none\n---\ntwo").to_equal {"one", "two"}
@@ -99,17 +100,17 @@ specify lyaml:
         expect (fn "---\none\n...\n---\ntwo\n...").to_equal {"one", "two"}
     - it reports an empty document:
         expect (fn "---\n---\ntwo\n---").
-          to_equal {"", "two", ""}
+          to_equal {lyaml.null, "two", lyaml.null}
         expect (fn "---\n...\n---\ntwo\n---").
-          to_equal {"", "two", ""}
+          to_equal {lyaml.null, "two", lyaml.null}
         expect (fn "---\n...\n---\ntwo\n...\n---").
-          to_equal {"", "two", ""}
+          to_equal {lyaml.null, "two", lyaml.null}
         expect (fn "---\n...\n---\ntwo\n...\n---\n...").
-          to_equal {"", "two", ""}
+          to_equal {lyaml.null, "two", lyaml.null}
 
   - context version directive:
     - it recognizes version number:
-        expect (fn "%YAML 1.1\n---").to_equal {""}
+        expect (fn "%YAML 1.1\n---").to_equal {lyaml.null}
     - it diagneses missing document start:
         expect (fn "%YAML 1.1").
           to_error "expected <document start>"
@@ -136,7 +137,8 @@ specify lyaml:
 
   - context scalars:
     - it recognizes null: '
-        expect (fn "~").to_equal {lyaml.null}'
+        expect (fn "~").to_equal {lyaml.null}
+        expect (fn "foo: ").to_equal {{foo = lyaml.null}}'
     - it recognizes booleans: '
         expect (fn "yes").to_equal {true}
         expect (fn "true").to_equal {true}
@@ -167,6 +169,8 @@ specify lyaml:
         expect (fn "a string").to_equal {"a string"}
         expect (fn "'''a string'''").to_equal {"'a string'"}
         expect (fn "|-\n  a\n  multiline\n  string").to_equal {"a\nmultiline\nstring"}
+        expect (fn "''").to_equal {""}
+        expect (fn '""').to_equal {""}
 
     - context global tags:
       - it recognizes !!null:
@@ -215,8 +219,8 @@ specify lyaml:
 
   - context sequences:
      - it recognizes block sequences:
-         expect (fn "- ~\n- true\n- 42").
-           to_equal {{lyaml.null, true, 42}}
+         expect (fn "- ~\n- \n- true\n- 42").
+           to_equal {{lyaml.null, lyaml.null, true, 42}}
      - it recognizes flow sequences:
          expect (fn "[~, true, 42]").
            to_equal {{lyaml.null, true, 42}}
