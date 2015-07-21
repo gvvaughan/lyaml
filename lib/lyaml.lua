@@ -3,38 +3,73 @@
 --
 -- Copyright (c) 2013-2015 Gary V. Vaughan
 --
--- Permission is hereby granted, free of charge, to any person obtaining a
--- copy of this software and associated documentation files (the "Software"),
--- to deal in the Software without restriction, including without limitation
--- the rights to use, copy, modify, merge, publish, distribute, sublicense,
--- and/or sell copies of the Software, and to permit persons to whom the
--- Software is furnished to do so, subject to the following conditions:
+-- Permission is hereby granted, free of charge, to any person obtaining
+-- a copy of this software and associated documentation files (the
+-- "Software"), to deal in the Software without restriction, including
+-- without limitation the rights to use, copy, modify, merge, publish,
+-- distribute, sublicense, and/or sell copies of the Software, and to
+-- permit persons to whom the Software is furnished to do so, subject to
+-- the following conditions:
 --
--- The above copyright notice and this permission notice shall be included in
--- all copies or substantial portions of the Software.
+-- The above copyright notice and this permission notice shall be
+-- included in all copies or substantial portions of the Software.
 --
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
--- THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
--- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
--- DEALINGS IN THE SOFTWARE.
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+-- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+-- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+-- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+-- CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+-- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+-- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --
--- Portions of this software were inspired by an earlier LibYAML binding by
--- Andrew Danforth <acd@weirdness.net>
+-- Portions of this software were inspired by an earlier LibYAML binding
+-- by Andrew Danforth <acd@weirdness.net>
 
 
-local yaml = require "yaml"
+local yaml       = require "yaml"
+local explicit   = require "lyaml.explicit"
+local implicit   = require "lyaml.implicit"
+local functional = require "lyaml.functional"
+
+local anyof, id, isnull =
+  functional.anyof, functional.id, functional.isnull
 
 
+local NULL       = functional.NULL
 local TAG_PREFIX = "tag:yaml.org,2002:"
 
-local null = setmetatable ({}, { _type = "LYAML null" })
 
-local function isnull (x)
-  return (getmetatable (x) or {})._type == "LYAML null"
+local function tag (name)
+  return TAG_PREFIX .. name
 end
+
+
+local default = {
+  -- Tag table to lookup explicit scalar conversions.
+  explicit_scalar = {
+    [tag "bool"]  = explicit.bool,
+    [tag "float"] = explicit.float,
+    [tag "int"]   = explicit.int,
+    [tag "null"]  = explicit.null,
+    [tag "str"]   = explicit.str,
+  },
+  -- Order is important, so we put most likely and fastest nearer
+  -- the top to reduce average number of comparisons and funcalls.
+  implicit_scalar = anyof {
+    implicit.null,
+    implicit.octal,	-- subset of decimal, must come earlier
+    implicit.decimal,
+    implicit.float,
+    implicit.bool,
+    implicit.inf,
+    implicit.nan,
+    implicit.hexadecimal,
+    implicit.binary,
+    implicit.sexagesimal,
+    implicit.sexfloat,
+    id,
+  },
+}
 
 
 -- Metatable for Dumper objects.
@@ -202,29 +237,6 @@ local function dump (documents, anchors)
   return stream
 end
 
-local istruthy = {
-  y = true, Y = true, yes = true, Yes = true, YES = true,
-  ["true"] = true, True = true, TRUE = true,
-  on = true, On = true, ON = true,
-}
-
-
-local isfalsey = {
-  n = true, N = true, no = true, No = true, NO = true,
-  ["false"] = true, False = true, FALSE = true,
-  off = true, Off = true, OFF = true,
-}
-
-
-local isnan = {
-  [".nan"] = true, [".NaN"] = true, [".NAN"] = true,
-}
-
-
-local isinf = {
-  [".inf"] = true, [".Inf"] = true, [".INF"] = true,
-}
-
 
 -- Metatable for Parser objects.
 local parser_mt = {
@@ -322,135 +334,22 @@ local parser_mt = {
       return sequence
     end,
 
-    -- Construct a Lua float from the current event, or return nil.
-    load_float = function (self)
-      local value = self.event.value
-
-      if tonumber (value) then return tonumber (value) end
-
-      if isnan[value] then return 0/0 end
-
-      local sign = 1
-      if (value:match "^%+") then
-	value = (value:match "^%+(.*)$")
-      elseif (value:match "^%-") then
-	sign, value = -1, (value:match "^%-(.*)$")
-      end
-
-      if isinf[value] then return sign * math.huge end
-
-      value = value:gsub ("_", "")
-      if tonumber (value) then return sign * tonumber (value) end
-
-      -- sexagesimal, for times and angles, e.g. 190:20:30.15
-      if value:match "^[0-9]+:[0-5]?[0-9][:0-9%.]*$" then
-	local float, first, rest = 0, "", value
-	repeat
-	  first, rest = rest:match "^([0-9]+):(.+)$"
-	  float = float * 60 + tonumber (first)
-        until (rest:match ":") == nil
-	return sign * (float * 60 + tonumber (rest))
-      end
-    end,
-
-    -- Construct a Lua integer from the current event, or return nil.
-    load_int = function (self)
-      local value = self.event.value
-
-      local sign = 1
-      if (value:match "^%+") then
-	value = (value:match "^%+(.*)$")
-      elseif (value:match "^%-") then
-	sign, value = -1, (value:match "^%-(.*)$")
-      end
-
-      value = value:gsub ("_", "")
-      if value == "0" then return sign * 0 end
-
-      -- binary, e.g. 0b1010_0111_0100_1010_1110
-      if value:match "^0b[01]+$" then
-        local int, first, rest = 0, "", value:match "^0b(.*)$"
-        repeat
-          first, rest = rest:match "^(.)(.*)$"
-          int = int * 2 + tonumber (first)
-        until rest == ""
-        return sign * int
-      end
-
-      -- octal, e.g. 0247
-      if value:match "^0[0-7]+$" then
-        local int, first, rest = 0, "", value:match "0(.*)$"
-        repeat
-          first, rest = rest:match "^(.)(.*)$"
-          int = int * 8 + tonumber (first)
-        until rest == ""
-        return sign * int
-      end
-
-      -- take care of decimal and 0x prefix hexadecimal
-      local int = tonumber (value)
-      if int and int % 1 == 0 then return sign * int end
-
-      -- sexagesimal, for times and angles, e.g. 190:20:30
-      if value:match "^[0-9]+:[0-5]?[0-9][:0-9]*$" then
-	local int, first, rest = 0, "", value
-	repeat
-	  first, rest = rest:match "^([0-9]+):(.+)$"
-	  int = int * 60 + tonumber (first)
-        until (rest:match ":") == nil
-	return sign * (int * 60 + tonumber (rest))
-      end
-    end,
-
     -- Construct a primitive type from the current event.
     load_scalar = function (self)
       local value = self.event.value
       local tag   = self.event.tag
+      local explicit = self.explicit_scalar[tag]
 
       -- Explicitly tagged values.
-      if tag then
-        tag = tag:match ("^" .. TAG_PREFIX .. "(.*)$")
-        if tag == "str" then
-          -- value is already a string
-	elseif tag == "null" then
-	  value = null
-        elseif tag == "int" then
-          value = self:load_int ()
-	  if not value then
-            self:error ("invalid %s value: '%s'",
-                        self.event.tag, self.event.value)
-	  end
-        elseif tag == "float" then
-	  value = self:load_float ()
-	  if not value then
-            self:error ("invalid %s value: '%s'",
-	                self.event.tag, self.event.value)
-	  end
-	  value = 0.0 + value
-        elseif tag == "bool" then
-	  if istruthy[value] == isfalsey[value] then
-            self:error ("invalid %s value: '%s'",
-	                self.event.tag, self.event.value)
-	  end
-          value = istruthy[value] == true
+      if explicit then
+	value = explicit (value)
+	if value == nil then
+          self:error ("invalid '%s' value: '%s'", tag, self.event.value)
         end
 
       -- Otherwise, implicit conversion according to value content.
       elseif self.event.style == "PLAIN" then
-        if value == "~" then
-          value = null
-        elseif value == "" then
-          value = null
-        elseif istruthy[value] then
-          value = true
-        elseif isfalsey[value] then
-          value = false
-	else
-          local float = self:load_float ()
-	  if float then value = 0.0 + float end
-        end
-	local int = self:load_int ()
-	if int then value = int end
+	value = self.implicit_scalar (self.event.value)
       end
       self:add_anchor (value)
       return value
@@ -486,19 +385,31 @@ local parser_mt = {
 
 
 -- Parser object constructor.
-local function Parser (s)
+local function Parser (s, opts)
   local object = {
-    anchors = {},
-    mark    = { line = 0, column = 0 },
-    next    = yaml.parser (s),
+    anchors         = {},
+    explicit_scalar = opts.explicit_scalar,
+    implicit_scalar = opts.implicit_scalar,
+    mark            = { line = 0, column = 0 },
+    next            = yaml.parser (s),
   }
   return setmetatable (object, parser_mt)
 end
 
 
-local function load (s, all)
+local function load (s, opts)
   local documents = {}
-  local parser    = Parser (s)
+  local all       = false
+
+  -- backwards compatibility
+  if opts == true then
+    opts = { all = true }
+  end
+
+  local parser = Parser (s, {
+    explicit_scalar = opts.explicit_scalar or default.explicit_scalar,
+    implicit_scalar = opts.implicit_scalar or default.implicit_scalar,
+  })
 
   if parser:parse () ~= "STREAM_START" then
     error ("expecting STREAM_START event, but got " .. parser:type (), 2)
@@ -521,7 +432,7 @@ local function load (s, all)
     parser.anchors = {}
   end
 
-  return all and documents or documents[1]
+  return opts.all and documents or documents[1]
 end
 
 
@@ -532,7 +443,7 @@ end
 local M = {
   dump      = dump,
   load      = load,
-  null      = null,
+  null      = NULL,
   _VERSION  = yaml.version,
 }
 

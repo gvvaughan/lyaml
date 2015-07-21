@@ -140,10 +140,8 @@ specify lyaml:
         expect (fn "~").to_equal {lyaml.null}
         expect (fn "foo: ").to_equal {{foo = lyaml.null}}'
     - it recognizes booleans: '
-        expect (fn "yes").to_equal {true}
         expect (fn "true").to_equal {true}
-        expect (fn "false").to_equal {false}
-        expect (fn "no").to_equal {false}'
+        expect (fn "false").to_equal {false}'
     - it recognizes integers:
         expect (fn "0b0010_1001_1010").to_equal {666}
         expect (fn "+0b001_010_011_010").to_equal {666}
@@ -183,7 +181,7 @@ specify lyaml:
           expect (fn '!!bool "no"').to_equal {false}
           expect (fn '!!bool false').to_equal {false}
           expect (fn '!!bool garbage').
-            to_raise "invalid tag:yaml.org,2002:bool value: 'garbage'"
+            to_raise "invalid 'tag:yaml.org,2002:bool' value: 'garbage'"
       - it recognizes !!float: |
           expect (fn '!!float 42').to_equal {42.0}
           expect (fn '!!float "42"').to_equal {42.0}
@@ -199,7 +197,7 @@ specify lyaml:
           nant = fn '!!float .NaN'
           expect (nant[1]).not_to_equal (nant[1])
           expect (fn '!!float garbage').
-            to_raise "invalid tag:yaml.org,2002:float value: 'garbage'"
+            to_raise "invalid 'tag:yaml.org,2002:float' value: 'garbage'"
       - it recognizes !!int: |
           expect (fn '!!int 0b0010_1001_1010').to_equal {666}
           expect (fn '!!int "+0b001_010_011_010"').to_equal {666}
@@ -213,9 +211,9 @@ specify lyaml:
           expect (fn '!!int 12_345_678').to_equal {12345678}
           expect (fn '!!int 11:6').to_equal {666}
           expect (fn '!!int 12.3').
-            to_raise "invalid tag:yaml.org,2002:int value: '12.3'"
+            to_raise "invalid 'tag:yaml.org,2002:int' value: '12.3'"
           expect (fn '!!int garbage').
-            to_raise "invalid tag:yaml.org,2002:int value: 'garbage'"
+            to_raise "invalid 'tag:yaml.org,2002:int' value: 'garbage'"
 
   - context sequences:
      - it recognizes block sequences:
@@ -247,11 +245,11 @@ specify lyaml:
            to_equal {{null = lyaml.null, boolean = true, number = 3.14}}
      - it supports merge keys:
          - before: |
-             YAML = '- &MERGE {x: 1, "y": 2}\n- &OVERRIDE {x: 0, z: 2}\n'
+             YAML = '- &MERGE {x: 1, y: 2}\n- &OVERRIDE {x: 0, z: 2}\n'
          - context with invalid merge event: |
              expect (fn ('-\n  !!merge : {x: 1, "y": 2}\n  z: 3')).
                to_raise "invalid 'tag:yaml.org,2002:merge' event: MAPPING_START"
-             expect (fn ('-\n  <<: {x: 1, "y": 2}\n  z: 3')).
+             expect (fn ('-\n  <<: {x: 1, y: 2}\n  z: 3')).
                to_raise "invalid '<<' event: MAPPING_START"
          - context with invalid merge alias: |
              expect (fn (YAML .. '-\n  !!merge : [*MERGE, OVERRIDE]')).
