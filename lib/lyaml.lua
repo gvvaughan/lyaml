@@ -25,6 +25,8 @@
 -- Portions of this software were inspired by an earlier LibYAML binding
 -- by Andrew Danforth <acd@weirdness.net>
 
+--- @module lyaml
+
 
 local yaml       = require "yaml"
 local explicit   = require "lyaml.explicit"
@@ -35,7 +37,10 @@ local anyof, id, isnull =
   functional.anyof, functional.id, functional.isnull
 
 
-local NULL       = functional.NULL
+--- `lyaml.null` value.
+-- @table null
+local null       = functional.NULL
+
 local TAG_PREFIX = "tag:yaml.org,2002:"
 
 
@@ -227,6 +232,10 @@ local function Dumper (anchors)
 end
 
 
+--- Dump a list of Lua tables to an equivalent YAML stream.
+-- @tparam table documents a sequence of Lua tables.
+-- @tparam[opt] table anchors initial document anchors
+-- @treturn string equivalest YAML stream
 local function dump (documents, anchors)
   local dumper = Dumper (anchors)
   dumper:emit { type = "STREAM_START", encoding = "UTF8" }
@@ -397,6 +406,17 @@ local function Parser (s, opts)
 end
 
 
+--- Loader options table.
+-- @table loader_opts
+-- @field all load all documents from the stream
+-- @field explicit_scalar map full tag-names to tag parser functions
+-- @field implicit_scalar a function to parse implicit scalar values
+
+
+--- Load a YAML stream into a Lua table.
+-- @tparam string s YAML stream
+-- @tparam[opt] loader_opts opts initialisation options
+-- @treturn table Lua table equivalent of stream *s*
 local function load (s, opts)
   local documents = {}
   local all       = false
@@ -440,11 +460,14 @@ end
 --[[ Public Interface. ]]--
 --[[ ----------------- ]]--
 
-local M = {
+
+--- @export
+return {
   dump      = dump,
   load      = load,
-  null      = NULL,
+  null      = null,
+
+  --- Underlying libyaml version.
+  -- @table _VERSION
   _VERSION  = yaml.version,
 }
-
-return M

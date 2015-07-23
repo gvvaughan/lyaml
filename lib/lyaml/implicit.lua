@@ -22,10 +22,18 @@
 -- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+--- @module lyaml.implicit
+
 
 local NULL = require "lyaml.functional".NULL
 
 
+
+--- Parse a null token to a null value.
+-- @param value token
+-- @return[1] lyaml.null, for an empty string or literal ~
+-- @return[2] nil otherwise, nil
+-- @usage maybe_null = implicit.null (token)
 local function null (value)
   if value == "~" or value == "" then
     return NULL
@@ -43,12 +51,23 @@ local to_bool = {
 }
 
 
+--- Parse a boolean token to the equivalent value.
+-- Treats capilalized, lower and upper-cased variants of true/false,
+-- yes/no or on/off tokens as boolean `true` and `false` values.
+-- @param value token
+-- @treturn[1] bool if a valid boolean token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_bool = implicit.bool (token)
 local function bool (value)
   return to_bool[value]
 end
 
 
--- binary, e.g. 0b1010_0111_0100_1010_1110
+--- Parse a binary token, such as "0b1010\_0111\_0100\_1010\_1110".
+-- @tparam string value token
+-- @treturn[1] int integer equivalent, if a valid token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_int = implicit.binary (value)
 local function binary (value)
   local r
   value:gsub ("^([+-]?)0b_*([01][01_]+)$", function (sign, rest)
@@ -62,7 +81,11 @@ local function binary (value)
 end
 
 
--- octal, e.g. 012345
+--- Parse an octal token, such as "012345".
+-- @tparam string value token
+-- @treturn[1] int integer equivalent, if a valid token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_int = implicit.octal (value)
 local function octal (value)
   local r
   value:gsub ("^([+-]?)0_*([0-7][0-7_]*)$", function (sign, rest)
@@ -76,7 +99,11 @@ local function octal (value)
 end
 
 
--- decimal, e.g. 0, or 12345
+--- Parse a decimal token, such as "0" or "12345".
+-- @tparam string value token
+-- @treturn[1] int integer equivalent, if a valid token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_int = implicit.decimal (value)
 local function decimal (value)
   local r
   value:gsub ("^([+-]?)_*([0-9][0-9_]*)$", function (sign, rest)
@@ -90,7 +117,11 @@ local function decimal (value)
 end
 
 
--- hexadecimal, eg. 0xdeadbeef
+--- Parse a hexadecimal token, such as "0xdeadbeef".
+-- @tparam string value token
+-- @treturn[1] int integer equivalent, if a valid token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_int = implicit.hexadecimal (value)
 local function hexadecimal (value)
   local r
   value:gsub ("^([+-]?)(0x_*[0-9a-fA-F][0-9a-fA-F_]*)$",
@@ -104,7 +135,12 @@ local function hexadecimal (value)
 end
 
 
--- sexagesimal, for times and angles, e.g. 190:20:30
+--- Parse a sexagesimal token, such as "190:20:30".
+-- Useful for times and angles.
+-- @tparam string value token
+-- @treturn[1] int integer equivalent, if a valid token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_int = implicit.sexagesimal (value)
 local function sexagesimal (value)
   local r
   value:gsub ("^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)$", function (sign, rest)
@@ -123,6 +159,11 @@ local isnan = {
 }
 
 
+--- Parse a `nan` token.
+-- @tparam string value token
+-- @treturn[1] nan not-a-number, if a valid token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_nan = implicit.nan (value)
 local function nan (value)
   if isnan[value] then return 0/0 end
 end
@@ -135,18 +176,33 @@ local isinf = {
 }
 
 
+--- Parse a signed `inf` token.
+-- @tparam string value token
+-- @treturn[1] number plus/minus-infinity, if a valid token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_inf = implicit.inf (value)
 local function inf (value)
   return isinf[value]
 end
 
 
+--- Parse a floating point number token, such as "1e-3" or "-0.12".
+-- @tparam string value token
+-- @treturn[1] number float equivalent, if a valid token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_float = implicit.float (value)
 local function float (value)
   local r = tonumber ((value:gsub ("_", "")))
   if r and value:find "[%.eE]" then return r end
 end
 
 
--- sexagesimal float, for times and angles, e.g. 190:20:30.15
+--- Parse a sexagesimal float, such as "190:20:30.15".
+-- Useful for times and angles.
+-- @tparam string value token
+-- @treturn[1] number float equivalent, if a valid token was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_float = implicit.sexfloat (value)
 local function sexfloat (value)
   local r
   value:gsub ("^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)(%.[0-9]+)$",
@@ -163,6 +219,7 @@ local function sexfloat (value)
 end
 
 
+--- @export
 return {
   binary      = binary,
   decimal     = decimal,

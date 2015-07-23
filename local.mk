@@ -47,6 +47,10 @@ update_copyright_env = \
 	UPDATE_COPYRIGHT_USE_INTERVALS=1 \
 	UPDATE_COPYRIGHT_FORCE=1
 
+
+dist_doc_DATA		=
+dist_docmodules_DATA	=
+
 include specs/specs.mk
 
 
@@ -87,3 +91,41 @@ MKROCKSPECS_ENV = $(LUA_ENV)
 
 # Make sure yaml is built before calling mkrockspecs.
 $(package_rockspec) $(scm_rockspec): $(lib_LTLIBRARIES)
+
+
+## ------------- ##
+## Distribution. ##
+## ------------- ##
+
+EXTRA_DIST +=				\
+	build-aux/config.ld.in		\
+	$(NOTHING_ELSE)
+
+
+## -------------- ##
+## Documentation. ##
+## -------------- ##
+
+docmodulesdir = $(srcdir)/doc/modules/lyaml
+
+dist_doc_DATA +=				\
+	$(srcdir)/doc/index.html		\
+	$(srcdir)/doc/ldoc.css			\
+	$(NOTHING_ELSE)
+
+dist_docmodules_DATA +=				\
+	$(docmodules).html			\
+	$(docmodules).explicit.html		\
+	$(docmodules).functional.html		\
+	$(docmodules).implicit.html		\
+	$(NOTHING_ELSE)
+
+
+## Parallel make gets confused when one command ($(LDOC)) produces
+## multiple targets (all the html files above), so use the presence
+## of the doc directory as a sentinel file.
+$(dist_doc_DATA) $(dist_docmodules_DATA): $(srcdir)/doc
+
+$(srcdir)/doc: $(dist_lua_DATA) $(dist_lualyaml_DATA)
+	test -d $@ || mkdir $@
+	$(LDOC) -c build-aux/config.ld -d $(abs_srcdir)/doc .

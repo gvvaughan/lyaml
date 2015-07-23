@@ -22,6 +22,8 @@
 -- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+--- @module lyaml.explicit
+
 local functional = require "lyaml.functional"
 local implicit   = require "lyaml.implicit"
 
@@ -35,12 +37,22 @@ local yn = {
 }
 
 
-local to_bool = anyof {
+--- Parse the value following an explicit `!!bool` tag.
+-- @function bool
+-- @param value token
+-- @treturn[1] bool boolean equivalent, if a valid value was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_bool = explicit.bool (tagarg)
+local bool = anyof {
   implicit.bool,
   function (x) return yn[x] end,
 }
 
 
+--- Return a function that converts integer results to equivalent float.
+-- @tparam function fn token parsing function
+-- @treturn function new function that converts int results to float
+-- @usage maybe_float = maybefloat (implicit.decimal) (tagarg)
 local function maybefloat (fn)
   return function (...)
     local r = fn (...)
@@ -51,7 +63,13 @@ local function maybefloat (fn)
 end
 
 
-local to_float = anyof {
+--- Parse the value following an explicit `!!float` tag.
+-- @function float
+-- @param value token
+-- @treturn[1] number float equivalent, if a valid value was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_float = explicit.float (tagarg)
+local float = anyof {
   implicit.float,
   implicit.nan,
   implicit.inf,
@@ -63,7 +81,13 @@ local to_float = anyof {
 }
 
 
-local to_int = anyof {
+--- Parse the value following an explicit `!!int` tag.
+-- @function int
+-- @param value token
+-- @treturn[1] int integer equivalent, if a valid value was recognized
+-- @treturn[2] nil otherwise, nil
+-- @usage maybe_int = explicit.int (tagarg)
+local int = anyof {
   implicit.octal,
   implicit.decimal,
   implicit.hexadecimal,
@@ -72,10 +96,27 @@ local to_int = anyof {
 }
 
 
+--- Parse an explicit `!!null` tag.
+-- @treturn lyaml.null
+-- @usage null = explicit.null (tagarg)
+local function null ()
+  return NULL
+end
+
+
+--- Parse the value following an explicit `!!str` tag.
+-- @function str
+-- @tparam string value token
+-- @treturn string *value* which was a string already
+-- @usage tagarg = explicit.str (tagarg)
+local str = id
+
+
+--- @export
 return {
-  bool  = to_bool,
-  float = to_float,
-  int   = to_int,
-  null  = function () return NULL end,
-  str   = id,
+  bool  = bool,
+  float = float,
+  int   = int,
+  null  = null,
+  str   = str,
 }

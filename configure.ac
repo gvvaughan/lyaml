@@ -3,23 +3,25 @@ dnl Written by Gary V. Vaughan, 2013
 dnl
 dnl Copyright (C) 2013-2015 Gary V. Vaughan
 dnl
-dnl Permission is hereby granted, free of charge, to any person obtaining a copy
-dnl of this software and associated documentation files (the "Software"), to deal
-dnl in the Software without restriction, including without limitation the rights
-dnl to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-dnl copies of the Software, and to permit persons to whom the Software is
-dnl furnished to do so, subject to the following conditions:
+dnl Permission is hereby granted, free of charge, to any person obtaining
+dnl a copy of this software and associated documentation files (the
+dnl "Software"), to deal
+dnl in the Software without restriction, including without limitation the
+dnl rights to use, copy, modify, merge, publish, distribute, sublicense,
+dnl and/or sell copies of the Software, and to permit persons to whom the
+dnl Software is furnished to do so, subject to the following conditions:
 dnl
-dnl The above copyright notice and this permission notice shall be included in
-dnl all copies or substantial portions of the Software.
+dnl The above copyright notice and this permission notice shall be
+dnl included in all copies or substantial portions of the Software.
 dnl
-dnl THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-dnl IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-dnl FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-dnl AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-dnl LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-dnl OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-dnl THE SOFTWARE.
+dnl THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+dnl EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+dnl MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+dnl NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+dnl BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+dnl ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+dnl CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+dnl SOFTWARE.
 
 AC_PREREQ([2.68])
 
@@ -48,6 +50,7 @@ AC_SUBST(LIBTOOL_DEPS)
 
 dnl Check for programs
 AC_PROG_CC
+AC_PATH_PROG([LDOC], [ldoc], [:])
 AC_PATH_PROG([SPECL], [specl], [:])
 AX_PROG_LUA(5.1, 5.4)
 AX_LUA_HEADERS
@@ -62,5 +65,5 @@ AC_SEARCH_LIBS([yaml_document_initialize], [yaml], [], [
 
 dnl Generate output files
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile build-aux/config.ld])
 AC_OUTPUT
