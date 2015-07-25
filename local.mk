@@ -48,15 +48,21 @@ update_copyright_env = \
 	UPDATE_COPYRIGHT_FORCE=1
 
 
+## ------------- ##
+## Declarations. ##
+## ------------- ##
+
+modulesdir		= $(docdir)/modules
+
 dist_doc_DATA		=
-dist_docmodules_DATA	=
+dist_modules_DATA	=
 
 include specs/specs.mk
 
 
-## ------------- ##
-## Declarations. ##
-## ------------- ##
+## ------ ##
+## Build. ##
+## ------ ##
 
 luaexec_LTLIBRARIES += ext/yaml/yaml.la
 
@@ -106,18 +112,16 @@ EXTRA_DIST +=				\
 ## Documentation. ##
 ## -------------- ##
 
-docmodulesdir = $(srcdir)/doc/modules/lyaml
-
 dist_doc_DATA +=				\
-	$(srcdir)/doc/index.html		\
-	$(srcdir)/doc/ldoc.css			\
+	doc/index.html				\
+	doc/ldoc.css				\
 	$(NOTHING_ELSE)
 
-dist_docmodules_DATA +=				\
-	$(docmodules).html			\
-	$(docmodules).explicit.html		\
-	$(docmodules).functional.html		\
-	$(docmodules).implicit.html		\
+dist_modules_DATA +=				\
+	doc/modules/lyaml.html			\
+	doc/modules/lyaml.explicit.html		\
+	doc/modules/lyaml.functional.html	\
+	doc/modules/lyaml.implicit.html		\
 	$(NOTHING_ELSE)
 
 
@@ -128,4 +132,9 @@ $(dist_doc_DATA) $(dist_docmodules_DATA): $(srcdir)/doc
 
 $(srcdir)/doc: $(dist_lua_DATA) $(dist_lualyaml_DATA)
 	test -d $@ || mkdir $@
+if HAVE_LDOC
 	$(LDOC) -c build-aux/config.ld -d $(abs_srcdir)/doc .
+else
+	$(MKDIR_P) doc
+	touch doc/index.html doc/ldoc.css
+endif
