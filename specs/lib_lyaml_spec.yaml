@@ -141,8 +141,14 @@ specify lyaml:
         expect (fn "foo: ").to_equal {{foo = lyaml.null}}'
     - it recognizes booleans: '
         expect (fn "true").to_equal {true}
-        expect (fn "false").to_equal {false}'
+        expect (fn "false").to_equal {false}
+        expect (fn "yes").to_equal {true}
+        expect (fn "no").to_equal {false}'
+    - it loads bare y and n as strings:
+        expect (fn "y").to_equal {"y"}
+        expect (fn "n").to_equal {"n"}
     - it recognizes integers:
+        expect (fn "0b001010011010").to_equal {666}
         expect (fn "0b0010_1001_1010").to_equal {666}
         expect (fn "+0b001_010_011_010").to_equal {666}
         expect (fn "-0b0010_1001_1010").to_equal {-666}
@@ -167,6 +173,7 @@ specify lyaml:
         expect (fn "a string").to_equal {"a string"}
         expect (fn "'''a string'''").to_equal {"'a string'"}
         expect (fn "|-\n  a\n  multiline\n  string").to_equal {"a\nmultiline\nstring"}
+        expect (fn "'yes'").to_equal {"yes"}
         expect (fn "''").to_equal {""}
         expect (fn '""').to_equal {""}
 
@@ -174,14 +181,27 @@ specify lyaml:
       - it recognizes !!null:
           expect (fn "!!null").to_equal {lyaml.null}
       - it recognizes !!bool: |
+          expect (fn '!!bool "true"').to_equal {true}
           expect (fn '!!bool true').to_equal {true}
-          expect (fn '!!bool "yes"').to_equal {true}
-          expect (fn '!!bool Y').to_equal {true}
-          expect (fn '!!bool N').to_equal {false}
-          expect (fn '!!bool "no"').to_equal {false}
+          expect (fn '!!bool True').to_equal {true}
+          expect (fn '!!bool TRUE').to_equal {true}
+          expect (fn "!!bool 'false'").to_equal {false}
           expect (fn '!!bool false').to_equal {false}
+          expect (fn '!!bool False').to_equal {false}
+          expect (fn '!!bool FALSE').to_equal {false}
+          expect (fn '!!bool "yes"').to_equal {true}
+          expect (fn "!!bool 'Yes'").to_equal {true}
+          expect (fn '!!bool YES').to_equal {true}
+          expect (fn '!!bool no').to_equal {false}
+          expect (fn "!!bool 'No'").to_equal {false}
+          expect (fn '!!bool "NO"').to_equal {false}
           expect (fn '!!bool garbage').
             to_raise "invalid 'tag:yaml.org,2002:bool' value: 'garbage'"
+      - it loads explicit y and n as booleans:
+          expect (fn '!!bool Y').to_equal {true}
+          expect (fn '!!bool y').to_equal {true}
+          expect (fn '!!bool N').to_equal {false}
+          expect (fn '!!bool n').to_equal {false}
       - it recognizes !!float: |
           expect (fn '!!float 42').to_equal {42.0}
           expect (fn '!!float "42"').to_equal {42.0}
