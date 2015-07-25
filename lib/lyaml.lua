@@ -467,7 +467,7 @@ return {
   load      = load,
   null      = null,
 
-  --- Underlying libyaml version.
+  --- Version number from yaml C binding.
   -- @table _VERSION
   _VERSION  = yaml.version,
 }
