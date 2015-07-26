@@ -165,10 +165,8 @@ local dumper_mt = {
       local anchor = self:get_anchor (value)
       local itsa = type (value)
       local style = "PLAIN"
-      if value == "true" or value == "false" or
-         value == "yes" or value == "no" or value == "~" or
-         (type (value) ~= "number" and tonumber (value) ~= nil) or
-         value == "" then
+      if itsa == "string" and self.implicit_scalar (value) ~= value then
+	-- take care to round-trip strings that look like scalars
         style = "SINGLE_QUOTED"
       elseif value == math.huge then
 	value = ".inf"
@@ -220,24 +218,42 @@ local dumper_mt = {
 
 
 -- Emitter object constructor.
-local function Dumper (anchors)
-  local t = {}
-  for k, v in pairs (anchors or {}) do t[v] = k end
+local function Dumper (opts)
+  local anchors = {}
+  for k, v in pairs (opts.anchors) do anchors[v] = k end
   local object = {
-    anchors = t,
-    aliased = {},
-    emitter = yaml.emitter (),
+    aliased         = {},
+    anchors         = anchors,
+    emitter         = yaml.emitter (),
+    implicit_scalar = opts.implicit_scalar,
   }
   return setmetatable (object, dumper_mt)
 end
 
 
+--- Dump options table.
+-- @table dumper_opts
+-- @tfield table anchors map initial anchor names to values
+-- @tfield function implicit_scalar parse implicit scalar values
+
+
 --- Dump a list of Lua tables to an equivalent YAML stream.
 -- @tparam table documents a sequence of Lua tables.
--- @tparam[opt] table anchors initial document anchors
+-- @tparam[opt] dumper_opts opts initialisation options
 -- @treturn string equivalest YAML stream
-local function dump (documents, anchors)
-  local dumper = Dumper (anchors)
+local function dump (documents, opts)
+  opts = opts or {}
+
+  -- backwards compatibility
+  if opts.anchors == nil and opts.implicit_scalar == nil then
+    opts = { anchors = opts }
+  end
+
+  local dumper = Dumper {
+    anchors         = opts.anchors or {},
+    implicit_scalar = opts.implicit_scalar or default.implicit_scalar,
+  }
+
   dumper:emit { type = "STREAM_START", encoding = "UTF8" }
   for _, document in ipairs (documents) do
     dumper:dump_document (document)
@@ -409,11 +425,11 @@ local function Parser (s, opts)
 end
 
 
---- Loader options table.
+--- Load options table.
 -- @table loader_opts
--- @field all load all documents from the stream
--- @field explicit_scalar map full tag-names to tag parser functions
--- @field implicit_scalar a function to parse implicit scalar values
+-- @tfield boolean all load all documents from the stream
+-- @tfield table explicit_scalar map full tag-names to parser functions
+-- @tfield function implicit_scalar parse implicit scalar values
 
 
 --- Load a YAML stream into a Lua table.
@@ -421,6 +437,7 @@ end
 -- @tparam[opt] loader_opts opts initialisation options
 -- @treturn table Lua table equivalent of stream *s*
 local function load (s, opts)
+  opts = opts or {}
   local documents = {}
   local all       = false
 

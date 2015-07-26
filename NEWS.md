@@ -87,6 +87,26 @@
     document as an `lyaml.null` reference, identical to the "~"
     shorthand syntax, according to [the specification][nullspec].
 
+### Incompatible Changes
+
+  - `lyaml.load` now takes a table of options as an optional second
+    argument, not a simple boolean to determine whether all documents
+    should be returned from the stream.  For now, a `true` second
+    argument will be converted to the modern equivalent:
+
+    ```lua
+    lyaml.load (document, { all = true })
+    ```
+
+  - `lyaml.dump` now takes a table of options as an optional second
+    argument, not an initial table of anchors.  For now, a second
+    argument without any new API keys will be converted to the modern
+    equivalent:
+
+    ```lua
+    lyaml.dump (t, { anchors = arg2 })
+    ```
+
 [boolspec]:  http://yaml.org/type/bool.html
 [floatspec]: http://yaml.org/type/float.html
 [intspec]:   http://yaml.org/type/int.html

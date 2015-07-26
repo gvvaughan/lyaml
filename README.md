@@ -20,7 +20,7 @@ and [%YAML 1.1][yaml11] format strings.
 ```lua
 local lyaml   = require "lyaml"
 local t       = lyaml.load (YAML-STRING, [OPTS-TABLE])
-local yamlstr = lyaml.dump (LUA-TABLE)
+local yamlstr = lyaml.dump (LUA-TABLE, [OPTS-TABLE])
 local null    = lyaml.null ()
 ```
 
@@ -67,9 +67,9 @@ from the `lyaml.explicit` module.
 #### `lyaml.dump`
 
 `lyaml.dump` accepts a table of values to dump. Each value in the table
-represents a single YAML document. To dump a table of lua values this means the
-table must be wrapped in another table (the outer table represents the YAML
-documents, the inner table is the data to dump).
+represents a single YAML document. To dump a table of lua values this means
+the table must be wrapped in another table (the outer table represents the
+YAML documents, the inner table is the single document table to dump).
 
 ```lua
 lyaml.dump({ { foo = "bar" } })
@@ -83,6 +83,12 @@ lyaml.dump({ "one", "two" })
 --> --- two
 --> ...
 ```
+
+If you need to round-trip load a dumped document, and you used a custom
+function for converting implicit scalars, then you should pass that same
+function in the `implicit_scalar` field of the OPTS-TABLE argument to
+`lyaml.dump` so that it can quote strings that might otherwise be
+implicitly converted on reload.
 
 #### Nil Values
 
