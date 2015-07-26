@@ -283,32 +283,6 @@ local parser_mt = {
       return self:type ()
     end,
 
-    -- Merge map aliases into the current map.
-    merge_map = function (self, map, tag)
-      local event = self:parse ()
-      if event == "ALIAS" then
-	for k, v in pairs (self:load_alias ()) do
-	  if map[k] == nil then map[k] = v end
-        end
-      elseif event == "SEQUENCE_START" then
-        while true do
-          local event = self:parse ()
-          if event == "SEQUENCE_END" then break end
-	  if event == "ALIAS" then
-	    for k, v in pairs (self:load_alias ()) do
-	      if map[k] == nil then map[k] = v end
-            end
-          elseif event == "SCALAR" then
-            self:error ("invalid '%s' alias: %s", tag, self.event.value)
-	  else
-            self:error ("invalid '%s' event: %s", tag, self:type ())
-          end
-        end
-      else
-        self:error ("invalid '%s' event: %s", tag, self:type ())
-      end
-    end,
-
     -- Construct a Lua hash table from following events.
     load_map = function (self)
       local map = {}
@@ -319,7 +293,36 @@ local parser_mt = {
 	if tag then tag = tag:match ("^" .. TAG_PREFIX .. "(.*)$") end
         if key == nil then break end
 	if key == "<<" or tag == "merge" then
-	  self:merge_map (map, self.event.tag or "<<")
+	  tag = self.event.tag or key
+	  local node, event = self:load_node ()
+	  if event == "ALIAS" then
+	    if type (node) ~= "table" then
+              self:error ("invalid '%s' merge event: %s",
+	                  tag, tostring (node))
+	    end
+	    for k, v in pairs (node) do
+	      if map[k] == nil then map[k] = v end
+	    end
+
+	  elseif event == "MAPPING_END" then
+	    for k, v in pairs (node) do
+	      if map[k] == nil then map[k] = v end
+	    end
+
+	  elseif event == "SEQUENCE_END" then
+	    for i, merge in ipairs (node) do
+	      if type (merge) ~= "table" then
+		self:error ("invalid '%s' sequence element %d: %s",
+		            tag, i, tostring (merge))
+	      end
+	      for k, v in pairs (merge) do
+		if map[k] == nil then map[k] = v end
+              end
+	    end
+
+	  else
+	    self:error ("invalid '%s' event: %s", tag, self:type ())
+	  end
 	else
           local value, event = self:load_node ()
           if value == nil then
@@ -387,7 +390,7 @@ local parser_mt = {
       if dispatch[event] == nil then
         self:error ("invalid event: %s", self:type ())
       end
-     return dispatch[event] (self)
+     return dispatch[event] (self), self:type ()
     end,
   },
 }

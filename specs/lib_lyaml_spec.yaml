@@ -263,28 +263,48 @@ specify lyaml:
      - it recognizes flow mapping: |
          expect (fn "{null: ~, boolean: yes, number: 3.14}").
            to_equal {{null = lyaml.null, boolean = true, number = 3.14}}
-     - it supports merge keys:
+     - context with merge keys:
          - before: |
-             YAML = '- &MERGE {x: 1, y: 2}\n- &OVERRIDE {x: 0, z: 2}\n'
-         - context with invalid merge event: |
-             expect (fn ('-\n  !!merge : {x: 1, "y": 2}\n  z: 3')).
-               to_raise "invalid 'tag:yaml.org,2002:merge' event: MAPPING_START"
-             expect (fn ('-\n  <<: {x: 1, y: 2}\n  z: 3')).
-               to_raise "invalid '<<' event: MAPPING_START"
-         - context with invalid merge alias: |
+             YAML = "- &MERGE {x: 1, y: 2}\n" ..
+                    "- &OVERRIDE {x: 0, z: 2}\n" ..
+                    "- &BOGUS true\n"
+         - it diagnoses invalid merge events: |
+             expect (fn "-\n  !!merge : x\n  z: 3").
+               to_raise "invalid 'tag:yaml.org,2002:merge' event: SCALAR"
+             expect (fn "-\n  << : x\n  z: 3").
+               to_raise "invalid '<<' event: SCALAR"
+         - it diagnoses invalid merge alias types: |
+             expect (fn (YAML .. "-\n !!merge : *BOGUS")).
+               to_raise "invalid 'tag:yaml.org,2002:merge' merge event: true"
+             expect (fn (YAML .. "-\n << : *BOGUS")).
+               to_raise "invalid '<<' merge event: true"
+         - it diagnoses invalid merge sequence elements: |
              expect (fn (YAML .. '-\n  !!merge : [*MERGE, OVERRIDE]')).
-               to_raise "invalid 'tag:yaml.org,2002:merge' alias: OVERRIDE"
+               to_raise "invalid 'tag:yaml.org,2002:merge' sequence element 2: OVERRIDE"
              expect (fn (YAML .. '-\n  <<: [*MERGE, OVERRIDE]')).
-               to_raise "invalid '<<' alias: OVERRIDE"
-         - context with an alias: |
-             expect (fn (YAML .. '-\n  !!merge : *MERGE\n  z: 3')).
-               to_equal {{{x=1, y=2}, {x=0, z=2}, {x=1, y=2, z=3}}}
-             expect (fn (YAML .. '-\n  <<: *MERGE\n  z: 3')).
-               to_equal {{{x=1, y=2}, {x=0, z=2}, {x=1, y=2, z=3}}}
-         # Leftmost map takes precedence, but original map values trump
-         # even that!
-         - context with an alias sequence: |
-             expect (fn (YAML .. '-\n  !!merge : [*MERGE, *OVERRIDE]\n  z: 3')).
-               to_equal {{{x=1, y=2}, {x=0, z=2}, {x=1, y=2, z=3}}}
-             expect (fn (YAML .. '-\n  <<: [*MERGE, *OVERRIDE]\n  z: 3')).
-               to_equal {{{x=1, y=2}, {x=0, z=2}, {x=1, y=2, z=3}}}
+               to_raise "invalid '<<' sequence element 2: OVERRIDE"
+         - it diagnoses invalid merge sequence alias tyes: |
+             expect (fn (YAML .. '-\n  !!merge : [*MERGE, *BOGUS]')).
+               to_raise "invalid 'tag:yaml.org,2002:merge' sequence element 2: true"
+             expect (fn (YAML .. '-\n  <<: [*MERGE, *BOGUS]')).
+               to_raise "invalid '<<' sequence element 2: true"
+         - it supports merging bare maps: |
+             expect (fn ("-\n  !!merge : {x: 1, y: 2}\n  z: 3")).
+               to_equal {{{x=1, y=2, z=3}}}
+             expect (fn "-\n  <<: {x: 1, y: 2}\n  z: 3").
+               to_equal {{{x=1, y=2, z=3}}}
+         - it supports merging map aliases: |
+             expect (fn (YAML .. "-\n  !!merge : *MERGE\n  z: 3")).
+               to_equal {{{x=1, y=2}, {x=0, z=2}, true, {x=1, y=2, z=3}}}
+             expect (fn (YAML .. "-\n  <<: *MERGE\n  z: 3")).
+               to_equal {{{x=1, y=2}, {x=0, z=2}, true, {x=1, y=2, z=3}}}
+         - it merges sequence of bare maps with decreasing precedence: |
+             expect (fn "-\n  !!merge : [{x: 1, y: 2}, {x: 0, z: 2}]\n  z: 3").
+               to_equal {{{x=1, y=2, z=3}}}
+             expect (fn "-\n  <<: [{x: 1, y: 2}, {x: 0, z: 2}]\n  z: 3").
+               to_equal {{{x=1, y=2, z=3}}}
+         - it merges sequence of aliases with decreasing precedence: |
+             expect (fn (YAML .. "-\n  !!merge : [*MERGE, *OVERRIDE]\n  z: 3")).
+               to_equal {{{x=1, y=2}, {x=0, z=2}, true, {x=1, y=2, z=3}}}
+             expect (fn (YAML .. "-\n  <<: [*MERGE, *OVERRIDE]\n  z: 3")).
+               to_equal {{{x=1, y=2}, {x=0, z=2}, true, {x=1, y=2, z=3}}}
