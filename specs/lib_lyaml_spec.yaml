@@ -256,7 +256,7 @@ specify lyaml:
            to_equal {{anchor = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63},
                       alias  = {["Mark McGwire"] = 65, ["Sammy Sosa"] = 63}}}'
 
-  - context mapping:
+  - context a map:
      - it recognizes block mapping: |
          expect (fn "null: ~\nboolean: yes\nnumber: 3.14").
            to_equal {{null = lyaml.null, boolean = true, number = 3.14}}
@@ -265,14 +265,17 @@ specify lyaml:
            to_equal {{null = lyaml.null, boolean = true, number = 3.14}}
      - context with merge keys:
          - before: |
+             merge    = {x=1, y=2}
+             override = {x=0, z=2}
+             bogus    = true
              YAML = "- &MERGE {x: 1, y: 2}\n" ..
                     "- &OVERRIDE {x: 0, z: 2}\n" ..
                     "- &BOGUS true\n"
          - it diagnoses invalid merge events: |
              expect (fn "-\n  !!merge : x\n  z: 3").
-               to_raise "invalid 'tag:yaml.org,2002:merge' event: SCALAR"
+               to_raise "invalid 'tag:yaml.org,2002:merge' merge event: x"
              expect (fn "-\n  << : x\n  z: 3").
-               to_raise "invalid '<<' event: SCALAR"
+               to_raise "invalid '<<' merge event: x"
          - it diagnoses invalid merge alias types: |
              expect (fn (YAML .. "-\n !!merge : *BOGUS")).
                to_raise "invalid 'tag:yaml.org,2002:merge' merge event: true"
@@ -295,9 +298,9 @@ specify lyaml:
                to_equal {{{x=1, y=2, z=3}}}
          - it supports merging map aliases: |
              expect (fn (YAML .. "-\n  !!merge : *MERGE\n  z: 3")).
-               to_equal {{{x=1, y=2}, {x=0, z=2}, true, {x=1, y=2, z=3}}}
+               to_equal {{merge, override, bogus, {x=1, y=2, z=3}}}
              expect (fn (YAML .. "-\n  <<: *MERGE\n  z: 3")).
-               to_equal {{{x=1, y=2}, {x=0, z=2}, true, {x=1, y=2, z=3}}}
+               to_equal {{merge, override, bogus, {x=1, y=2, z=3}}}
          - it merges sequence of bare maps with decreasing precedence: |
              expect (fn "-\n  !!merge : [{x: 1, y: 2}, {x: 0, z: 2}]\n  z: 3").
                to_equal {{{x=1, y=2, z=3}}}
@@ -305,6 +308,13 @@ specify lyaml:
                to_equal {{{x=1, y=2, z=3}}}
          - it merges sequence of aliases with decreasing precedence: |
              expect (fn (YAML .. "-\n  !!merge : [*MERGE, *OVERRIDE]\n  z: 3")).
-               to_equal {{{x=1, y=2}, {x=0, z=2}, true, {x=1, y=2, z=3}}}
+               to_equal {{merge, override, bogus, {x=1, y=2, z=3}}}
              expect (fn (YAML .. "-\n  <<: [*MERGE, *OVERRIDE]\n  z: 3")).
-               to_equal {{{x=1, y=2}, {x=0, z=2}, true, {x=1, y=2, z=3}}}
+               to_equal {{merge, override, bogus, {x=1, y=2, z=3}}}
+         - it merges a sequence alias with decreasing precedence: |
+             seq = {merge, override}
+             r = {{merge, override, bogus, seq, {x=1, y=2, z=3}}}
+             expect (fn (YAML .. "- &SEQ [*MERGE, *OVERRIDE]\n" ..
+                         "-\n  !!merge : *SEQ\n  z: 3")).to_equal (r)
+             expect (fn (YAML .. "- &SEQ [*MERGE, *OVERRIDE]\n" ..
+                         "-\n  <<: *SEQ\n  z: 3")).to_equal (r)

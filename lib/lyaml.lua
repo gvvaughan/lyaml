@@ -263,6 +263,17 @@ local function dump (documents, opts)
 end
 
 
+-- We save anchor types that will match the node type from expanding
+-- an alias for that anchor.
+local alias_type = {
+  MAPPING_END    = "MAPPING_END",
+  MAPPING_START  = "MAPPING_END",
+  SCALAR         = "SCALAR",
+  SEQUENCE_END   = "SEQUENCE_END",
+  SEQUENCE_START = "SEQUENCE_END",
+}
+
+
 -- Metatable for Parser objects.
 local parser_mt = {
   __index = {
@@ -280,7 +291,10 @@ local parser_mt = {
     -- Save node in the anchor table for reference in future ALIASes.
     add_anchor = function (self, node)
       if self.event.anchor ~= nil then
-        self.anchors[self.event.anchor] = node
+        self.anchors[self.event.anchor] = {
+	  type  = alias_type[self.event.type],
+	  value = node,
+	}
       end
     end,
 
@@ -311,16 +325,7 @@ local parser_mt = {
 	if key == "<<" or tag == "merge" then
 	  tag = self.event.tag or key
 	  local node, event = self:load_node ()
-	  if event == "ALIAS" then
-	    if type (node) ~= "table" then
-              self:error ("invalid '%s' merge event: %s",
-	                  tag, tostring (node))
-	    end
-	    for k, v in pairs (node) do
-	      if map[k] == nil then map[k] = v end
-	    end
-
-	  elseif event == "MAPPING_END" then
+	  if event == "MAPPING_END" then
 	    for k, v in pairs (node) do
 	      if map[k] == nil then map[k] = v end
 	    end
@@ -337,7 +342,8 @@ local parser_mt = {
 	    end
 
 	  else
-	    self:error ("invalid '%s' event: %s", tag, self:type ())
+	    if event == "SCALAR" then event = tostring (node) end
+	    self:error ("invalid '%s' merge event: %s", tag, event)
 	  end
 	else
           local value, event = self:load_node ()
@@ -347,7 +353,7 @@ local parser_mt = {
           map[key] = value
 	end
       end
-      return map
+      return map, self:type ()
     end,
 
     -- Construct a Lua array table from following events.
@@ -359,7 +365,7 @@ local parser_mt = {
         if node == nil then break end
         sequence[#sequence + 1] = node
       end
-      return sequence
+      return sequence, self:type ()
     end,
 
     -- Construct a primitive type from the current event.
@@ -380,15 +386,16 @@ local parser_mt = {
 	value = self.implicit_scalar (self.event.value)
       end
       self:add_anchor (value)
-      return value
+      return value, self:type ()
     end,
 
     load_alias = function (self)
       local anchor = self.event.anchor
-      if self.anchors[anchor] == nil then
+      local event  = self.anchors[anchor]
+      if event == nil then
         self:error ("invalid reference: %s", tostring (anchor))
       end
-      return self.anchors[anchor]
+      return event.value, event.type
     end,
 
     load_node = function (self)
@@ -406,7 +413,7 @@ local parser_mt = {
       if dispatch[event] == nil then
         self:error ("invalid event: %s", self:type ())
       end
-     return dispatch[event] (self), self:type ()
+     return dispatch[event] (self)
     end,
   },
 }
