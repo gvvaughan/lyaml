@@ -1,4 +1,271 @@
+2015-07-27  Gary V. Vaughan  <gary@gnu.org>
+
+	Release version 6.0
+	* NEWS.md: Record release date.
+
+	maint: support installcheck rules.
+	* specs/spec_helper.lua (package.path, package.cpath): Don't
+	set these paths for installcheck!
+
+	slingshot: sync with upstream.
+	* slingshot: Sync with upstream for Lua 5.3.1 support.
+
+	configury: bump release number to 6.0.
+	* configure.ac (AC_INIT): Bump release number to 6.0.
+	* .travis.yml: Regenerate.
+
+	lyaml: recognize merging of sequence alias.
+	* specs/lib_lyaml_spec.yaml: Specify behaviour for loading an
+	alias to a sequence.
+	* lib/lyaml.lua (alias_type): New table mapping anchor save types
+	to equivalent later alias load types.
+	(parser_mt:add_anchor): Use it to save the anchor type in addition
+	to the node value, so we can distingish between saved sequence
+	tables and map tables.
+	(parser_mt:load_map, parser_mt:load_sequence)
+	(parser_mt:load_scalar): Return value and type of actual event.
+	(parser_mt:load_alias): Return value, and type of aliased event.
+	(parser_mt:load_map): Simplify. Now that aliases are expanded
+	recursively, no need to handle ALIAS events specially.
+	* specs/lib_lyaml_spec.yaml: Simplify some examples with local
+	variables for intermediate values.
+	Adjust error messages expectations to match reality!
+
+2015-07-26  Gary V. Vaughan  <gary@gnu.org>
+
+	lyaml: ensure lyaml.dump has an equivalent signature to lyaml.load.
+	* lib/lyaml.lua (dump): Accept an option table of options.
+	(Dumper): Normalise options.
+	(dumper_mt.dump_scalar): Quote any strings that would be implicitly
+	converted by opts.implicit_scalar function otherwise.
+	* NEWS.md: Update accordingly.
+	* README.md: Update.
+
+	lyaml: merge bare maps and sequences.
+	* specs/lib_lyaml_spec.yaml (context with merge keys): Specify
+	behaviour with non-alias merge key arguments more thoroughly,
+	especially merging bare maps and sequences.
+	* lib/lyaml.lua (parser_mt.load_map): generalize support of
+	arguments to merge key to satisfy new specifications.
+
+2015-07-25  Gary V. Vaughan  <gary@gnu.org>
+
+	specs: specify loading of  more variant boolean and y/n tokens.
+	* specs/lib_lyaml_spec.yaml (it recognizes booleans): Specify
+	behaviour with "yes" and "no".
+	(it loads bare y and n as strings): Specify behaviour with "y"
+	and "n".
+	(it recognizes strings): Specify behaviour with quoted "yes".
+	(it recognizes !!bool): Specify behaviours with variations of
+	yes, no, y and n.
+
+	doc: clarify lyaml._VERSION docs.
+	* lib/lyaml.lua (_VERSION): Clarify what this is the version of!
+
+	maint: consolidate .gitignore files.
+	* build-aux/.gitignore: Remove.
+	* .gitignore: Ignore everything in build-aux except config.ld.in
+	and sanity-cfg.mk.
+
+	configury: install api docs correctly.
+	* configure.ac: Modernize.
+	(HAVE_LDOC): New conditional, so that installation from a
+	release tarball works without LDoc installed.
+	* local.mk (modulesdir): Destination for api ldocs.
+	(dist_doc_DATA): VPATH search automatically prepends $(srcdir).
+	(dist_docmodules_DATA): Oops, not this...
+	(dist_modules_DATA): ...it should be spelled like this.  And
+	we should reference sources relative to Makefile directory
+
+2015-07-23  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: add ldoc to bootstrap travis_extra_rocks.
+	* bootstrap.conf (travis_extra_rocks): Add ldoc.
+	* .travis.yml.in: Regenerate.
+
+	maint: add ldoc to bootstrap buildreq.
+	* bootstrap.conf (buildreq): Add ldoc.
+
+	doc: preliminary LDoc API documentation.
+	* build-aux/config.ld.in: New file.  LDoc configuration.
+	* configure.ac (AC_CONFIG_FILES): Generate config.ld.
+	(AC_PATH_PROG): Find ldoc binary in path.
+	* local.mk (src/doc): Automatically generate API documentation.
+	* lib/lyaml.lua, lib/lyaml/explicit.lua, lib/lyaml/functional.lua,
+	lib/lyaml/implicit.lua: Add API doc-comments markup.
+	* AUTHORS: Update.
+
+2015-07-22  Gary V. Vaughan  <gary@gnu.org>
+
+	lyaml: provide API for loading scalar types.
+	In the process of factoring the scalar parsing in user over-
+	ridable parameters, we also make default boolean value parsing
+	more idiomatic - namely, bare y and n tokens remain as y and
+	n string values respectively, unless preceded by the !!bool
+	tag, when they are parsed to true and false values.
+	* lib/lyaml.lua (istruthy, isfalsey, isnan, isinf)
+	(parser_mt.load_float, parser_mt.load_int)
+	(parser_mt.load_scalar): Factor implicit scalar loaders from
+	here...
+	* lib/lyaml/implicit.lua (binary, decimal, float, hexadecimal)
+	(inf, nan, null, octal, sexagesimal, sexfloat, bool): New file.
+	...to here.
+	* lib/lyaml/functional.lua: New file with minimal higher order
+	functions for internal use.
+	* lib/lyaml.lua (parser_mt.load_scalar): Factor explicit tagged
+	scalar loaders from here...
+	* lib/lyaml/explicit.lua (bool, float, int, null, str): New
+	file. ...to here.
+	* lib/lyaml.lua (default.explicit_scalar)
+	(default.implicit_scalar): Compose equivalent functionality to
+	prefactored code from the new functions above.
+	(Parser): Fallback to scalar value parsing from default.
+	(load): If opts is a table, accept keys that override default
+	scalar loading functions with the user's own.
+	* specs/lib_lyaml_spec.yaml: Adjust specifications to match
+	clearer error messages and more idiomatic parsing of y and n.
+	* README.md (lyaml.load): Describe new APIs.
+
+2015-07-20  Nick Muerdter  <nick.muerdter@nrel.gov>
+
+	lyaml: parse empty values as null, not empty strings.
+	Close #10
+	According to the [spec](http://yaml.org/type/null.html) an empty value
+	should be null. lyaml was previously treating empty values as empty
+	strings which isn't correct.
+
+	This change means that `lyaml.load("foo: ")` will now be parsed as
+	`{ foo = lyaml.null }` instead of `{ foo = "" }`.
+
+	This also adjusts how real empty string values are dumped, since they
+	need to be quoted rather than an empty value. So
+	`lyaml.dump({{ foo = "" }})` will now be dumped as `foo: ''` instead of
+	`foo: `.
+
+	This does change a number of existing tests that involved empty
+	documents now becoming nulls, rather than empty strings, but I've
+	verified that the new behavior seems to match Ruby's YAML library in all
+	these cases. Here's a few examples of these empty document changes (I
+	updated the lyaml test suite accordingly):
+
+	```
+	> YAML.load_stream("---")
+	=> [nil]
+	> YAML.load_stream("---\n...\n---\ntwo\n...\n---\n...")
+	=> [nil, "two", nil]
+	> YAML.dump("")
+	=> "--- ''\n"
+	```
+
+	I've also added new tests to explicitly check the null handling for
+	empty values. Here's also a few more examples verifying the new null
+	behavior against the Ruby YAML library:
+
+	```
+	> YAML.load_stream("foo: ")
+	=> [{"foo"=>nil}]
+	> YAML.load_stream("- ~\n- \n- true\n- 42")
+	=> [[nil, nil, true, 42]]
+	> YAML.load_stream("''")
+	=> [""]
+	```
+	* specs/lib_lyaml_spec.yaml (writes an empty document): Correct
+	behaviour is to dump a literal empty string.
+	(writes a mapping): Specify dumping an empts string value.
+	(lyaml.loads an empty document): Correct behaviour is to return
+	lyaml.null for no content.
+	(reports an empty document): Likewise for multi-document streams.
+	(recognizes version number): Adjust accordingly.
+	(recognizes null): Specify behaviour when loading an empty value,
+	(recognizes strings): Specify behaviour when loading an empty
+	string.
+	(recognizes block sequences): Likewise for empty sequence values.
+	* lib/lyaml.lua (dumper_mt): Set SINGLE_QUOTED style for empty
+	strings.
+	(parser_mt): Load an empty string as lyaml.null.
+	From Nick Muerdter
+
+2015-07-20  Nick Muerdter  <nick.muerdter@nrel.gov>
+
+	doc: clarify multiple document handling.
+	Close #9
+	* README.md: This is based on the discussion regarding how the
+	API handles multiple documents here:
+	https://github.com/gvvaughan/lyaml/issues/7
+	From Nick Muerdter
+
+2015-07-13  Gary V. Vaughan  <gary@gnu.org>
+
+	lyaml: support !!merge key type.
+	Fixes #8.
+	* specs/lib_lyaml_spec.yaml (load): Specify input types for
+	merge tag value strings and how they should be loaded.
+	* lib/lyaml.lua (parser_mt.merge_map): Fetch an alias or sequence
+	of aliases, and merge them into the containing map.
+	(parser_mt.load_map): Use it to !!merge tag.
+	* NEWS.md (New Features): Update accordingly.
+	Reported by Yuichi Murata <mrk21info+gitub@gmail.com>
+
+	lyaml: load the whole range of !!int arguments fully.
+	* specs/lib_lyaml_spec.yaml (load): Specify more input types for
+	int tag value strings and how they should be loaded.
+	* lib/lyaml.lua (istruthy, isfalsey): New sets of accepted !!int
+	value strings that will convert to Lua true and false respectively.
+	(parser_mt.load_scalar): Parse !!int tag arguments fully.
+	* NEWS.md (Bug fixes): Update accordingly.
+
+2015-07-12  Gary V. Vaughan  <gary@gnu.org>
+
+	lyaml: load the whole range of !!float arguments fully.
+	* specs/lib_lyaml_spec.yaml (load): Specify more input types for
+	float tag value strings and how they should be loaded.
+	* lib/lyaml.lua (isnan, isinf): New sets of accepted !!float
+	value strings that will convert to Lua 0/0 and inf respectively.
+	(parser_mt.load_scalar): Parse !!float tag arguments fully.
+	(dumper_mt.dump_scalar): Dump NaN and Inf values idiomatically.
+	* NEWS.md (Bug fixes): Update accordingly.
+
+	lyaml: load the full range of !!bool arguments fully.
+	* specs/lib_lyaml_spec.yaml (load): Specify more input types for
+	bool tag value strings and how they should be loaded.
+	* lib/lyaml.lua (istruthy, isfalsey): New sets of accepted !!bool
+	value strings that will convert to Lua true and false respectively.
+	(parser_mt.load_scalar): Parse !!bool tag arguments fully.
+	* NEWS.md (Bug fixes): Update accordingly.
+
+	lyaml: recognize !!null tags.
+	* specs/lib_lyaml_spec.yaml (load): Specify correct loading of
+	!!null tags.
+	* lib/lyaml.lua (parser_mt.load_scalar): Load a !!null tag as an
+	lyaml.null reference.
+	* NEWS (Bugs Fixed): Update.
+
+2015-06-21  Nick Muerdter  <nick.muerdter@nrel.gov>
+
+	lyaml.dumper_mt: fix multi-line string dumping.
+	Close #6.
+	Multi-line strings were previously being dumped using single quotes
+	which caused the dumped YAML to break, dump using LITERAL syntax in
+	this case.
+	* specs/lib_lyaml_spec.yaml (lyaml dumping): Specify correct
+	behaviours for dumping multi-line strings.
+	(lyaml loading): Likewise for loading strings dumped this way.
+	* lib/lyaml.lua (dumper_mt): use "LITERAL" style to dump strings
+	containing embedded newlines.
+	* NEWS.md (Bug fixes): Update.
+
+2015-01-19  Gary V. Vaughan  <gary@gnu.org>
+
+	slingshot: sync with upstream for lua 5.3.0 final support.
+	* slingshot: Sync with upstream.
+	* .travis.yml: Regenerate.
+
 2015-01-01  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: post-release administrivia.
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* ./local.mk (old_NEWS_hash): Auto-update.
 
 	Release version 5.1.4
 	* NEWS.md: Record release date.

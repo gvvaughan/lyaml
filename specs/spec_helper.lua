@@ -1,21 +1,23 @@
-local std = require "specl.std"
+if os.getenv "installcheck" == nil then
+  -- Unless we're running inside `make installcheck`, add the dev-tree
+  -- directories to the module search paths.
+  local std = require "specl.std"
 
-local top_srcdir = os.getenv "top_srcdir" or "."
-local top_builddir = os.getenv "top_builddir" or "."
+  local top_srcdir = os.getenv "top_srcdir" or "."
+  local top_builddir = os.getenv "top_builddir" or "."
 
-package.path  = std.package.normalize (
-                  top_builddir .. "/lib/?.lua",
-                  top_srcdir .. "/lib/?.lua",
-                  package.path
-                )
+  package.path  = std.package.normalize (
+                    top_builddir .. "/lib/?.lua",
+                    top_srcdir .. "/lib/?.lua",
+                    package.path)
 
-package.cpath = std.package.normalize (
-                  top_builddir .. "/ext/yaml/.libs/?.so",
-                  top_builddir .. "/ext/yaml/_libs/?.dll",
-                  top_srcdir .. "/ext/yaml/.libs/?.so",
-                  top_srcdir .. "/ext/yaml/_libs/?.dll",
-                  package.cpathi
-                )
+  package.cpath = std.package.normalize (
+                    top_builddir .. "/ext/yaml/.libs/?.so",
+                    top_builddir .. "/ext/yaml/_libs/?.dll",
+                    top_srcdir .. "/ext/yaml/.libs/?.so",
+                    top_srcdir .. "/ext/yaml/_libs/?.dll",
+                    package.cpath)
+end
 
 yaml = require "yaml"
 

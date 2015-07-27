@@ -323,10 +323,7 @@ announcement: NEWS
 	    -e p NEWS |$(SED) -e 1,2d
 	$(AM_V_at)printf '%s\n'						\
 	  'Install it with LuaRocks, using:' ''				\
-	  '    luarocks install $(PACKAGE) $(VERSION)' ''		\
-	  'If the latest rocks are not yet available from the official repository,' \
-	  'you can install directly from the $(PACKAGE) release branch, with:' \
-	  '' '    $$ luarocks install '\\
+	  '    luarocks install $(PACKAGE) $(VERSION)'
 	$(AM_V_at)$(ANNOUNCE_PRINT) 'print ($(GITHUB_ROCKSPEC))'
 
 

@@ -6,6 +6,7 @@ this list, please file an issue on github (run `./configure --help`
 for the URL).
 
  * Andrew Danforth <acd@weirdness.net>:
-   Designed and implemented lyaml.
+   Designed and implemented the C LibYAML binding.
  * Gary V. Vaughan <gary@gnu.org>:
-   Lua 5.2 compatibility, build system, luarock packaging, releases.
+   Lua 5.2 and 5.3 compatibility, build system, luarock packaging,
+   lymal Lua code, release.

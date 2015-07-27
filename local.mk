@@ -3,23 +3,24 @@
 # Copyright (C) 2013-2015 Gary V. Vaughan
 # Written by Gary V. Vaughan, 2013
 #
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
 #
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## ------------ ##
@@ -46,12 +47,22 @@ update_copyright_env = \
 	UPDATE_COPYRIGHT_USE_INTERVALS=1 \
 	UPDATE_COPYRIGHT_FORCE=1
 
-include specs/specs.mk
-
 
 ## ------------- ##
 ## Declarations. ##
 ## ------------- ##
+
+modulesdir		= $(docdir)/modules
+
+dist_doc_DATA		=
+dist_modules_DATA	=
+
+include specs/specs.mk
+
+
+## ------ ##
+## Build. ##
+## ------ ##
 
 luaexec_LTLIBRARIES += ext/yaml/yaml.la
 
@@ -73,8 +84,57 @@ dist_lua_DATA	+=					\
 	lib/lyaml.lua					\
 	$(NOTHING_ELSE)
 
+lualyamldir = $(luadir)/lyaml
+
+dist_lualyaml_DATA =					\
+	lib/lyaml/explicit.lua				\
+	lib/lyaml/functional.lua			\
+	lib/lyaml/implicit.lua				\
+	$(NOTHING_ELSE)
+
 # Point mkrockspecs at the in-tree lyaml module.
 MKROCKSPECS_ENV = $(LUA_ENV)
 
 # Make sure yaml is built before calling mkrockspecs.
 $(package_rockspec) $(scm_rockspec): $(lib_LTLIBRARIES)
+
+
+## ------------- ##
+## Distribution. ##
+## ------------- ##
+
+EXTRA_DIST +=				\
+	build-aux/config.ld.in		\
+	$(NOTHING_ELSE)
+
+
+## -------------- ##
+## Documentation. ##
+## -------------- ##
+
+dist_doc_DATA +=				\
+	doc/index.html				\
+	doc/ldoc.css				\
+	$(NOTHING_ELSE)
+
+dist_modules_DATA +=				\
+	doc/modules/lyaml.html			\
+	doc/modules/lyaml.explicit.html		\
+	doc/modules/lyaml.functional.html	\
+	doc/modules/lyaml.implicit.html		\
+	$(NOTHING_ELSE)
+
+
+## Parallel make gets confused when one command ($(LDOC)) produces
+## multiple targets (all the html files above), so use the presence
+## of the doc directory as a sentinel file.
+$(dist_doc_DATA) $(dist_docmodules_DATA): $(srcdir)/doc
+
+$(srcdir)/doc: $(dist_lua_DATA) $(dist_lualyaml_DATA)
+	test -d $@ || mkdir $@
+if HAVE_LDOC
+	$(LDOC) -c build-aux/config.ld -d $(abs_srcdir)/doc .
+else
+	$(MKDIR_P) doc
+	touch doc/index.html doc/ldoc.css
+endif

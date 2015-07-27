@@ -3,38 +3,78 @@
 --
 -- Copyright (c) 2013-2015 Gary V. Vaughan
 --
--- Permission is hereby granted, free of charge, to any person obtaining a
--- copy of this software and associated documentation files (the "Software"),
--- to deal in the Software without restriction, including without limitation
--- the rights to use, copy, modify, merge, publish, distribute, sublicense,
--- and/or sell copies of the Software, and to permit persons to whom the
--- Software is furnished to do so, subject to the following conditions:
+-- Permission is hereby granted, free of charge, to any person obtaining
+-- a copy of this software and associated documentation files (the
+-- "Software"), to deal in the Software without restriction, including
+-- without limitation the rights to use, copy, modify, merge, publish,
+-- distribute, sublicense, and/or sell copies of the Software, and to
+-- permit persons to whom the Software is furnished to do so, subject to
+-- the following conditions:
 --
--- The above copyright notice and this permission notice shall be included in
--- all copies or substantial portions of the Software.
+-- The above copyright notice and this permission notice shall be
+-- included in all copies or substantial portions of the Software.
 --
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
--- THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
--- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
--- DEALINGS IN THE SOFTWARE.
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+-- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+-- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+-- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+-- CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+-- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+-- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --
--- Portions of this software were inspired by an earlier LibYAML binding by
--- Andrew Danforth <acd@weirdness.net>
+-- Portions of this software were inspired by an earlier LibYAML binding
+-- by Andrew Danforth <acd@weirdness.net>
+
+--- @module lyaml
 
 
-local yaml = require "yaml"
+local yaml       = require "yaml"
+local explicit   = require "lyaml.explicit"
+local implicit   = require "lyaml.implicit"
+local functional = require "lyaml.functional"
 
+local anyof, id, isnull =
+  functional.anyof, functional.id, functional.isnull
+
+
+--- `lyaml.null` value.
+-- @table null
+local null       = functional.NULL
 
 local TAG_PREFIX = "tag:yaml.org,2002:"
 
-local null = setmetatable ({}, { _type = "LYAML null" })
 
-local function isnull (x)
-  return (getmetatable (x) or {})._type == "LYAML null"
+local function tag (name)
+  return TAG_PREFIX .. name
 end
+
+
+local default = {
+  -- Tag table to lookup explicit scalar conversions.
+  explicit_scalar = {
+    [tag "bool"]  = explicit.bool,
+    [tag "float"] = explicit.float,
+    [tag "int"]   = explicit.int,
+    [tag "null"]  = explicit.null,
+    [tag "str"]   = explicit.str,
+  },
+  -- Order is important, so we put most likely and fastest nearer
+  -- the top to reduce average number of comparisons and funcalls.
+  implicit_scalar = anyof {
+    implicit.null,
+    implicit.octal,	-- subset of decimal, must come earlier
+    implicit.decimal,
+    implicit.float,
+    implicit.bool,
+    implicit.inf,
+    implicit.nan,
+    implicit.hexadecimal,
+    implicit.binary,
+    implicit.sexagesimal,
+    implicit.sexfloat,
+    id,
+  },
+}
 
 
 -- Metatable for Dumper objects.
@@ -125,12 +165,19 @@ local dumper_mt = {
       local anchor = self:get_anchor (value)
       local itsa = type (value)
       local style = "PLAIN"
-      if value == "true" or value == "false" or
-         value == "yes" or value == "no" or value == "~" or
-         (type (value) ~= "number" and tonumber (value) ~= nil) then
+      if itsa == "string" and self.implicit_scalar (value) ~= value then
+	-- take care to round-trip strings that look like scalars
         style = "SINGLE_QUOTED"
+      elseif value == math.huge then
+	value = ".inf"
+      elseif value == -math.huge then
+	value = "-.inf"
+      elseif value ~= value then
+	value = ".nan"
       elseif itsa == "number" or itsa == "boolean" then
         value = tostring (value)
+      elseif itsa == "string" and string.find (value, "\n") then
+        style = "LITERAL"
       end
       return self:emit {
         type            = "SCALAR",
@@ -171,20 +218,42 @@ local dumper_mt = {
 
 
 -- Emitter object constructor.
-local function Dumper (anchors)
-  local t = {}
-  for k, v in pairs (anchors or {}) do t[v] = k end
+local function Dumper (opts)
+  local anchors = {}
+  for k, v in pairs (opts.anchors) do anchors[v] = k end
   local object = {
-    anchors = t,
-    aliased = {},
-    emitter = yaml.emitter (),
+    aliased         = {},
+    anchors         = anchors,
+    emitter         = yaml.emitter (),
+    implicit_scalar = opts.implicit_scalar,
   }
   return setmetatable (object, dumper_mt)
 end
 
 
-local function dump (documents, anchors)
-  local dumper = Dumper (anchors)
+--- Dump options table.
+-- @table dumper_opts
+-- @tfield table anchors map initial anchor names to values
+-- @tfield function implicit_scalar parse implicit scalar values
+
+
+--- Dump a list of Lua tables to an equivalent YAML stream.
+-- @tparam table documents a sequence of Lua tables.
+-- @tparam[opt] dumper_opts opts initialisation options
+-- @treturn string equivalest YAML stream
+local function dump (documents, opts)
+  opts = opts or {}
+
+  -- backwards compatibility
+  if opts.anchors == nil and opts.implicit_scalar == nil then
+    opts = { anchors = opts }
+  end
+
+  local dumper = Dumper {
+    anchors         = opts.anchors or {},
+    implicit_scalar = opts.implicit_scalar or default.implicit_scalar,
+  }
+
   dumper:emit { type = "STREAM_START", encoding = "UTF8" }
   for _, document in ipairs (documents) do
     dumper:dump_document (document)
@@ -192,6 +261,17 @@ local function dump (documents, anchors)
   local ok, stream = dumper:emit { type = "STREAM_END" }
   return stream
 end
+
+
+-- We save anchor types that will match the node type from expanding
+-- an alias for that anchor.
+local alias_type = {
+  MAPPING_END    = "MAPPING_END",
+  MAPPING_START  = "MAPPING_END",
+  SCALAR         = "SCALAR",
+  SEQUENCE_END   = "SEQUENCE_END",
+  SEQUENCE_START = "SEQUENCE_END",
+}
 
 
 -- Metatable for Parser objects.
@@ -203,15 +283,18 @@ local parser_mt = {
     end,
 
     -- Raise a parse error.
-    error = function (self, errmsg)
-      error (string.format ("%d:%d: %s", self.mark.line,
-                            self.mark.column, errmsg), 0)
+    error = function (self, errmsg, ...)
+      error (string.format ("%d:%d: " .. errmsg, self.mark.line,
+                            self.mark.column, ...), 0)
     end,
 
     -- Save node in the anchor table for reference in future ALIASes.
     add_anchor = function (self, node)
       if self.event.anchor ~= nil then
-        self.anchors[self.event.anchor] = node
+        self.anchors[self.event.anchor] = {
+	  type  = alias_type[self.event.type],
+	  value = node,
+	}
       end
     end,
 
@@ -236,14 +319,41 @@ local parser_mt = {
       self:add_anchor (map)
       while true do
         local key = self:load_node ()
+        local tag = self.event.tag
+	if tag then tag = tag:match ("^" .. TAG_PREFIX .. "(.*)$") end
         if key == nil then break end
-        local value, event = self:load_node ()
-        if value == nil then
-          self:error ("unexpected " .. self:type () .. "event")
-        end
-        map[key] = value
+	if key == "<<" or tag == "merge" then
+	  tag = self.event.tag or key
+	  local node, event = self:load_node ()
+	  if event == "MAPPING_END" then
+	    for k, v in pairs (node) do
+	      if map[k] == nil then map[k] = v end
+	    end
+
+	  elseif event == "SEQUENCE_END" then
+	    for i, merge in ipairs (node) do
+	      if type (merge) ~= "table" then
+		self:error ("invalid '%s' sequence element %d: %s",
+		            tag, i, tostring (merge))
+	      end
+	      for k, v in pairs (merge) do
+		if map[k] == nil then map[k] = v end
+              end
+	    end
+
+	  else
+	    if event == "SCALAR" then event = tostring (node) end
+	    self:error ("invalid '%s' merge event: %s", tag, event)
+	  end
+	else
+          local value, event = self:load_node ()
+          if value == nil then
+            self:error ("unexpected %s event", self:type ())
+          end
+          map[key] = value
+	end
       end
-      return map
+      return map, self:type ()
     end,
 
     -- Construct a Lua array table from following events.
@@ -255,44 +365,37 @@ local parser_mt = {
         if node == nil then break end
         sequence[#sequence + 1] = node
       end
-      return sequence
+      return sequence, self:type ()
     end,
 
     -- Construct a primitive type from the current event.
     load_scalar = function (self)
       local value = self.event.value
       local tag   = self.event.tag
-      if tag then
-        tag = tag:match ("^" .. TAG_PREFIX .. "(.*)$")
-        if tag == "str" then
-          -- value is already a string
-        elseif tag == "int" or tag == "float" then
-          value = tonumber (value)
-        elseif tag == "bool" then
-          value = (value == "true" or value == "yes")
+      local explicit = self.explicit_scalar[tag]
+
+      -- Explicitly tagged values.
+      if explicit then
+	value = explicit (value)
+	if value == nil then
+          self:error ("invalid '%s' value: '%s'", tag, self.event.value)
         end
+
+      -- Otherwise, implicit conversion according to value content.
       elseif self.event.style == "PLAIN" then
-        if value == "~" then
-          value = null
-        elseif value == "true" or value == "yes" then
-          value = true
-        elseif value == "false" or value == "no" then
-          value = false
-        else
-          local number = tonumber (value)
-          if number then value = number end
-        end
+	value = self.implicit_scalar (self.event.value)
       end
       self:add_anchor (value)
-      return value
+      return value, self:type ()
     end,
 
     load_alias = function (self)
       local anchor = self.event.anchor
-      if self.anchors[anchor] == nil then
-        self:error ("invalid reference: " .. tostring (anchor))
+      local event  = self.anchors[anchor]
+      if event == nil then
+        self:error ("invalid reference: %s", tostring (anchor))
       end
-      return self.anchors[anchor]
+      return event.value, event.type
     end,
 
     load_node = function (self)
@@ -308,7 +411,7 @@ local parser_mt = {
 
       local event = self:parse ()
       if dispatch[event] == nil then
-        self:error ("invalid event: " .. self:type ())
+        self:error ("invalid event: %s", self:type ())
       end
      return dispatch[event] (self)
     end,
@@ -317,19 +420,43 @@ local parser_mt = {
 
 
 -- Parser object constructor.
-local function Parser (s)
+local function Parser (s, opts)
   local object = {
-    anchors = {},
-    mark    = { line = 0, column = 0 },
-    next    = yaml.parser (s),
+    anchors         = {},
+    explicit_scalar = opts.explicit_scalar,
+    implicit_scalar = opts.implicit_scalar,
+    mark            = { line = 0, column = 0 },
+    next            = yaml.parser (s),
   }
   return setmetatable (object, parser_mt)
 end
 
 
-local function load (s, all)
+--- Load options table.
+-- @table loader_opts
+-- @tfield boolean all load all documents from the stream
+-- @tfield table explicit_scalar map full tag-names to parser functions
+-- @tfield function implicit_scalar parse implicit scalar values
+
+
+--- Load a YAML stream into a Lua table.
+-- @tparam string s YAML stream
+-- @tparam[opt] loader_opts opts initialisation options
+-- @treturn table Lua table equivalent of stream *s*
+local function load (s, opts)
+  opts = opts or {}
   local documents = {}
-  local parser    = Parser (s)
+  local all       = false
+
+  -- backwards compatibility
+  if opts == true then
+    opts = { all = true }
+  end
+
+  local parser = Parser (s, {
+    explicit_scalar = opts.explicit_scalar or default.explicit_scalar,
+    implicit_scalar = opts.implicit_scalar or default.implicit_scalar,
+  })
 
   if parser:parse () ~= "STREAM_START" then
     error ("expecting STREAM_START event, but got " .. parser:type (), 2)
@@ -352,7 +479,7 @@ local function load (s, all)
     parser.anchors = {}
   end
 
-  return all and documents or documents[1]
+  return opts.all and documents or documents[1]
 end
 
 
@@ -360,11 +487,14 @@ end
 --[[ Public Interface. ]]--
 --[[ ----------------- ]]--
 
-local M = {
+
+--- @export
+return {
   dump      = dump,
   load      = load,
   null      = null,
+
+  --- Version number from yaml C binding.
+  -- @table _VERSION
   _VERSION  = yaml.version,
 }
-
-return M
