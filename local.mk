@@ -74,7 +74,8 @@ ext_yaml_yaml_la_SOURCES =				\
 	$(NOTHING_ELSE)
 
 ext_yaml_yaml_la_LDFLAGS  = -module -avoid-version
-ext_yaml_yaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
+ext_yaml_yaml_la_CPPFLAGS = $(LUA_INCLUDE)
+ext_yaml_yaml_la_LIBADD = $(LIBYAML)
 
 EXTRA_DIST +=						\
 	ext/yaml/lyaml.h				\

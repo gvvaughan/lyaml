@@ -56,8 +56,11 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([yaml.h])
 
 ## Search libs
+save_LIBS=$LIBS LIBS=
 AC_SEARCH_LIBS([yaml_document_initialize], [yaml], [], [
     AC_MSG_ERROR([Required library 'yaml' could not be found])])
+AC_SUBST([LIBYAML], [$LIBS])
+LIBS=$save_LIBS
 
 ## Lua
 AC_PATH_PROG([SPECL], [specl], [:])
