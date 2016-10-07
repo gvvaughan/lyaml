@@ -50,9 +50,14 @@ AC_SUBST(LIBTOOL_DEPS)
 
 ## Check for programs
 AC_PROG_CC
+AC_PATH_PROG([SPECL], [specl], [:])
+AC_PATH_PROG([LDOC], [ldoc], [false])
+AM_CONDITIONAL([HAVE_LDOC], [test false != "$LDOC"])
+AX_PROG_LUA(5.1, 5.4)
 
 ## Check for header files
 AC_HEADER_STDC
+AX_LUA_HEADERS
 AC_CHECK_HEADERS([yaml.h])
 
 ## Search libs
@@ -61,15 +66,6 @@ AC_SEARCH_LIBS([yaml_document_initialize], [yaml], [], [
     AC_MSG_ERROR([Required library 'yaml' could not be found])])
 AC_SUBST([LIBYAML], [$LIBS])
 LIBS=$save_LIBS
-
-## Lua
-AC_PATH_PROG([SPECL], [specl], [:])
-AX_PROG_LUA(5.1, 5.4)
-AX_LUA_HEADERS
-
-## LDoc
-AC_PATH_PROG([LDOC], [ldoc], [false])
-AM_CONDITIONAL([HAVE_LDOC], [test false != "$LDOC"])
 
 ## Generate output files
 AC_CONFIG_HEADERS([config.h])
