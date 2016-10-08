@@ -26,7 +26,7 @@
 AC_PREREQ([2.68])
 
 ## Initialise autoconf and automake
-AC_INIT([lyaml], [6.0], [http://github.com/gvvaughan/lyaml/issues])
+AC_INIT([lyaml], [6.1], [http://github.com/gvvaughan/lyaml/issues])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 

@@ -45,8 +45,8 @@ install:
   # Build from rockspec, forcing uninstall of older luarocks installed
   # above when testing the git rockspec, both for enforcing backwards
   # compatibility by default, and for ease of maintenance.
-  - if test -f 'lyaml-6.0-1.rockspec'; then
-      luarocks make 'lyaml-6.0-1.rockspec';
+  - if test -f 'lyaml-6.1-1.rockspec'; then
+      luarocks make 'lyaml-6.1-1.rockspec';
     else
       luarocks make --force 'lyaml-git-1.rockspec';
     fi
