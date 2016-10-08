@@ -1,7 +1,7 @@
 -- LYAML parse implicit type tokens.
 -- Written by Gary V. Vaughan, 2015
 --
--- Copyright (c) 2015 Gary V. Vaughan
+-- Copyright (C) 2015-2016 Gary V. Vaughan
 --
 -- Permission is hereby granted, free of charge, to any person obtaining
 -- a copy of this software and associated documentation files (the
@@ -28,6 +28,10 @@
 local NULL = require "lyaml.functional".NULL
 
 
+local is_null = {
+  [""] = true, ["~"] = true, null = true, Null = true, NULL = true,
+}
+
 
 --- Parse a null token to a null value.
 -- @param value token
@@ -35,7 +39,7 @@ local NULL = require "lyaml.functional".NULL
 -- @return[2] nil otherwise, nil
 -- @usage maybe_null = implicit.null (token)
 local function null (value)
-  if value == "~" or value == "" then
+  if is_null[value] then
     return NULL
   end
 end

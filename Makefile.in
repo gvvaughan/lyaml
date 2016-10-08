@@ -16,7 +16,7 @@
 
 # Non-recursive Make rules.
 #
-# Copyright (C) 2013-2015 Gary V. Vaughan
+# Copyright (C) 2013-2016 Gary V. Vaughan
 # Written by Gary V. Vaughan, 2013
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@
 
 # Non-recursive Make rules.
 #
-# Copyright (C) 2013-2015 Gary V. Vaughan
+# Copyright (C) 2013-2016 Gary V. Vaughan
 # Written by Gary V. Vaughan, 2013
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -58,7 +58,7 @@
 
 # Lyaml Specl make rules.
 #
-# Copyright (c) 2013-2015 Gary V. Vaughan
+# Copyright (C) 2013-2016 Gary V. Vaughan
 # Written by Gary V. Vaughan, 2013
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -80,7 +80,7 @@
 # terms of the MIT license reproduced below.
 
 # ==================================================================== #
-# Copyright (C) 2013-2015 Gary V. Vaughan                              #
+# Copyright (C) 2013-2016 Gary V. Vaughan                              #
 #                                                                      #
 # Permission is hereby granted, free of charge, to any person          #
 # obtaining a copy of this software and associated documentation       #
@@ -111,7 +111,7 @@
 # terms of the MIT license reproduced below.
 
 # ==================================================================== #
-# Copyright (C) 2013-2015 Reuben Thomas and Gary V. Vaughan                 #
+# Copyright (C) 2013-2016 Reuben Thomas and Gary V. Vaughan                 #
 #                                                                      #
 # Permission is hereby granted, free of charge, to any person          #
 # obtaining a copy of this software and associated documentation       #
@@ -265,7 +265,8 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(luaexecdir)" \
 	"$(DESTDIR)$(lualyamldir)" "$(DESTDIR)$(modulesdir)" \
 	"$(DESTDIR)$(docdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES) $(luaexec_LTLIBRARIES)
-ext_yaml_yaml_la_LIBADD =
+am__DEPENDENCIES_1 =
+ext_yaml_yaml_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 =
 am_ext_yaml_yaml_la_OBJECTS = ext/yaml/ext_yaml_yaml_la-yaml.lo \
@@ -417,6 +418,7 @@ LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
+LIBYAML = @LIBYAML@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -576,7 +578,8 @@ ext_yaml_yaml_la_SOURCES = \
 	$(NOTHING_ELSE)
 
 ext_yaml_yaml_la_LDFLAGS = -module -avoid-version
-ext_yaml_yaml_la_CPPFLAGS = $(LUA_INCLUDE) $(YAML_INCLUDE)
+ext_yaml_yaml_la_CPPFLAGS = $(LUA_INCLUDE)
+ext_yaml_yaml_la_LIBADD = $(LIBYAML)
 lualyamldir = $(luadir)/lyaml
 dist_lualyaml_DATA = \
 	lib/lyaml/explicit.lua				\

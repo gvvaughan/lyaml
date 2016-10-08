@@ -1,4 +1,64 @@
-2015-07-27  Gary V. Vaughan  <gary@gnu.org>
+2016-10-08  Gary V. Vaughan  <gary@gnu.org>
+
+	Release version 6.1
+	* NEWS.md: Record release date.
+
+	configury: bump release number to 6.1.
+	* configure.ac (AC_INIT): Bump release number to 6.1.
+	* .travis.yml: Regenerate.
+
+	implicit: parse an unquoted null token as lyaml.null
+	Fixes #13.
+	* specs/lib_lyaml_spec.yaml (scalars): Specify correct behaviour
+	with various spellings of 'null'.
+	(a map): Quote bare null tokens that should be parsed as strings.
+	* lib/lyaml/implicit.lua (null): Parse an unquoted null token as
+	lyaml.null.
+	* NEWS.md (Bug fixes): Update.
+
+2016-10-07  Gary V. Vaughan  <gary@gnu.org>
+
+	slingshot: sync with latest upstream.
+	* slingshot: Update submodule.
+	* .travis.yml: Regenerate.
+	* bootstrap: Regenerate.
+
+	configury: rearrange configure.ac macros for better error reporting
+	If libyaml.so is not in the path, the old order would fall over
+	during AX_PROG_LUA with an unhelpful failure message.
+	* configure.ac (AC_PATH_PROG, AX_PROG_LUA, AX_LUA_HEADERS): Move
+	invocations above LIBYAML checks.
+
+2016-01-05  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: bump copyright years.
+	* bootstrap.conf, configure.ac, ext/yaml/emitter.c,
+	ext/yaml/lyaml.h, ext/yaml/parser.c, ext/yaml/scanner.c,
+	ext/yaml/yaml.c, lib/lyaml.lua, lib/lyaml/explicit.lua,
+	lib/lyaml/functional.lua, lib/lyaml/implicit.lua, local.mk,
+	slingshot, specs/specs.mk: Add 2016 to copyright years.
+
+	slingshot: update to latest revision for Travis GCE compatibility.
+	* slingshot: Pull latest upstream.
+	* .travis.yml: Regenerate.
+
+2015-10-11  Gary V. Vaughan  <gary@gnu.org>
+
+	configury: don't let libyaml search affect Lua headers test.
+	Closes #11.
+	* configure.ac (AC_SEARCH_LIBS): Save and restore $LIBS contents
+	around this search, so that -lyaml is not left prepended to
+	affect later checks.
+	(lyaml): Store -lyaml in LIBYAML.
+	* local.mk (ext_yaml_yaml_la_LIBADD): Add $(LIBYAML).
+	(ext_yaml_yaml_la_CPPFLAGS): Remove unset YAML_INCLUDE.
+
+2015-07-26  Gary V. Vaughan  <gary@gnu.org>
+
+	maint: post-release administrivia.
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* ./local.mk (old_NEWS_hash): Auto-update.
 
 	Release version 6.0
 	* NEWS.md: Record release date.
@@ -30,8 +90,6 @@
 	* specs/lib_lyaml_spec.yaml: Simplify some examples with local
 	variables for intermediate values.
 	Adjust error messages expectations to match reality!
-
-2015-07-26  Gary V. Vaughan  <gary@gnu.org>
 
 	lyaml: ensure lyaml.dump has an equivalent signature to lyaml.load.
 	* lib/lyaml.lua (dump): Accept an option table of options.
@@ -194,7 +252,7 @@
 	https://github.com/gvvaughan/lyaml/issues/7
 	From Nick Muerdter
 
-2015-07-13  Gary V. Vaughan  <gary@gnu.org>
+2015-07-12  Gary V. Vaughan  <gary@gnu.org>
 
 	lyaml: support !!merge key type.
 	Fixes #8.
@@ -213,8 +271,6 @@
 	value strings that will convert to Lua true and false respectively.
 	(parser_mt.load_scalar): Parse !!int tag arguments fully.
 	* NEWS.md (Bug fixes): Update accordingly.
-
-2015-07-12  Gary V. Vaughan  <gary@gnu.org>
 
 	lyaml: load the whole range of !!float arguments fully.
 	* specs/lib_lyaml_spec.yaml (load): Specify more input types for
@@ -374,11 +430,11 @@
 	slingshot: sync with upstream, for release fixes.
 	* slingshot: Sync with upstream.
 
+2014-12-18  Gary V. Vaughan  <gary@gnu.org>
+
 	slingshot: sync with upstream, for rebootstrap subproject fix.
 	* slingshot: Sync with upstream.
 	* bootstrap: Update from slingshot.
-
-2014-12-18  Gary V. Vaughan  <gary@gnu.org>
 
 	slingshot: sync with upstream, for luaexec_LTLIBRARIES support.
 	Close #5.
@@ -408,6 +464,8 @@
 
 	configury: remove references to lua52compat.h.
 	* local.mk (EXTRA_DIST): Remove ext/yaml/luacompat.h.
+
+2014-12-16  Gary V. Vaughan  <gary@gnu.org>
 
 	slingshot: sync with upstream, for release fixes.
 	* slingshot: Sync with upstream.
@@ -444,20 +502,16 @@
 	(luaL_register): Lua 5.2 and 5.3 compatibility definitions.
 	* .travis.yml: Regenerate.
 
-2014-12-16  Gary V. Vaughan  <gary@gnu.org>
-
 	configury: adopt semantic versioning.
 	* configure.ac (AC_INIT): Bump version to 6.0.0.
 
-2014-09-26  Gary V. Vaughan  <gary@gnu.org>
+2014-09-25  Gary V. Vaughan  <gary@gnu.org>
 
 	maint: post-release administrivia.
 	* configure.ac (AC_INIT): Bump release version to 6.
 	* NEWS: Add header line for next release.
 	* .prev-version: Record previous version.
 	* ./local.mk (old_NEWS_hash): Auto-update.
-
-2014-09-25  Gary V. Vaughan  <gary@gnu.org>
 
 	Release version 5
 	* NEWS: Record release date.
@@ -577,7 +631,7 @@
 
 	add waffle.io badge
 
-2014-05-21  Gary V. Vaughan  <gary@gnu.org>
+2014-05-20  Gary V. Vaughan  <gary@gnu.org>
 
 	maint: fix a README typo.
 	* README.md: Remove a spurious word.
@@ -591,14 +645,12 @@
 	else `GIT=true ./bootstrap` doesn't work.
 	* .travis.yml: Regenerate.
 
-2014-01-05  Gary V. Vaughan  <gary@gnu.org>
+2014-01-04  Gary V. Vaughan  <gary@gnu.org>
 
 	slingshot: sync with upstream.
 	Fix the annoying contest.sed file dropping bug.
 	* slingshot: Sync with upstream.
 	* bootstrap: Sync with slingshot.
-
-2014-01-04  Gary V. Vaughan  <gary@gnu.org>
 
 	maint: update copyright notices to include 2014.
 	* .x-upate-copyright: New file. Exclude files not owned by this
@@ -620,7 +672,7 @@
 	copying over a standard GPLv3 COPYING boilerplate.
 	* .travis.yml: Regenerate.
 
-2013-11-15  Gary V. Vaughan  <gary@gnu.org>
+2013-11-14  Gary V. Vaughan  <gary@gnu.org>
 
 	maint: prevent pointer type mismatch warnings.
 	* ext/yaml/lyaml.h (lua_pushyamlstr): Cast away the impedence
@@ -632,7 +684,7 @@
 	* ext/yaml/scanner.c (Pscanner): Likewise.
 	* NEWS: Update.
 
-2013-09-11  Gary V. Vaughan  <gary@gnu.org>
+2013-09-10  Gary V. Vaughan  <gary@gnu.org>
 
 	maint: post-release administrivia.
 	* configure.ac (AC_INIT): Bump revision to 5.
@@ -643,13 +695,11 @@
 	Release version 4
 	* NEWS: Record release date.
 
-2013-08-30  Gary V. Vaughan  <gary@gnu.org>
+2013-08-29  Gary V. Vaughan  <gary@gnu.org>
 
 	docs: update README.
 	* README.md: Remove documentation for removed lyaml.configure
 	call, and add documentation for new yaml.emitter call.
-
-2013-08-29  Gary V. Vaughan  <gary@gnu.org>
 
 	specs: remove trailing blanks.
 	* specs/ext_yaml_emitter_spec.yaml: Remove trailing blanks.
@@ -734,6 +784,8 @@
 	* slingshot: Pick up recent improvements, particularly compatibility
 	with upcoming lyaml 4 release.
 
+2013-07-27  Gary V. Vaughan  <gary@gnu.org>
+
 	scanner: bind YAML tokenizer.
 	* specs/ext_lyaml_scanner_spec.yaml: New file.  Specify behaviour
 	of tokenizing scanner.
@@ -744,8 +796,6 @@
 	* local.mk (ext_lyaml_lyaml_la_SOURCES): Add ext/lyaml/scanner.c.
 	* README.md: Add instructions for using lyaml.scanner().
 	* NEWS: Update.
-
-2013-07-27  Gary V. Vaughan  <gary@gnu.org>
 
 	parser: factor out function dispatch for simple events.
 	* ext/lyaml/parser.c (parse_STREAM_END, parse_SEQUENCE_END)
@@ -792,7 +842,7 @@
 	...from here.
 	Adjust all callers.
 
-2013-07-26  Gary V. Vaughan  <gary@gnu.org>
+2013-07-25  Gary V. Vaughan  <gary@gnu.org>
 
 	docs: add missing link, and missing space.
 	* README.md: Add missing [libtool][] destination and insert a
@@ -801,8 +851,6 @@
 	README: improve documentation.
 	* README.md: Rewrite to provide a tiny bit more insight into how
 	to install and use lyaml.
-
-2013-07-25  Gary V. Vaughan  <gary@gnu.org>
 
 	specs: quote 5.2 illegal escapes carefully.
 	* specs/parser_spec.yaml: Use [[]] quoting to prevent Lua 5.2
@@ -831,7 +879,7 @@
 	* local.mk (EXTRA_DIST): Add parser.c.
 	* NEWS: Update.
 
-2013-07-15  Gary V. Vaughan  <gary@gnu.org>
+2013-07-14  Gary V. Vaughan  <gary@gnu.org>
 
 	slingshot: sync with upstream.
 	Use upstream slingshot, which prevents us requesting installation
@@ -893,6 +941,8 @@
 	and rockspec_conf.
 	(smc_rockspec): git rockspec is always revision 1!
 
+2013-04-26  Gary V. Vaughan  <gary@gnu.org>
+
 	maint: support external_dependencies with mkrockspecs.
 	* build-aux/mkrockspecs: Support ordering of external_dependencies.
 	Add quote marks around various paths in case of whitespace after
@@ -901,8 +951,6 @@
 	entries.
 	* rockspec.conf (external_dependencies): Required for a correct
 	build.
-
-2013-04-26  Gary V. Vaughan  <gary@gnu.org>
 
 	Revert "maint: post-release administrivia."
 	This reverts commit 9fcdd06a1f88d6db0ab344b0de4dda314ff8eb8c.
@@ -956,6 +1004,8 @@
 	* .travis.yml (env.matrix): Specify LUA_INCDIR for each Lua
 	interpreter in the build matrix.
 	(script): Pass LUA_INCDIR to make luarocks-config.lua rule.
+
+2013-04-05  Gary V. Vaughan  <gary@gnu.org>
 
 	maint: move Travis CI local luarocks build into install key.
 	* .travis.yml (script): Move local luarocks build from here...
@@ -1032,7 +1082,7 @@
 	maint: use travis CI server.
 	* .travis.yml: New file. Travis CI directives.
 
-2013-03-18  Gary V. Vaughan  <gary@gnu.org>
+2013-03-17  Gary V. Vaughan  <gary@gnu.org>
 
 	docs: insert missing link.
 	* README.md (Lua): Add missing URL.
@@ -1046,8 +1096,6 @@
 	* lyaml-rockspec.lua (license): Correct license is MIT.
 	* GNUmakefile, Makefile.am, bootstrap.conf, configure.ac:
 	Relicense files authored by me under MIT.
-
-2013-03-17  Gary V. Vaughan  <gary@gnu.org>
 
 	maint: bump release number to 2.
 	* configure.ac (AC_INIT): Bump release number to 2.
