@@ -2,6 +2,19 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### Bug fixes
+
+  - `lyaml.load` now correctly reads implicit null scalars in a YAML
+    document as an `lyaml.null` reference, identical to the "~"
+    shorthand syntax, according to [the specification][nullspec].
+
+    ```yaml
+    empty:
+    canonical: ~
+    english: null
+    ~: null key
+    ```
+
 
 ## Noteworthy changes in release 6.0 (2015-07-27) [stable]
 

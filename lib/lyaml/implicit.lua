@@ -28,6 +28,10 @@
 local NULL = require "lyaml.functional".NULL
 
 
+local is_null = {
+  [""] = true, ["~"] = true, null = true, Null = true, NULL = true,
+}
+
 
 --- Parse a null token to a null value.
 -- @param value token
@@ -35,7 +39,7 @@ local NULL = require "lyaml.functional".NULL
 -- @return[2] nil otherwise, nil
 -- @usage maybe_null = implicit.null (token)
 local function null (value)
-  if value == "~" or value == "" then
+  if is_null[value] then
     return NULL
   end
 end

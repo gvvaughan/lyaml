@@ -138,7 +138,12 @@ specify lyaml:
   - context scalars:
     - it recognizes null: '
         expect (fn "~").to_equal {lyaml.null}
-        expect (fn "foo: ").to_equal {{foo = lyaml.null}}'
+        expect (fn "foo: ").to_equal {{foo = lyaml.null}}
+        expect (fn "foo: ~").to_equal {{foo = lyaml.null}}
+        expect (fn "foo: !!null").to_equal {{foo = lyaml.null}}
+        expect (fn "foo: null").to_equal {{foo = lyaml.null}}
+        expect (fn "foo: Null").to_equal {{foo = lyaml.null}}
+        expect (fn "foo: NULL").to_equal {{foo = lyaml.null}}'
     - it recognizes booleans: '
         expect (fn "true").to_equal {true}
         expect (fn "false").to_equal {false}
@@ -258,11 +263,11 @@ specify lyaml:
 
   - context a map:
      - it recognizes block mapping: |
-         expect (fn "null: ~\nboolean: yes\nnumber: 3.14").
+         expect (fn "'null': ~\nboolean: yes\nnumber: 3.14").
            to_equal {{null = lyaml.null, boolean = true, number = 3.14}}
      - it recognizes flow mapping: |
-         expect (fn "{null: ~, boolean: yes, number: 3.14}").
-           to_equal {{null = lyaml.null, boolean = true, number = 3.14}}
+         expect (fn "{null: null, boolean: yes, number: 3.14}").
+           to_equal {{[lyaml.null] = lyaml.null, boolean = true, number = 3.14}}
      - context with merge keys:
          - before: |
              merge    = {x=1, y=2}
