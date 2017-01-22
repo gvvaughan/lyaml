@@ -6,5 +6,6 @@
 /ChangeLog
 /doc
 /build-aux/config.ld
+/luacov.*.out
 /lyaml-*.tar.gz
 /TAGS
