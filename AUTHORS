@@ -1,12 +1,6 @@
-lyaml Contributors
-==================
+lyaml is the work of several authors (see git history for
+contributors).
 
-This file list contributors to lyaml. If you think you should be in
-this list, please file an issue on github (run `./configure --help`
-for the URL).
+There is an earlier C LibYAML binding
 
- * Andrew Danforth <acd@weirdness.net>:
-   Designed and implemented the C LibYAML binding.
- * Gary V. Vaughan <gary@gnu.org>:
-   Lua 5.2 and 5.3 compatibility, build system, luarock packaging,
-   lymal Lua code, release.
+  Copyright Andrew Danforth <acd@weirdness.net>

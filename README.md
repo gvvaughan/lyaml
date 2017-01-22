@@ -174,13 +174,13 @@ To install without [LuaRocks], clone the sources from the
 
 ```sh
 cd lyaml
-./bootstrap
-./configure --prefix=INSTALLATION-ROOT-DIRECTORY
-make all check install
+build-aux/luke LYAML_DIR=LIBYAML-INSTALL-PREFIX
+sudo build-aux/luke PREFIX=LYAML-INSTALL-PREFIX install
+specl -v1freport specs/*_spec.yaml
 ```
 
 The dependencies are listed in the dependencies entry of the file
-[rockspec.conf][L10].  You will also need [Autoconf], [Automake]
+[rockspec][L15].  You will also need [Autoconf], [Automake]
 and [Libtool].
 
 See [INSTALL] for instructions for `configure`.
@@ -193,7 +193,7 @@ See [INSTALL] for instructions for `configure`.
 [lua]:      http://www.lua.org
 [luarocks]: http://www.luarocks.org
 [lyaml]:    http://github.com/gvvaughan/lyaml
-[L10]:      http://github.com/gvvaughan/lyaml/blob/master/rockspec.conf#L10
+[L15]:      http://github.com/gvvaughan/lyaml/blob/master/lyaml-git-1.rockspec#L15
 [yaml.h]:   http://pyyaml.org/browser/libyaml/branches/stable/include/yaml.h
 [yaml]:     http://yaml.org
 [yaml11]:   http://yaml.org/spec/1.1/

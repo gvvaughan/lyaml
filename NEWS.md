@@ -2,6 +2,10 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### New Features
+
+  - Builds and installs with `luke` instead of Autotools.
+
 
 ## Noteworthy changes in release 6.1 (2016-10-08) [stable]
 

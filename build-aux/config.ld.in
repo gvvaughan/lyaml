@@ -1,6 +1,6 @@
 -- -*- lua -*-
-title = "@PACKAGE_STRING@ Reference"
-project = "@PACKAGE_STRING@"
+title = '@package@ @version@ Reference'
+project = '@package@ @version@'
 description = [[
 # LYAML binding for Lua
 
@@ -16,15 +16,15 @@ The code is copyright by its respective authors, and released under the
 MIT license (the same license as Lua itself).  There is no warranty.
 ]]
 
-dir = "."
+dir = '../doc'
 
 file = {
-  "../lib/lyaml.lua",
-  "../lib/lyaml/explicit.lua",
-  "../lib/lyaml/functional.lua",
-  "../lib/lyaml/implicit.lua",
+  '../lib/lyaml/init.lua',
+  '../lib/lyaml/explicit.lua',
+  '../lib/lyaml/functional.lua',
+  '../lib/lyaml/implicit.lua',
 }
 
-format = "markdown"
+format = 'markdown'
 backtick_references = false
 sort = false

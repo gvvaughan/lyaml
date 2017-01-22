@@ -23,7 +23,6 @@
  * THE SOFTWARE.
  */
 
-#include <config.h>
 #include <assert.h>
 
 #include "lyaml.h"
