@@ -106,7 +106,7 @@ package.preload['luke.cli'] = function()
 luke (Luke) 0.0.0.1
 Written by Gary V. Vaughan <gary@gnu.org>, 2014
 
-Copyright (C) 2016, Gary V. Vaughan
+Copyright (C) 2017 Gary V. Vaughan
 Luke comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of Luke under the terms of the MIT license;
 it may be used for any purpose at absolutely no cost, without permission.
