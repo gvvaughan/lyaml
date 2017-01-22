@@ -1,5 +1,5 @@
 package = 'lyaml'
-version = 'git-1'
+version = '6.1.1-1'
 
 description = {
   summary = 'libYAML binding for Lua',
@@ -9,7 +9,8 @@ description = {
 }
 
 source = {
-  url = 'git://github.com/gvvaughan/lyaml.git',
+  dir = 'lyaml-6.1.1',
+  url = 'http://github.com/gvvaughan/lyaml/archive/v6.1.1.zip',
 }
 
 dependencies = {
@@ -24,7 +25,7 @@ external_dependencies = {
 
 build = {
   type = 'command',
-  build_command = 'build-aux/luke'
+  build_command = '$(LUA) build-aux/luke'
     .. ' package="' .. package .. '"'
     .. ' version="' .. version .. '"'
     .. ' PREFIX="$(PREFIX)"'
@@ -39,7 +40,7 @@ build = {
     .. ' YAML_INCDIR="$(YAML_INCDIR)"'
     .. ' YAML_LIBDIR="$(YAML_LIBDIR)"'
     ,
-  install_command = 'build-aux/luke install --quiet'
+  install_command = '$(LUA) build-aux/luke install --quiet'
     .. ' INST_LIBDIR="$(LIBDIR)"'
     .. ' INST_LUADIR="$(LUADIR)"'
     ,

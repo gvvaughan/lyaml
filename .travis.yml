@@ -22,7 +22,7 @@ install:
   - luarocks install luacov
 
 script:
-  - luarocks make --force lyaml-git-1.rockspec
+  - luarocks make --force
   - specl -vfreport --coverage specs/*_spec.yaml
 
 after_success:

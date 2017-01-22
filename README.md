@@ -169,7 +169,7 @@ Or from the rockspec in a release tarball:
 
 To install current git master from [GitHub][lyaml] (for testing):
 
-    luarocks install http://raw.github.com/gvvaughan/lyaml/release/lyaml-git-1.rockspec
+    luarocks install http://raw.github.com/gvvaughan/lyaml/master/lyaml-git-1.rockspec
 
 To install without [LuaRocks], clone the sources from the
 [repository][lyaml], and then run the following commands:
