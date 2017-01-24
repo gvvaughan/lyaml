@@ -1,5 +1,5 @@
 package = 'lyaml'
-version = '6.1.1-3'
+version = '6.1.1-4'
 
 description = {
   summary = 'libYAML binding for Lua',
