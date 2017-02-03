@@ -175,10 +175,10 @@ To install without [LuaRocks], clone the sources from the
 [repository][lyaml], and then run the following commands:
 
 ```sh
-cd lyaml
-build-aux/luke LYAML_DIR=LIBYAML-INSTALL-PREFIX
-sudo build-aux/luke PREFIX=LYAML-INSTALL-PREFIX install
-specl -v1freport specs/*_spec.yaml
+$ mkdir build && cd build
+$ cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DLUA=5.1
+$ make
+$ sudo make install
 ```
 
 The dependencies are listed in the dependencies entry of the file
