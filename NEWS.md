@@ -1,6 +1,11 @@
 # lyaml NEWS - User visible changes
 
-## Noteworthy changes in release ?.? (????-??-??) [?]
+## Noteworthy changes in release 6.1.2 (2017-04-30) [stable]
+
+### Bug fixes
+
+  - `luke` now propagates LUA_DIR, YAML_INCDIR and YAML_LIBDIR
+    correctly.
 
 
 ## Noteworthy changes in release 6.1.1 (2017-01-22) [stable]

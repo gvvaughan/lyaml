@@ -42,7 +42,7 @@ local function opterr(msg)if match(msg,'%.$')==nil then
 msg=msg..'.'end
 stderr:write('luke: error: '..msg..'\n')stderr:write("luke: try '"..arg[0].." --help' for help.\n")exit(2)end
 local function display(...)return stdout:write(concat{...})end
-local function dump(...)return stderr:write('   DEBUG: "'..concat{...}..'"\n')end
+local function dump(...)return stderr:write('   DEBUG: "'..concat(map(list(...),str))..'"\n')end
 local function interpolate_to_substitute(s)return(gsub(s,'%$([%w_]+)','@%1@'))end
 return{parse_arguments=function(args)local clidefs,fname,targets,install={},'lukefile',{},{}local verbose,write,debug=nop,display,nop
 map(args,function(opt)case(opt,{['--debug']=function()debug=dump
@@ -69,7 +69,7 @@ luke.modules=build
 if isempty(luke.modules)then
 luke.external_dependencies=nil
 end
-luke.substitute=merge(luke.substitute or{},{package=interpolate_to_substitute(luke.package),version=interpolate_to_substitute(luke.version),})luke.variables=merge(luke.variables or{},collect_variables(luke),{objdir=platforms[1],package=luke.package,version=luke.version,})return{clidefs=clidefs,install=install,debug=debug,luke=luke,verbose=verbose,write=write,}end,}
+luke.substitute=merge(luke.substitute or{},{package=interpolate_to_substitute(luke.package),version=interpolate_to_substitute(luke.version),})luke.variables=merge(luke.variables or{},collect_variables(luke),{LUA_DIR='/usr',LUA_BINDIR='$LUA_DIR/bin',LUA_INCDIR='$LUA_DIR/include/lua$LUAVERSION',LUA_LIBDIR='$LUA_DIR/lib',objdir=platforms[1],package=luke.package,version=luke.version,})return{clidefs=clidefs,install=install,debug=debug,luke=luke,verbose=verbose,write=write,}end,}
 end
 package.preload['luke.compile']=function()
 local _ENV=require'std.normalize'{'luke._base','luke.environment','std.functional','type.context-manager',SHELLMETACHARS='[%s%$"]',}local function spawn(env,...)local command=interpolate(env,concat({...},' '))return with(TmpFile(),TmpFile(),function(out,err)local pipe=concat{command,' >',out.filename,' 2>',err.filename,'; printf $?'}return int(slurp(Pipe(pipe))),slurp(File(err.filename)),slurp(File(out.filename))end)end
@@ -92,7 +92,7 @@ abspath=abspath..'.lua'return src,(gsub(abspath,'/[^/]+%.lua$',''))end
 local function module_to_path(module,sources,objdir)return dropuntil(sources,function(source)return case(source,{['.*%.[ch]']=bind(c_source,{module,objdir}),['(.*%.[ch])%.in']=bind(c_source,{module,objdir}),['.*%.lua']=bind(lua_source,{module}),['(.*%.lua)%.in']=bind(lua_source,{module}),function(src)fatal("unsupported source type '%s'",src)end,})end)end
 return{build_c_module=function(L,env,luke,name)local rules=luke.modules[name]local c_module=c_module_path(luke.variables.objdir,name)local command={'$MAKEDIRS',(gsub(c_module,'/[^/]*$',''))}local status,err,out=spawn(env,unpack(command))if status~=0 then
 stdout:write(concat(command,' ')..'\n')stderr:write(err..'\n')exit(status)end
-return run(L,env,flatten('$COMPILE',defines(env,except(list(rules.defines,luke.defines),nil)),incdirs(rules.incdirs,luke.incdirs),rules.sources,'-o',c_module,libdirs(rules.libdirs,luke.libdirs),'$LIBS',rules.libraries,luke.libraries))end,c_modules=function(modules)return filter(keys(modules),function(name)return dropuntil(modules[name].sources,bind(match,{[2]='%.[ch]$'}))end)end,incdirs=incdirs,install_modules=function(L,env,luke,modules)return reduce(keys(modules),0,function(status,name)if status==0 then
+return run(L,env,flatten('$CC $CFLAGS $LIBFLAGS $PKGFLAGS $CPPFLAGS',defines(env,except(list(rules.defines,luke.defines),nil)),incdirs(rules.incdirs,luke.incdirs),rules.sources,'-o',c_module,libdirs(rules.libdirs,luke.libdirs),'$LIBS',rules.libraries,luke.libraries))end,c_modules=function(modules)return filter(keys(modules),function(name)return dropuntil(modules[name].sources,bind(match,{[2]='%.[ch]$'}))end)end,incdirs=incdirs,install_modules=function(L,env,luke,modules)return reduce(keys(modules),0,function(status,name)if status==0 then
 local src,dir=module_to_path(name,modules[name].sources,luke.variables.objdir)if open(interpolate(env,dir))==nil then
 status=run(L,env,{'$MAKEDIRS',dir})end
 if status==0 then
@@ -233,7 +233,7 @@ return r
 end
 local function isenv(t)return getmetatable(t)==env_mt
 end
-return{CONFIGENV={compile='$CC -c $CFLAGS $CPPFLAGS',libs='',link='$CC $CFLAGS $CPPFLAGS $LDFLAGS',},DEFAULTENV=filter_platforms{LUAVERSION=LUAVERSION,PREFIX='/usr/local',INST_LIBDIR='$PREFIX/lib/lua/$LUAVERSION',INST_LUADIR='$PREFIX/share/lua/$LUAVERSION',LUA_INCDIR='/usr/include/lua$LUAVERSION',LIB_EXTENSION='so',OBJ_EXTENSION='o',INSTALL='cp',MAKEDIRS='mkdir -p',COMPILE='$CC $CFLAGS $LIBFLAGS $PKGFLAGS $CPPFLAGS',CFLAGS='-O2',platforms={macosx={LIBFLAGS='-fPIC -bundle -undefined dynamic_lookup -all_load',},LIBFLAGS='-shared -fPIC',},},SHELLENV=setmetatable({},{__index=function(_,v)return getenv(v)end,}),expand=bind(interpolate_with,{'@([^@]+)@'}),interpolate=bind(interpolate_with,{'%$([%w_]+)'}),makeenv=function(...)local env=reduce(except(list(...),nil),function(r,t)if isenv(t)then
+return{CONFIGENV={compile='$CC -c $CFLAGS $CPPFLAGS',libs='',link='$CC $CFLAGS $CPPFLAGS $LDFLAGS',},DEFAULTENV=filter_platforms{LUAVERSION=LUAVERSION,PREFIX='/usr/local',INST_LIBDIR='$PREFIX/lib/lua/$LUAVERSION',INST_LUADIR='$PREFIX/share/lua/$LUAVERSION',LIB_EXTENSION='so',OBJ_EXTENSION='o',INSTALL='cp',MAKEDIRS='mkdir -p',CFLAGS='-O2',platforms={macosx={LIBFLAGS='-fPIC -bundle -undefined dynamic_lookup -all_load',},LIBFLAGS='-shared -fPIC',},},SHELLENV=setmetatable({},{__index=function(_,v)return getenv(v)end,}),expand=bind(interpolate_with,{'@([^@]+)@'}),interpolate=bind(interpolate_with,{'%$([%w_]+)'}),makeenv=function(...)local env=reduce(except(list(...),nil),function(r,t)if isenv(t)then
 map(t,bind(append,{r}))else
 append(r,t)end
 end)return setmetatable(env,env_mt)end,}
@@ -303,7 +303,7 @@ end
 return unwind_external_dependencies(v)end)if istable(r.external_dependencies)then
 for prefix,config in next,r.external_dependencies do
 if config.library~=''then
-r.libdirs=append(r.libdirs or{},format('$%s_LIBDIR',prefix))r.libraries=append(r.libraries or{},'-l'..config.library)end
+r.incdirs=append(r.incdirs or{},format('$%s_INCDIR',prefix))r.libdirs=append(r.libdirs or{},format('$%s_LIBDIR',prefix))r.libraries=append(r.libraries or{},'-l'..config.library)end
 end
 r.external_dependencies=nil
 end
@@ -326,21 +326,21 @@ end,}
 end
 package.preload['luke.platforms']=function()
 local _ENV=require'std.normalize'{'std.functional',}local CANON={['AIX']=list('aix','unix'),['FreeBSD']=list('freebsd','bsd','unix'),['OpenBSD']=list('openbsd','bsd','unix'),['NetBSD']=list('netbsd','bsd','unix'),['Darwin']=list('macosx','bsd','unix'),['Linux']=list('linux','unix'),['SunOS']=list('solaris','unix'),['^CYGWIN']=list('cygwin','unix'),['^MSYS']=list('msys','cygwin','unix'),['^Windows']=list('win32','windows'),['^MINGW']=list('mingw32','win32','windows'),['^procnto']=list('qnx'),['QNX']=list('qnx'),['Haiku']=list('haiku','unix'),}local ALLPLATFORMS=reduce(values(CANON),function(acc,platforms)map(platforms,function(v)acc[v]=true
-end)end)local function match_uname(lookup,uname,x)return match(uname,x)and lookup[x]end
-local function toplatforms(lookup,uname)local literalkeys,patternkeys=partition(keys(lookup),function(k)return sub(k,1,1)~='^'end)return(pluck(literalkeys,lookup)or{})[uname]or dropuntil(map(patternkeys,bind(match_uname,{lookup,uname})))or list('unix')end
-local function isplatform(x)return ALLPLATFORMS[x]~=nil
+end)end)local function match_uname(canon,uname,x)return match(uname,x)and canon[x]end
+local function toplatforms(canon,uname)local literalkeys,patternkeys=partition(keys(canon),function(k)return sub(k,1,1)~='^'end)return(pluck(literalkeys,canon)or{})[uname]or dropuntil(map(patternkeys,bind(match_uname,{canon,uname})))or list('unix')end
+local supported=toplatforms(CANON,popen('uname -s'):read'*l')local function isplatform(x)return ALLPLATFORMS[x]~=nil
 end
-local platforms=toplatforms(CANON,popen('uname -s'):read'*l')local function filter_platforms(t,using,predicate)local r,platforms,isplatform={},using or platforms,predicate or isplatform
+local function filter_platforms(t,using,predicate)local r,supported,isplatform={},using or supported,predicate or isplatform
 for k,v in next,t do
 if k=='platforms'then
-local branches,defaults=partition(keys(v),isplatform)local matches=filter(branches,bind(contains,{platforms}))merge(r,hoist(matches,v)or pluck(defaults,v))elseif istable(v)then
-r[k]=filter_platforms(v,using)else
+local matches=filter(supported,bind(get,{v}))local default=except(keys(v),isplatform)merge(r,hoist(matches,v)or pluck(default,v))elseif istable(v)then
+r[k]=filter_platforms(v,supported)else
 r[k]=r[k]or v
 end
 end
 return r
 end
-return{filter_platforms=filter_platforms,platforms=platforms,toplatforms=toplatforms,}
+return{filter_platforms=filter_platforms,platforms=supported,toplatforms=toplatforms,}
 end
 package.preload['std.functional']=function()
 local _ENV=require'std.normalize'{destructure=next,isfile=function(x)return io.type(x)=='file'end,wrap=coroutine.wrap,yield=coroutine.yield,}local function apply(fn,argu)assert(fn~=nil,'cannot apply nil-valued function')if iscallable(fn)then
@@ -450,7 +450,7 @@ r[k]=r[k]or v
 end
 end
 return r
-end,hoist=function(keylist,dict)local r={}for keyu in each(keylist)do
+end,get=function(dict,key)return(dict or{})[key]end,hoist=function(keylist,dict)local r={}for keyu in each(keylist)do
 merge(r,dict[unpack(keyu)])end
 return next(r)and r or nil
 end,id=function(...)return...end,isempty=function(x)return type(x)=='table'and not next(x)end,isfile=isfile,isfunction=function(x)return type(x)=='function'end,isnil=function(x)return x==nil
