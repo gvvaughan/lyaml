@@ -1,5 +1,5 @@
 package = 'lyaml'
-version = 'git-1'
+version = '6.1.2-1'
 
 description = {
   summary = 'libYAML binding for Lua',
@@ -9,12 +9,12 @@ description = {
 }
 
 source = {
-  url = 'git://github.com/gvvaughan/lyaml.git',
+  dir = 'lyaml-6.1.2',
+  url = 'http://github.com/gvvaughan/lyaml/archive/v6.1.2.zip',
 }
 
 dependencies = {
   'lua >= 5.1, < 5.4',
-  'ldoc',
 }
 
 external_dependencies = {
