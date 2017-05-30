@@ -1,5 +1,12 @@
 # lyaml NEWS - User visible changes
 
+## Noteworthy changes in release 6.1.3 (2017-05-29) [stable]
+
+### Bug fixes
+
+  - `luke` no longer bombs out with a nil concat error.
+
+
 ## Noteworthy changes in release 6.1.2 (2017-04-30) [stable]
 
 ### Bug fixes
