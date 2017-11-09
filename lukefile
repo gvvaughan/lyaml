@@ -2,10 +2,10 @@ package  = 'lyaml'
 version  = '$USER'
 
 defines  = {
-   PACKAGE           = '"$package"',
-   VERSION           = '"$version"',
-   NDEBUG            = 1,
-   _FORTIFY_SOURCE   = 2,
+   PACKAGE              = '"$package"',
+   VERSION              = '"$version"',
+   NDEBUG               = 1,
+   _FORTIFY_SOURCE      = 2,
    platforms   = {    
       aix      = {_ALL_SOURCE       = 1},
       bsd      = {_BSD_SOURCE       = 1},
@@ -15,7 +15,9 @@ defines  = {
 }
 
 external_dependencies   = {
-   YAML  = {checksymbol='yaml_document_initialize', library='yaml'},
+   YAML  = {
+      library = {checksymbol='yaml_document_initialize', library='yaml'},
+   },
 }
 
 incdirs  = {

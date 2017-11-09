@@ -1,5 +1,14 @@
 # lyaml NEWS - User visible changes
 
+## Noteworthy changes in release ?.? (????-??-??) [?]
+
+### Bug fixes
+
+  - `luke` uses the correct spelling of LIBFLAG to match luarocks now.
+
+  - `luke` works on luajit again.
+
+
 ## Noteworthy changes in release 6.1.3 (2017-05-29) [stable]
 
 ### Bug fixes
@@ -11,7 +20,7 @@
 
 ### Bug fixes
 
-  - `luke` now propagates LUA_DIR, YAML_INCDIR and YAML_LIBDIR
+  - `luke` now propagates `LUA_DIR`, `YAML_INCDIR` and `YAML_LIBDIR`
     correctly.
 
 
