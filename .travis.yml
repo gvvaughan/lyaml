@@ -23,7 +23,7 @@ install:
 script:
   - luarocks make --force
   - luarocks install specl
-  - specl -vfreport --coverage specs/*_spec.yaml
+  - specl -vfreport --coverage spec/*_spec.yaml
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f luacov.report.out

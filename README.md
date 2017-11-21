@@ -178,7 +178,7 @@ To install without [LuaRocks], clone the sources from the
 cd lyaml
 build-aux/luke LYAML_DIR=LIBYAML-INSTALL-PREFIX
 sudo build-aux/luke PREFIX=LYAML-INSTALL-PREFIX install
-specl -v1freport specs/*_spec.yaml
+specl -v1freport spec/*_spec.yaml
 ```
 
 The dependencies are listed in the dependencies entry of the file
