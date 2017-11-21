@@ -26,7 +26,9 @@
 
 
 local NULL = require 'lyaml.functional'.NULL
-
+local find = string.find
+local gsub = string.gsub
+local sub = string.sub
 
 local is_null = {['']=true, ['~']=true, null=true, Null=true, NULL=true}
 
@@ -72,9 +74,9 @@ end
 -- @usage maybe_int = implicit.binary(value)
 local function binary(value)
    local r
-   value:gsub('^([+-]?)0b_*([01][01_]+)$', function(sign, rest)
+   gsub(value, '^([+-]?)0b_*([01][01_]+)$', function(sign, rest)
       r = 0
-      rest:gsub('_*(.)', function(digit)
+      gsub(rest, '_*(.)', function(digit)
          r = r * 2 + tonumber(digit)
       end)
       if sign == '-' then
@@ -92,9 +94,9 @@ end
 -- @usage maybe_int = implicit.octal(value)
 local function octal(value)
    local r
-   value:gsub('^([+-]?)0_*([0-7][0-7_]*)$', function(sign, rest)
+   gsub(value, '^([+-]?)0_*([0-7][0-7_]*)$', function(sign, rest)
       r = 0
-      rest:gsub('_*(.)', function(digit)
+      gsub(rest, '_*(.)', function(digit)
          r = r * 8 + tonumber(digit)
       end)
       if sign == '-' then
@@ -112,9 +114,9 @@ end
 -- @usage maybe_int = implicit.decimal(value)
 local function decimal(value)
    local r
-   value:gsub('^([+-]?)_*([0-9][0-9_]*)$', function(sign, rest)
-      rest = rest:gsub('_', '')
-      if rest == '0' or #rest > 1 or rest:sub(1, 1) ~= '0' then
+   gsub(value, '^([+-]?)_*([0-9][0-9_]*)$', function(sign, rest)
+      rest = gsub(rest, '_', '')
+      if rest == '0' or #rest > 1 or sub(rest, 1, 1) ~= '0' then
          r = tonumber(rest)
          if sign == '-' then
             r = r * -1
@@ -132,8 +134,8 @@ end
 -- @usage maybe_int = implicit.hexadecimal(value)
 local function hexadecimal(value)
    local r
-   value:gsub('^([+-]?)(0x_*[0-9a-fA-F][0-9a-fA-F_]*)$', function(sign, rest)
-      rest = rest:gsub('_', '')
+   gsub(value, '^([+-]?)(0x_*[0-9a-fA-F][0-9a-fA-F_]*)$', function(sign, rest)
+      rest = gsub(rest, '_', '')
       r = tonumber(rest)
       if sign == '-' then
          r = r * -1
@@ -151,9 +153,9 @@ end
 -- @usage maybe_int = implicit.sexagesimal(value)
 local function sexagesimal(value)
    local r
-   value:gsub('^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)$', function(sign, rest)
+   gsub(value, '^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)$', function(sign, rest)
       r = 0
-      rest:gsub('([0-9]+):?', function(digit)
+      gsub(rest, '([0-9]+):?', function(digit)
          r = r * 60 + tonumber(digit)
       end)
       if sign == '-' then
@@ -202,8 +204,8 @@ end
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_float = implicit.float(value)
 local function float(value)
-   local r = tonumber((value:gsub('_', '')))
-   if r and value:find '[%.eE]' then
+   local r = tonumber((gsub(value, '_', '')))
+   if r and find(value, '[%.eE]') then
       return r
    end
 end
@@ -217,10 +219,10 @@ end
 -- @usage maybe_float = implicit.sexfloat(value)
 local function sexfloat(value)
    local r
-   value:gsub('^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)(%.[0-9]+)$',
+   gsub(value, '^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)(%.[0-9]+)$',
       function(sign, rest, float)
          r = 0
-         rest:gsub('([0-9]+):?', function(digit)
+         gsub(rest, '([0-9]+):?', function(digit)
             r = r * 60 + tonumber(digit)
          end)
          r = r + tonumber(float)

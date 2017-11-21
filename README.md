@@ -216,6 +216,9 @@ points when proposing changes:
 4. Use vertical space to separate out compound statements to help the
    coverage reports discover untested lines.
 
+5. Prefer explicit string function calls over object methods, to mitigate
+   issues with monkey-patching in caller environment.
+
 
 [issues]:   http://github.com/gvvaughas/lyaml/issues
 [libyaml]:  http://pyyaml.org/wiki/LibYAML

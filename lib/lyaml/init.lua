@@ -28,10 +28,12 @@
 --- @module lyaml
 
 
-local yaml = require 'yaml'
 local explicit = require 'lyaml.explicit'
-local implicit = require 'lyaml.implicit'
 local functional = require 'lyaml.functional'
+local gsub = string.gsub
+local implicit = require 'lyaml.implicit'
+local match = string.match
+local yaml = require 'yaml'
 
 local anyof, id, isnull =
    functional.anyof, functional.id, functional.isnull
@@ -305,7 +307,7 @@ local parser_mt = {
          local ok, event = pcall(self.next)
          if not ok then
             -- if ok is nil, then event is a parser error from libYAML
-            self:error(event:gsub(' at document: .*$', ''))
+            self:error(gsub(event, ' at document: .*$', ''))
          end
          self.event = event
          self.mark = {
@@ -323,7 +325,7 @@ local parser_mt = {
             local key = self:load_node()
             local tag = self.event.tag
             if tag then
-               tag = tag:match('^' .. TAG_PREFIX .. '(.*)$')
+               tag = match(tag, '^' .. TAG_PREFIX .. '(.*)$')
             end
             if key == nil then
                break
