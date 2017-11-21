@@ -25,11 +25,11 @@
 --- @module lyaml.implicit
 
 
-local NULL = require "lyaml.functional".NULL
+local NULL = require 'lyaml.functional'.NULL
 
 
 local is_null = {
-   [""] = true, ["~"] = true, null = true, Null = true, NULL = true,
+   [''] = true, ['~'] = true, null = true, Null = true, NULL = true,
 }
 
 
@@ -46,8 +46,8 @@ end
 
 
 local to_bool = {
-   ["true"]  = true,  True  = true,  TRUE  = true,
-   ["false"] = false, False = false, FALSE = false,
+   ['true']  = true,  True  = true,  TRUE  = true,
+   ['false'] = false, False = false, FALSE = false,
    yes       = true,  Yes   = true,  YES   = true,
    no        = false, No    = false, NO    = false,
    on        = true,  On    = true,  ON    = true,
@@ -67,79 +67,79 @@ local function bool (value)
 end
 
 
---- Parse a binary token, such as "0b1010\_0111\_0100\_1010\_1110".
+--- Parse a binary token, such as '0b1010\_0111\_0100\_1010\_1110'.
 -- @tparam string value token
 -- @treturn[1] int integer equivalent, if a valid token was recognized
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_int = implicit.binary (value)
 local function binary (value)
    local r
-   value:gsub ("^([+-]?)0b_*([01][01_]+)$", function (sign, rest)
+   value:gsub ('^([+-]?)0b_*([01][01_]+)$', function (sign, rest)
       r = 0
-      rest:gsub ("_*(.)", function (digit)
+      rest:gsub ('_*(.)', function (digit)
          r = r * 2 + tonumber (digit)
       end)
-      if sign == "-" then r = r * -1 end
+      if sign == '-' then r = r * -1 end
    end)
    return r
 end
 
 
---- Parse an octal token, such as "012345".
+--- Parse an octal token, such as '012345'.
 -- @tparam string value token
 -- @treturn[1] int integer equivalent, if a valid token was recognized
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_int = implicit.octal (value)
 local function octal (value)
    local r
-   value:gsub ("^([+-]?)0_*([0-7][0-7_]*)$", function (sign, rest)
+   value:gsub ('^([+-]?)0_*([0-7][0-7_]*)$', function (sign, rest)
       r = 0
-      rest:gsub ("_*(.)", function (digit)
+      rest:gsub ('_*(.)', function (digit)
          r = r * 8 + tonumber (digit)
       end)
-      if sign == "-" then r = r * -1 end
+      if sign == '-' then r = r * -1 end
    end)
    return r
 end
 
 
---- Parse a decimal token, such as "0" or "12345".
+--- Parse a decimal token, such as '0' or '12345'.
 -- @tparam string value token
 -- @treturn[1] int integer equivalent, if a valid token was recognized
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_int = implicit.decimal (value)
 local function decimal (value)
    local r
-   value:gsub ("^([+-]?)_*([0-9][0-9_]*)$", function (sign, rest)
-      rest = rest:gsub ("_", "")
-      if rest == "0" or #rest > 1 or rest:sub (1, 1) ~= "0"   then
+   value:gsub ('^([+-]?)_*([0-9][0-9_]*)$', function (sign, rest)
+      rest = rest:gsub ('_', '')
+      if rest == '0' or #rest > 1 or rest:sub (1, 1) ~= '0'   then
          r = tonumber (rest)
-         if sign == "-" then r = r * -1 end
+         if sign == '-' then r = r * -1 end
       end
    end)
    return r
 end
 
 
---- Parse a hexadecimal token, such as "0xdeadbeef".
+--- Parse a hexadecimal token, such as '0xdeadbeef'.
 -- @tparam string value token
 -- @treturn[1] int integer equivalent, if a valid token was recognized
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_int = implicit.hexadecimal (value)
 local function hexadecimal (value)
    local r
-   value:gsub ("^([+-]?)(0x_*[0-9a-fA-F][0-9a-fA-F_]*)$",
+   value:gsub ('^([+-]?)(0x_*[0-9a-fA-F][0-9a-fA-F_]*)$',
       function (sign, rest)
-         rest = rest:gsub ("_", "")
+         rest = rest:gsub ('_', '')
          r = tonumber (rest)
-         if sign == "-" then r = r * -1 end
+         if sign == '-' then r = r * -1 end
       end
    )
    return r
 end
 
 
---- Parse a sexagesimal token, such as "190:20:30".
+--- Parse a sexagesimal token, such as '190:20:30'.
 -- Useful for times and angles.
 -- @tparam string value token
 -- @treturn[1] int integer equivalent, if a valid token was recognized
@@ -147,19 +147,19 @@ end
 -- @usage maybe_int = implicit.sexagesimal (value)
 local function sexagesimal (value)
    local r
-   value:gsub ("^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)$", function (sign, rest)
+   value:gsub ('^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)$', function (sign, rest)
       r = 0
-      rest:gsub ("([0-9]+):?", function (digit)
+      rest:gsub ('([0-9]+):?', function (digit)
          r = r * 60 + tonumber (digit)
       end)
-      if sign == "-" then r = r * -1 end
+      if sign == '-' then r = r * -1 end
    end)
    return r
 end
 
 
 local isnan = {
-   [".nan"] = true, [".NaN"] = true, [".NAN"] = true,
+   ['.nan'] = true, ['.NaN'] = true, ['.NAN'] = true,
 }
 
 
@@ -174,9 +174,9 @@ end
 
 
 local isinf = {
-   [".inf"]  = math.huge,  [".Inf"]  = math.huge,  [".INF"]  = math.huge,
-   ["+.inf"] = math.huge,  ["+.Inf"] = math.huge,  ["+.INF"] = math.huge,
-   ["-.inf"] = -math.huge, ["-.Inf"] = -math.huge, ["-.INF"] = -math.huge,
+   ['.inf']  = math.huge,  ['.Inf']  = math.huge,  ['.INF']  = math.huge,
+   ['+.inf'] = math.huge,  ['+.Inf'] = math.huge,  ['+.INF'] = math.huge,
+   ['-.inf'] = -math.huge, ['-.Inf'] = -math.huge, ['-.INF'] = -math.huge,
 }
 
 
@@ -190,18 +190,18 @@ local function inf (value)
 end
 
 
---- Parse a floating point number token, such as "1e-3" or "-0.12".
+--- Parse a floating point number token, such as '1e-3' or '-0.12'.
 -- @tparam string value token
 -- @treturn[1] number float equivalent, if a valid token was recognized
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_float = implicit.float (value)
 local function float (value)
-   local r = tonumber ((value:gsub ("_", "")))
-   if r and value:find "[%.eE]" then return r end
+   local r = tonumber ((value:gsub ('_', '')))
+   if r and value:find '[%.eE]' then return r end
 end
 
 
---- Parse a sexagesimal float, such as "190:20:30.15".
+--- Parse a sexagesimal float, such as '190:20:30.15'.
 -- Useful for times and angles.
 -- @tparam string value token
 -- @treturn[1] number float equivalent, if a valid token was recognized
@@ -209,14 +209,14 @@ end
 -- @usage maybe_float = implicit.sexfloat (value)
 local function sexfloat (value)
    local r
-   value:gsub ("^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)(%.[0-9]+)$",
+   value:gsub ('^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)(%.[0-9]+)$',
       function (sign, rest, float)
          r = 0
-         rest:gsub ("([0-9]+):?", function (digit)
+         rest:gsub ('([0-9]+):?', function (digit)
             r = r * 60 + tonumber (digit)
          end)
          r = r + tonumber (float)
-         if sign == "-" then r = r * -1 end
+         if sign == '-' then r = r * -1 end
       end
    )
    return r

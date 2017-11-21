@@ -27,14 +27,14 @@
 
 --- `lyaml.null` value.
 -- @table NULL
-local NULL = setmetatable ({}, { _type = "LYAML null" })
+local NULL = setmetatable ({}, { _type = 'LYAML null' })
 
 
 --- `lyaml.null` predicate.
 -- @param x operand
 -- @treturn bool `true` if *x* is `lyaml.null`.
 local function isnull (x)
-   return (getmetatable (x) or {})._type == "LYAML null"
+   return (getmetatable (x) or {})._type == 'LYAML null'
 end
 
 
@@ -43,10 +43,10 @@ end
 -- @treturn bool `true` if *x* is a function has a __call metamethod
 -- @usage r = iscallable (x) and x (...)
 local function iscallable (x)
-   if type (x) ~= "function" then
+   if type (x) ~= 'function' then
       x = (getmetatable (x) or {}).__call
    end
-   if type (x) == "function" then return x end
+   if type (x) == 'function' then return x end
 end
 
 

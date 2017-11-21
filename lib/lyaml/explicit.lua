@@ -24,8 +24,8 @@
 
 --- @module lyaml.explicit
 
-local functional = require "lyaml.functional"
-local implicit   = require "lyaml.implicit"
+local functional = require 'lyaml.functional'
+local implicit   = require 'lyaml.implicit'
 
 local anyof, id  = functional.anyof, functional.id
 
@@ -56,7 +56,7 @@ local bool = anyof {
 local function maybefloat (fn)
    return function (...)
       local r = fn (...)
-      if type (r) == "number" then
+      if type (r) == 'number' then
          return r + 0.0
       end
    end

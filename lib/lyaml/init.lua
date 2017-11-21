@@ -28,10 +28,10 @@
 --- @module lyaml
 
 
-local yaml       = require "yaml"
-local explicit   = require "lyaml.explicit"
-local implicit   = require "lyaml.implicit"
-local functional = require "lyaml.functional"
+local yaml       = require 'yaml'
+local explicit   = require 'lyaml.explicit'
+local implicit   = require 'lyaml.implicit'
+local functional = require 'lyaml.functional'
 
 local anyof, id, isnull =
    functional.anyof, functional.id, functional.isnull
@@ -41,7 +41,7 @@ local anyof, id, isnull =
 -- @table null
 local null       = functional.NULL
 
-local TAG_PREFIX = "tag:yaml.org,2002:"
+local TAG_PREFIX = 'tag:yaml.org,2002:'
 
 
 local function tag (name)
@@ -52,11 +52,11 @@ end
 local default = {
    -- Tag table to lookup explicit scalar conversions.
    explicit_scalar = {
-      [tag "bool"]  = explicit.bool,
-      [tag "float"] = explicit.float,
-      [tag "int"]   = explicit.int,
-      [tag "null"]  = explicit.null,
-      [tag "str"]   = explicit.str,
+      [tag 'bool']  = explicit.bool,
+      [tag 'float'] = explicit.float,
+      [tag 'int']   = explicit.int,
+      [tag 'null']  = explicit.null,
+      [tag 'str']   = explicit.str,
    },
    -- Order is important, so we put most likely and fastest nearer
    -- the top to reduce average number of comparisons and funcalls.
@@ -102,7 +102,7 @@ local dumper_mt = {
       -- Dump ALIAS into the event stream.
       dump_alias = function (self, alias)
          return self:emit {
-            type   = "ALIAS",
+            type   = 'ALIAS',
             anchor = alias,
          }
       end,
@@ -115,15 +115,15 @@ local dumper_mt = {
          end
 
          self:emit {
-            type    = "MAPPING_START",
+            type   = 'MAPPING_START',
             anchor = self:get_anchor (map),
-            style   = "BLOCK",
+            style  = 'BLOCK',
          }
          for k, v in pairs (map) do
             self:dump_node (k)
             self:dump_node (v)
          end
-         return self:emit {type = "MAPPING_END"}
+         return self:emit {type = 'MAPPING_END'}
       end,
 
       -- Dump SEQUENCE into the event stream.
@@ -134,24 +134,24 @@ local dumper_mt = {
          end
 
          self:emit {
-            type = "SEQUENCE_START",
+            type   = 'SEQUENCE_START',
             anchor = self:get_anchor (sequence),
-            style = "BLOCK",
+            style  = 'BLOCK',
          }
          for _, v in ipairs (sequence) do
             self:dump_node (v)
          end
-         return self:emit {type = "SEQUENCE_END"}
+         return self:emit {type = 'SEQUENCE_END'}
       end,
 
       -- Dump a null into the event stream.
       dump_null = function (self)
          return self:emit {
-            type            = "SCALAR",
-            value           = "~",
+            type            = 'SCALAR',
+            value           = '~',
             plain_implicit  = true,
             quoted_implicit = true,
-            style           = "PLAIN",
+            style           = 'PLAIN',
          }
       end,
 
@@ -164,23 +164,23 @@ local dumper_mt = {
 
          local anchor = self:get_anchor (value)
          local itsa = type (value)
-         local style = "PLAIN"
-         if itsa == "string" and self.implicit_scalar (value) ~= value then
+         local style = 'PLAIN'
+         if itsa == 'string' and self.implicit_scalar (value) ~= value then
             -- take care to round-trip strings that look like scalars
-            style = "SINGLE_QUOTED"
+            style = 'SINGLE_QUOTED'
          elseif value == math.huge then
-            value = ".inf"
+            value = '.inf'
          elseif value == -math.huge then
-            value = "-.inf"
+            value = '-.inf'
          elseif value ~= value then
-            value = ".nan"
-         elseif itsa == "number" or itsa == "boolean" then
+            value = '.nan'
+         elseif itsa == 'number' or itsa == 'boolean' then
             value = tostring (value)
-         elseif itsa == "string" and string.find (value, "\n") then
-            style = "LITERAL"
+         elseif itsa == 'string' and string.find (value, '\n') then
+            style = 'LITERAL'
          end
          return self:emit {
-            type            = "SCALAR",
+            type            = 'SCALAR',
             anchor          = anchor,
             value           = value,
             plain_implicit  = true,
@@ -194,9 +194,9 @@ local dumper_mt = {
          local itsa = type (node)
          if isnull (node) then
             return self:dump_null ()
-         elseif itsa == "string" or itsa == "boolean" or itsa == "number" then
+         elseif itsa == 'string' or itsa == 'boolean' or itsa == 'number' then
             return self:dump_scalar (node)
-         elseif itsa == "table" then
+         elseif itsa == 'table' then
             if #node > 0 then
                return self:dump_sequence (node)
             else
@@ -209,9 +209,9 @@ local dumper_mt = {
 
       -- Dump DOCUMENT into the event stream.
       dump_document = function (self, document)
-         self:emit {type = "DOCUMENT_START"}
+         self:emit {type = 'DOCUMENT_START'}
          self:dump_node (document)
-         return self:emit {type = "DOCUMENT_END"}
+         return self:emit {type = 'DOCUMENT_END'}
       end,
    },
 }
@@ -254,23 +254,23 @@ local function dump (documents, opts)
       implicit_scalar = opts.implicit_scalar or default.implicit_scalar,
    }
 
-   dumper:emit { type = "STREAM_START", encoding = "UTF8" }
+   dumper:emit { type = 'STREAM_START', encoding = 'UTF8' }
    for _, document in ipairs (documents) do
       dumper:dump_document (document)
    end
-   local ok, stream = dumper:emit { type = "STREAM_END" }
+   local ok, stream = dumper:emit { type = 'STREAM_END' }
    return stream
 end
 
 
 -- We save anchor types that will match the node type from expanding
 -- an alias for that anchor.
-local alias_type = {
-   MAPPING_END    = "MAPPING_END",
-   MAPPING_START  = "MAPPING_END",
-   SCALAR         = "SCALAR",
-   SEQUENCE_END   = "SEQUENCE_END",
-   SEQUENCE_START = "SEQUENCE_END",
+local alias_type  = {
+   MAPPING_END    = 'MAPPING_END',
+   MAPPING_START  = 'MAPPING_END',
+   SCALAR         = 'SCALAR',
+   SEQUENCE_END   = 'SEQUENCE_END',
+   SEQUENCE_START = 'SEQUENCE_END',
 }
 
 
@@ -284,7 +284,7 @@ local parser_mt = {
 
       -- Raise a parse error.
       error = function (self, errmsg, ...)
-         error (string.format ("%d:%d: " .. errmsg, self.mark.line,
+         error (string.format ('%d:%d: ' .. errmsg, self.mark.line,
                                self.mark.column, ...), 0)
       end,
 
@@ -303,7 +303,7 @@ local parser_mt = {
          local ok, event = pcall (self.next)
          if not ok then
             -- if ok is nil, then event is a parser error from libYAML
-            self:error (event:gsub (" at document: .*$", ""))
+            self:error (event:gsub (' at document: .*$', ''))
          end
          self.event = event
          self.mark  = {
@@ -320,19 +320,19 @@ local parser_mt = {
          while true do
             local key = self:load_node ()
             local tag = self.event.tag
-            if tag then tag = tag:match ("^" .. TAG_PREFIX .. "(.*)$") end
+            if tag then tag = tag:match ('^' .. TAG_PREFIX .. '(.*)$') end
             if key == nil then break end
-            if key == "<<" or tag == "merge" then
+            if key == '<<' or tag == 'merge' then
                tag = self.event.tag or key
                local node, event = self:load_node ()
-               if event == "MAPPING_END" then
+               if event == 'MAPPING_END' then
                   for k, v in pairs (node) do
                      if map[k] == nil then map[k] = v end
                   end
 
-               elseif event == "SEQUENCE_END" then
+               elseif event == 'SEQUENCE_END' then
                   for i, merge in ipairs (node) do
-                     if type (merge) ~= "table" then
+                     if type (merge) ~= 'table' then
                         self:error ("invalid '%s' sequence element %d: %s",
                            tag, i, tostring (merge))
                      end
@@ -342,13 +342,13 @@ local parser_mt = {
                   end
 
                else
-                  if event == "SCALAR" then event = tostring (node) end
+                  if event == 'SCALAR' then event = tostring (node) end
                   self:error ("invalid '%s' merge event: %s", tag, event)
                end
             else
                local value, event = self:load_node ()
                if value == nil then
-                  self:error ("unexpected %s event", self:type ())
+                  self:error ('unexpected %s event', self:type ())
                end
                map[key] = value
             end
@@ -382,7 +382,7 @@ local parser_mt = {
             end
 
          -- Otherwise, implicit conversion according to value content.
-         elseif self.event.style == "PLAIN" then
+         elseif self.event.style == 'PLAIN' then
             value = self.implicit_scalar (self.event.value)
          end
          self:add_anchor (value)
@@ -393,7 +393,7 @@ local parser_mt = {
          local anchor = self.event.anchor
          local event  = self.anchors[anchor]
          if event == nil then
-            self:error ("invalid reference: %s", tostring (anchor))
+            self:error ('invalid reference: %s', tostring (anchor))
          end
          return event.value, event.type
       end,
@@ -411,7 +411,7 @@ local parser_mt = {
 
          local event = self:parse ()
          if dispatch[event] == nil then
-            self:error ("invalid event: %s", self:type ())
+            self:error ('invalid event: %s', self:type ())
          end
        return dispatch[event] (self)
       end,
@@ -458,18 +458,18 @@ local function load (s, opts)
       implicit_scalar = opts.implicit_scalar or default.implicit_scalar,
    })
 
-   if parser:parse () ~= "STREAM_START" then
-      error ("expecting STREAM_START event, but got " .. parser:type (), 2)
+   if parser:parse () ~= 'STREAM_START' then
+      error ('expecting STREAM_START event, but got ' .. parser:type (), 2)
    end
 
-   while parser:parse () ~= "STREAM_END" do
+   while parser:parse () ~= 'STREAM_END' do
       local document = parser:load_node ()
       if document == nil then
-         error ("unexpected " .. parser:type () .. " event")
+         error ('unexpected ' .. parser:type () .. ' event')
       end
 
-      if parser:parse () ~= "DOCUMENT_END" then
-         error ("expecting DOCUMENT_END event, but got " .. parser:type (), 2)
+      if parser:parse () ~= 'DOCUMENT_END' then
+         error ('expecting DOCUMENT_END event, but got ' .. parser:type (), 2)
       end
 
       -- save document
