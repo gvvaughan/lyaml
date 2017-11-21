@@ -48,7 +48,7 @@ specify scanning:
       k = consume (1, "%YAML 1.0")
   - it can recognize document versions:
       expect (filter (k (), "type", "major", "minor")).
-        to_equal {type = "VERSION_DIRECTIVE", major = 1, minor = 0}
+         to_equal {type = "VERSION_DIRECTIVE", major = 1, minor = 0}
   - it reports token start marker:
       expect (k ().start_mark).to_equal {line = 0, column = 0, index = 0}
   - it reports token end marker:
@@ -58,15 +58,15 @@ specify scanning:
   - it can recognize primary tag handles:
       k = consume (1, "%TAG ! tag:ben-kiki.org,2000:app/")
       expect (filter (k (), "handle", "prefix")).
-        to_equal {handle = "!", prefix = "tag:ben-kiki.org,2000:app/"}
+         to_equal {handle = "!", prefix = "tag:ben-kiki.org,2000:app/"}
   - it can recognize secondary tag handles:
       k = consume (1, "%TAG !! tag:yaml.org,2002:")
       expect (filter (k (), "handle", "prefix")).
-        to_equal {handle = "!!", prefix = "tag:yaml.org,2002:"}
+         to_equal {handle = "!!", prefix = "tag:yaml.org,2002:"}
   - it can recognize named tag handles:
       k = consume (1, "%TAG !o! tag:ben-kiki.org,2000:\n---")
       expect (filter (k (), "handle", "prefix")).
-        to_equal {handle = "!o!", prefix = "tag:ben-kiki.org,2000:"}
+         to_equal {handle = "!o!", prefix = "tag:ben-kiki.org,2000:"}
 
 - describe DOCUMENT_START:
   - before:
@@ -99,7 +99,7 @@ specify scanning:
                       "- Ken Griffey")
   - it recognizes an alias token:
       expect (filter (k (), "type", "value")).
-        to_equal {type = "ALIAS", value = "SS"}
+         to_equal {type = "ALIAS", value = "SS"}
   - it reports token start marker:
       expect (k ().start_mark).to_equal {line = 5, column = 2, index = 47}
   - it reports token end marker:
@@ -116,7 +116,7 @@ specify scanning:
                       "- Ken Griffey")
   - it recognizes an anchor token:
       expect (filter (k (), "type", "value")).
-        to_equal {type = "ANCHOR", value = "SS"}
+         to_equal {type = "ANCHOR", value = "SS"}
   - it reports token start marker:
       expect (k ().start_mark).to_equal {line = 3, column = 2, index = 25}
   - it reports token end marker:
@@ -133,7 +133,7 @@ specify scanning:
                       "- Ken Griffey")
   - it recognizes a scalar token:
       expect (filter (k (), "type", "value")).
-        to_equal {type = "SCALAR",  value = "Sammy Sosa"}
+         to_equal {type = "SCALAR",  value = "Sammy Sosa"}
   - it reports token start marker:
       expect (k ().start_mark).to_equal {line = 3, column = 6, index = 29}
   - it reports token end marker:
@@ -148,7 +148,7 @@ specify scanning:
                           "  by a knee injury.\n")
       - it ignores line-breaks and indentation:
           expect (k ().value).
-            to_be "Mark McGwire's year was crippled by a knee injury."
+             to_be "Mark McGwire's year was crippled by a knee injury."
       - it recognizes PLAIN style:
           expect (k ().style).to_be "PLAIN"
     - context folded style:
@@ -163,7 +163,7 @@ specify scanning:
                           "  What a year!\n")
       - it preserves blank lines and deeper indentation:
           expect (k ().value).
-            to_be ("Sammy Sosa completed another fine season with great stats.\n" ..
+             to_be ("Sammy Sosa completed another fine season with great stats.\n" ..
                        "\n" ..
                        "  63 Home Runs\n" ..
                        "  0.288 Batting Average\n" ..
@@ -179,7 +179,7 @@ specify scanning:
                           [[  // ||  ||__]] .. "\n")
       - it removes indentation but preserves all line-breaks:
           expect (k ().value).
-            to_be ([[\//||\/||]] .. "\n" ..
+             to_be ([[\//||\/||]] .. "\n" ..
                        [[// ||  ||__]] .. "\n")
       - it recognizes LITERAL style:
           expect (k ().style).to_be "LITERAL"
@@ -190,7 +190,7 @@ specify scanning:
                           [[  spans two lines.']])
       - it folds line breaks:
           expect (k ().value).
-            to_be "This quoted scalar spans two lines."
+             to_be "This quoted scalar spans two lines."
       - it does not process escape sequences:
           # Lua [[ quoting makes sure libyaml sees all the quotes.
           k = consume (1, [['"Howdy!"\t\u263A']])
@@ -206,7 +206,7 @@ specify scanning:
           k = consume (5, [[quoted: "This quoted scalar]] .. "\n" ..
                           [[  spans two lines\n"]])
           expect (k ().value).
-            to_be "This quoted scalar spans two lines\n"'
+             to_be "This quoted scalar spans two lines\n"'
       - it recognizes unicode escape sequences: '
           k = consume (5, [[unicode: "Sosa did fine.\u263A"]])
           expect (k ().value).to_be "Sosa did fine.\226\152\186"'
@@ -243,7 +243,7 @@ specify scanning:
                       " above may be different for\n" ..
                       " different documents.")
       expect (filter (k (), "type", "handle", "suffix")).
-        to_equal {type = "TAG", handle = "!", suffix = "something"}'
+         to_equal {type = "TAG", handle = "!", suffix = "something"}'
   - it recognizes global tags: '
       k = consume (5, "picture: !!binary |\n" ..
                       " R0lGODlhDAAMAIQAAP//9/X\n" ..
@@ -251,7 +251,7 @@ specify scanning:
                       " Pz7Y6OjuDg4J+fn5OTk6enp\n" ..
                       " 56enmleECcgggoBADs=")
       expect (filter (k (), "type", "handle", "suffix")).
-        to_equal {type = "TAG", handle = "!!", suffix = "binary"}'
+         to_equal {type = "TAG", handle = "!!", suffix = "binary"}'
 
 - describe BLOCK_SEQUENCE_START:
   - before: '

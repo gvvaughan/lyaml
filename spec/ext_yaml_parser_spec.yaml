@@ -68,29 +68,29 @@ specify parsing:
         pending (github_issue "1")
         e = consume (1, "%YAML 1.9\n---")
         expect (e ()).
-          to_error "attempting parsing of newer minor document version"
+           to_error "attempting parsing of newer minor document version"
 
     - it can recognize primary tag handles:
         e = consume (1, "%TAG ! tag:ben-kiki.org,2000:app/\n---")
         expect (e ().tag_directives).
-          to_equal {{handle = "!", prefix = "tag:ben-kiki.org,2000:app/"}}
+           to_equal {{handle = "!", prefix = "tag:ben-kiki.org,2000:app/"}}
     - it can recognize secondary tag handles:
         e = consume (1, "%TAG !! tag:yaml.org,2002:\n---")
         expect (e ().tag_directives).
-          to_equal {{handle = "!!", prefix = "tag:yaml.org,2002:"}}
+           to_equal {{handle = "!!", prefix = "tag:yaml.org,2002:"}}
     - it can recognize named tag handles:
         e = consume (1, "%TAG !o! tag:ben-kiki.org,2000:\n---")
         expect (e ().tag_directives).
-          to_equal {{handle = "!o!", prefix = "tag:ben-kiki.org,2000:"}}
+           to_equal {{handle = "!o!", prefix = "tag:ben-kiki.org,2000:"}}
     - it can concatenate multiple tag handles:
         e = consume (1, "%TAG ! !\n" ..
                         "%TAG !! tag:yaml.org,2002:\n" ..
                         "%TAG !o! tag:ben-kiki.org,2000:\n" ..
                         "---")
         expect (e ().tag_directives).to_contain.
-          all_of {{handle = "!", prefix = "!"},
-                  {handle = "!!", prefix = "tag:yaml.org,2002:"},
-                  {handle = "!o!", prefix = "tag:ben-kiki.org,2000:"}}
+           all_of {{handle = "!", prefix = "!"},
+                   {handle = "!!", prefix = "tag:yaml.org,2002:"},
+                   {handle = "!o!", prefix = "tag:ben-kiki.org,2000:"}}
     - it can diagnose missing document start:
         e = consume (1, "%TAG ! !\n")
         expect (e ()).to_error "expected <document start>"
@@ -100,11 +100,11 @@ specify parsing:
       e = consume (3, "foo\n...")
   - it recognizes the document end marker:
       expect (filter (e (), "type", "implicit")).
-        to_equal {type = "DOCUMENT_END", implicit = false}
+         to_equal {type = "DOCUMENT_END", implicit = false}
   - it reports an implicit document end marker:
       e = consume (3, "foo\n")
       expect (filter (e (), "type", "implicit")).
-        to_equal {type = "DOCUMENT_END", implicit = true}
+         to_equal {type = "DOCUMENT_END", implicit = true}
   - it reports event start marker:
       expect (e ().start_mark).to_equal {line = 1, column = 0, index = 4}
   - it reports event end marker:
@@ -121,7 +121,7 @@ specify parsing:
                       "- Ken Griffey")
   - it recognizes an alias event:
       expect (filter (e (), "type", "anchor")).
-        to_equal {type = "ALIAS", anchor = "SS"}
+         to_equal {type = "ALIAS", anchor = "SS"}
   - it reports event start marker:
       expect (e ().start_mark).to_equal {line = 5, column = 2, index = 47}
   - it reports event end marker:
@@ -138,7 +138,7 @@ specify parsing:
                       "- Ken Griffey")
   - it recognizes a scalar event:
       expect (filter (e (), "type", "value")).
-        to_equal {type = "SCALAR",  value = "Sammy Sosa"}
+         to_equal {type = "SCALAR",  value = "Sammy Sosa"}
   - it records anchors:
       expect (e ().anchor).to_be "SS"
   - it reports event start marker:
@@ -155,7 +155,7 @@ specify parsing:
                           "  by a knee injury.\n")
       - it ignores line-breaks and indentation:
           expect (e ().value).
-            to_be "Mark McGwire's year was crippled by a knee injury."
+             to_be "Mark McGwire's year was crippled by a knee injury."
       - it recognizes implicit plain style:
           e = consume (2, "---\n" ..
                           "  Mark McGwire's\n" ..
@@ -191,7 +191,7 @@ specify parsing:
                           "\n" ..
                           "  What a year!\n")
           expect (e ().value).
-            to_be ("Sammy Sosa completed another fine season with great stats.\n" ..
+             to_be ("Sammy Sosa completed another fine season with great stats.\n" ..
                        "\n" ..
                        "  63 Home Runs\n" ..
                        "  0.288 Batting Average\n" ..
@@ -204,15 +204,15 @@ specify parsing:
                           [[  \//||\/||]] .. "\n" ..
                           [[  // ||  ||__]] .. "\n")
           expect (e ().value).
-            to_be ([[\//||\/||]] .. "\n" ..
-                       [[// ||  ||__]] .. "\n")
+             to_be ([[\//||\/||]] .. "\n" ..
+                        [[// ||  ||__]] .. "\n")
 
     - context single quoted style:
       - it folds line breaks:
           e = consume (2, [['This quoted scalar]] .. "\n" ..
                           [[  spans two lines.']])
           expect (e ().value).
-            to_be "This quoted scalar spans two lines."
+             to_be "This quoted scalar spans two lines."
       - it does not process escape sequences:
           # Lua [[ quoting makes sure libyaml sees all the quotes.
           e = consume (2, [['"Howdy!"\t\u263A']])
@@ -226,7 +226,7 @@ specify parsing:
           e = consume (4, [[quoted: "This quoted scalar]] .. "\n" ..
                           [[  spans two lines\n"]])
           expect (e ().value).
-            to_be "This quoted scalar spans two lines\n"'
+             to_be "This quoted scalar spans two lines\n"'
       - it recognizes unicode escape sequences: '
           e = consume (4, [[unicode: "Sosa did fine.\u263A"]])
           expect (e ().value).to_be "Sosa did fine.\226\152\186"'
@@ -248,7 +248,7 @@ specify parsing:
         expect (e ().value).to_be "Mark McGwire"
         expect (e ().value).to_be "accomplishment"
         expect (e ().value).
-          to_be "Mark set a major league home run record in 1998.\n"
+           to_be "Mark set a major league home run record in 1998.\n"
         expect (e ().value).to_be "stats"
         expect (e ().value).to_be "65 Home Runs\n0.278 Batting Average\n"'
 
@@ -294,14 +294,14 @@ specify parsing:
         e = consume (2, "--- !something\n" ..
                         "- foo\n")
         expect (filter (e (), "type", "tag")).
-          to_equal {type = "SEQUENCE_START", tag = "!something"}'
+           to_equal {type = "SEQUENCE_START", tag = "!something"}'
     - it recognizes global tags: '
         e = consume (2, "--- !!omap\n" ..
                         "- Mark McGwire: 65\n" ..
                         "- Sammy Sosa: 63\n" ..
                         "- Ken Griffy: 58\n")
         expect (filter (e (), "type", "tag")).
-          to_equal {type = "SEQUENCE_START",
+           to_equal {type = "SEQUENCE_START",
                         tag  = "tag:yaml.org,2002:omap"}'
     - it resolves %TAG declarations: '
         e = consume (2, "%TAG ! tag:clarkevans.com,2002:\n" ..
@@ -310,18 +310,18 @@ specify parsing:
                         "  center: &ORIGIN {x: 73, y: 129}\n" ..
                         "  radius: 7\n")
         expect (filter (e (), "type", "tag")).
-          to_equal {type = "SEQUENCE_START",
+           to_equal {type = "SEQUENCE_START",
                         tag  = "tag:clarkevans.com,2002:shape"}'
 
   - context with style:
     - it recognizes block style:
         e = consume (2, "- first\n- second")
         expect (filter (e (), "type", "style")).
-          to_equal {type = "SEQUENCE_START", style = "BLOCK"}
+           to_equal {type = "SEQUENCE_START", style = "BLOCK"}
     - it recognizes flow style:
         e = consume (2, "[first, second]")
         expect (filter (e (), "type", "style")).
-          to_equal {type = "SEQUENCE_START", style = "FLOW"}
+           to_equal {type = "SEQUENCE_START", style = "FLOW"}
 
 - describe SEQUENCE_END:
   - before:
@@ -348,14 +348,14 @@ specify parsing:
     - it recognizes local tags: '
     e = consume (2, "--- !something\nfoo: bar\n")
         expect (filter (e (), "type", "tag")).
-          to_equal {type = "MAPPING_START", tag = "!something"}'
+           to_equal {type = "MAPPING_START", tag = "!something"}'
     - it recognizes global tags: '
         e = consume (2, "--- !!set\n" ..
                         "? Mark McGwire\n" ..
                         "? Sammy Sosa\n" ..
                         "? Ken Griffy\n")
         expect (filter (e (), "type", "tag")).
-          to_equal {type = "MAPPING_START",
+           to_equal {type = "MAPPING_START",
                         tag  = "tag:yaml.org,2002:set"}'
     - it resolves %TAG declarations: '
         e = consume (3, "%TAG ! tag:clarkevans.com,2002:\n" ..
@@ -364,18 +364,18 @@ specify parsing:
                         "  center: &ORIGIN {x: 73, y: 129}\n" ..
                         "  radius: 7\n")
         expect (filter (e (), "type", "tag")).
-          to_equal {type = "MAPPING_START",
+           to_equal {type = "MAPPING_START",
                         tag  = "tag:clarkevans.com,2002:circle"}'
 
   - context with style:
     - it recognizes block style: '
         e = consume (2, "foo: bar\nbaz:\n  quux")
         expect (filter (e (), "type", "style")).
-          to_equal {type = "MAPPING_START", style = "BLOCK"}'
+           to_equal {type = "MAPPING_START", style = "BLOCK"}'
     - it recognizes flow style: '
         e = consume (2, "{foo: bar, baz: quux}")
         expect (filter (e (), "type", "style")).
-          to_equal {type = "MAPPING_START", style = "FLOW"}'
+           to_equal {type = "MAPPING_START", style = "FLOW"}'
 
 
 - describe MAPPING_END:

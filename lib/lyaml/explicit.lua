@@ -27,13 +27,13 @@
 local functional = require "lyaml.functional"
 local implicit   = require "lyaml.implicit"
 
-local anyof, id = functional.anyof, functional.id
+local anyof, id  = functional.anyof, functional.id
 
 local NULL       = functional.NULL
 
 
 local yn = {
-  y = true, Y = true, n = false, N = false,
+   y = true, Y = true, n = false, N = false,
 }
 
 
@@ -44,8 +44,8 @@ local yn = {
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_bool = explicit.bool (tagarg)
 local bool = anyof {
-  implicit.bool,
-  function (x) return yn[x] end,
+   implicit.bool,
+   function (x) return yn[x] end,
 }
 
 
@@ -54,12 +54,12 @@ local bool = anyof {
 -- @treturn function new function that converts int results to float
 -- @usage maybe_float = maybefloat (implicit.decimal) (tagarg)
 local function maybefloat (fn)
-  return function (...)
-    local r = fn (...)
-    if type (r) == "number" then
-      return r + 0.0
-    end
-  end
+   return function (...)
+      local r = fn (...)
+      if type (r) == "number" then
+         return r + 0.0
+      end
+   end
 end
 
 
@@ -70,14 +70,14 @@ end
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_float = explicit.float (tagarg)
 local float = anyof {
-  implicit.float,
-  implicit.nan,
-  implicit.inf,
-  maybefloat (implicit.octal),
-  maybefloat (implicit.decimal),
-  maybefloat (implicit.hexadecimal),
-  maybefloat (implicit.binary),
-  implicit.sexfloat,
+   implicit.float,
+   implicit.nan,
+   implicit.inf,
+   maybefloat (implicit.octal),
+   maybefloat (implicit.decimal),
+   maybefloat (implicit.hexadecimal),
+   maybefloat (implicit.binary),
+   implicit.sexfloat,
 }
 
 
@@ -88,11 +88,11 @@ local float = anyof {
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_int = explicit.int (tagarg)
 local int = anyof {
-  implicit.octal,
-  implicit.decimal,
-  implicit.hexadecimal,
-  implicit.binary,
-  implicit.sexagesimal,
+   implicit.octal,
+   implicit.decimal,
+   implicit.hexadecimal,
+   implicit.binary,
+   implicit.sexagesimal,
 }
 
 
@@ -100,7 +100,7 @@ local int = anyof {
 -- @treturn lyaml.null
 -- @usage null = explicit.null (tagarg)
 local function null ()
-  return NULL
+   return NULL
 end
 
 
@@ -114,9 +114,9 @@ local str = id
 
 --- @export
 return {
-  bool  = bool,
-  float = float,
-  int   = int,
-  null  = null,
-  str   = str,
+   bool   = bool,
+   float  = float,
+   int    = int,
+   null   = null,
+   str    = str,
 }

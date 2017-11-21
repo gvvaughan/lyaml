@@ -184,9 +184,31 @@ specl -v1freport spec/*_spec.yaml
 The dependencies are listed in the dependencies entry of the file
 [rockspec][L15].
 
-See [INSTALL] for instructions for `configure`.
 
-[install]:  http://raw.github.com/gvvaughan/lyaml/release/INSTALL
+Bug reports and code contributions
+----------------------------------
+
+This library is maintained by its users.
+
+Please make bug reports and suggestions as [GitHub Issues][issues].
+Pull requests are especially appreciated.
+
+But first, please check that your issue has not already been reported by
+someone else, and that it is not already fixed by [master][lyaml] in
+preparation for the next release (see  Installation section above for how
+to temporarily install master with [LuaRocks][]).
+
+There is no strict coding style, but please bear in mind the following
+points when proposing changes:
+
+0. Follow existing code. There are a lot of useful patterns and avoided
+   traps there.
+
+1. 3-character indentation using SPACES in Lua sources: It makes rogue
+   TABs easier to see, and lines up nicely with 'if' and 'end' keywords.
+
+
+[issues]:   http://github.com/gvvaughas/lyaml/issues
 [libyaml]:  http://pyyaml.org/wiki/LibYAML
 [lua]:      http://www.lua.org
 [luarocks]: http://www.luarocks.org
