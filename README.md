@@ -210,6 +210,9 @@ points when proposing changes:
 2. Simple strings are easiest to type using single-quote delimiters,
    saving double-quotes for where a string contains apostrophes.
 
+3. Save horizontal space by only using SPACEs where the parser requires
+   them.
+
 
 [issues]:   http://github.com/gvvaughas/lyaml/issues
 [libyaml]:  http://pyyaml.org/wiki/LibYAML
