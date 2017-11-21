@@ -220,7 +220,9 @@ local dumper_mt = {
 -- Emitter object constructor.
 local function Dumper(opts)
    local anchors = {}
-   for k, v in pairs(opts.anchors) do anchors[v] = k end
+   for k, v in pairs(opts.anchors) do
+      anchors[v] = k
+   end
    local object = {
       aliased = {},
       anchors = anchors,
@@ -320,14 +322,20 @@ local parser_mt = {
          while true do
             local key = self:load_node()
             local tag = self.event.tag
-            if tag then tag = tag:match('^' .. TAG_PREFIX .. '(.*)$') end
-            if key == nil then break end
+            if tag then
+               tag = tag:match('^' .. TAG_PREFIX .. '(.*)$')
+            end
+            if key == nil then
+               break
+            end
             if key == '<<' or tag == 'merge' then
                tag = self.event.tag or key
                local node, event = self:load_node()
                if event == 'MAPPING_END' then
                   for k, v in pairs(node) do
-                     if map[k] == nil then map[k] = v end
+                     if map[k] == nil then
+                        map[k] = v
+                     end
                   end
 
                elseif event == 'SEQUENCE_END' then
@@ -337,12 +345,16 @@ local parser_mt = {
                            tag, i, tostring(merge))
                      end
                      for k, v in pairs(merge) do
-                        if map[k] == nil then map[k] = v end
+                        if map[k] == nil then
+                           map[k] = v
+                        end
                      end
                   end
 
                else
-                  if event == 'SCALAR' then event = tostring(node) end
+                  if event == 'SCALAR' then
+                     event = tostring(node)
+                  end
                   self:error("invalid '%s' merge event: %s", tag, event)
                end
             else
@@ -362,7 +374,9 @@ local parser_mt = {
          self:add_anchor(sequence)
          while true do
             local node = self:load_node()
-            if node == nil then break end
+            if node == nil then
+               break
+            end
             sequence[#sequence + 1] = node
          end
          return sequence, self:type()

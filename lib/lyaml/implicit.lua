@@ -77,7 +77,9 @@ local function binary(value)
       rest:gsub('_*(.)', function(digit)
          r = r * 2 + tonumber(digit)
       end)
-      if sign == '-' then r = r * -1 end
+      if sign == '-' then
+         r = r * -1
+      end
    end)
    return r
 end
@@ -95,7 +97,9 @@ local function octal(value)
       rest:gsub('_*(.)', function(digit)
          r = r * 8 + tonumber(digit)
       end)
-      if sign == '-' then r = r * -1 end
+      if sign == '-' then
+         r = r * -1
+      end
    end)
    return r
 end
@@ -110,9 +114,11 @@ local function decimal(value)
    local r
    value:gsub('^([+-]?)_*([0-9][0-9_]*)$', function(sign, rest)
       rest = rest:gsub('_', '')
-      if rest == '0' or #rest > 1 or rest:sub(1, 1) ~= '0'   then
+      if rest == '0' or #rest > 1 or rest:sub(1, 1) ~= '0' then
          r = tonumber(rest)
-         if sign == '-' then r = r * -1 end
+         if sign == '-' then
+            r = r * -1
+         end
       end
    end)
    return r
@@ -126,13 +132,13 @@ end
 -- @usage maybe_int = implicit.hexadecimal(value)
 local function hexadecimal(value)
    local r
-   value:gsub('^([+-]?)(0x_*[0-9a-fA-F][0-9a-fA-F_]*)$',
-      function(sign, rest)
-         rest = rest:gsub('_', '')
-         r = tonumber(rest)
-         if sign == '-' then r = r * -1 end
+   value:gsub('^([+-]?)(0x_*[0-9a-fA-F][0-9a-fA-F_]*)$', function(sign, rest)
+      rest = rest:gsub('_', '')
+      r = tonumber(rest)
+      if sign == '-' then
+         r = r * -1
       end
-   )
+   end)
    return r
 end
 
@@ -150,7 +156,9 @@ local function sexagesimal(value)
       rest:gsub('([0-9]+):?', function(digit)
          r = r * 60 + tonumber(digit)
       end)
-      if sign == '-' then r = r * -1 end
+      if sign == '-' then
+         r = r * -1
+      end
    end)
    return r
 end
@@ -165,7 +173,9 @@ local isnan = {['.nan']=true, ['.NaN']=true, ['.NAN']=true}
 -- @treturn[2] nil otherwise, nil
 -- @usage maybe_nan = implicit.nan(value)
 local function nan(value)
-   if isnan[value] then return 0/0 end
+   if isnan[value] then
+      return 0/0
+   end
 end
 
 
@@ -193,7 +203,9 @@ end
 -- @usage maybe_float = implicit.float(value)
 local function float(value)
    local r = tonumber((value:gsub('_', '')))
-   if r and value:find '[%.eE]' then return r end
+   if r and value:find '[%.eE]' then
+      return r
+   end
 end
 
 
@@ -212,7 +224,9 @@ local function sexfloat(value)
             r = r * 60 + tonumber(digit)
          end)
          r = r + tonumber(float)
-         if sign == '-' then r = r * -1 end
+         if sign == '-' then
+            r = r * -1
+         end
       end
    )
    return r

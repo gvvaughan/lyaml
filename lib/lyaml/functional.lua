@@ -46,7 +46,9 @@ local function iscallable(x)
    if type(x) ~= 'function' then
       x =(getmetatable(x) or {}).__call
    end
-   if type(x) == 'function' then return x end
+   if type(x) == 'function' then
+      return x
+   end
 end
 
 
@@ -59,7 +61,9 @@ local function anyof(fns)
       for _, fn in ipairs(fns) do
          if iscallable(fn) then
             local r = fn(...)
-            if r ~= nil then return r end
+            if r ~= nil then
+               return r
+            end
          end
       end
    end

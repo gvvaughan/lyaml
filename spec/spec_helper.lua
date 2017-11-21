@@ -65,7 +65,9 @@ end
 -- Create a new parser for STR, and consume the first N events.
 function consume(n, str)
    local e = yaml.parser(str)
-   for n = 1, n do e() end
+   for n = 1, n do
+      e()
+   end
    return e
 end
 
