@@ -10,11 +10,18 @@ description = {
    license  = 'MIT/X11',
 }
 
-source = {
-   url = 'git://github.com/gvvaughan/lyaml.git',
--- url = 'http://github.com/gvvaughan/lyaml/archive' .. _MODREV .. '.zip',
--- dir = 'lyaml-' .. _MODREV,
-}
+source = (function(gitp)
+   if gitp then
+      return {
+         url = 'git://github.com/gvvaughan/lyaml.git',
+      }
+   else
+      return {
+         url = 'http://github.com/gvvaughan/lyaml/archive/v' .. _MODREV .. '.zip',
+         dir = 'lyaml-' .. _MODREV,
+      }
+   end
+end)(_MODREV == 'git')
 
 dependencies = {
    'ldoc',
