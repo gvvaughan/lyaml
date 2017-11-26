@@ -28,20 +28,21 @@
 --- @module lyaml
 
 
-local explicit = require 'lyaml.explicit'
-local functional = require 'lyaml.functional'
-local gsub = string.gsub
-local implicit = require 'lyaml.implicit'
-local match = string.match
-local yaml = require 'yaml'
+local _ENV = require 'std.normalize' {
+   'math',
+   'string.find',
+   'string.format',
+   'string.match',
+   'string.gsub',
+   'yaml',
+   'lyaml.functional.NULL',
+   'lyaml.explicit',
+   'lyaml.functional.anyof',
+   'lyaml.functional.id',
+   'lyaml.implicit',
+   'lyaml.functional.isnull',
+}
 
-local anyof, id, isnull =
-   functional.anyof, functional.id, functional.isnull
-
-
---- `lyaml.null` value.
--- @table null
-local null = functional.NULL
 
 local TAG_PREFIX = 'tag:yaml.org,2002:'
 
@@ -178,7 +179,7 @@ local dumper_mt = {
             value = '.nan'
          elseif itsa == 'number' or itsa == 'boolean' then
             value = tostring(value)
-         elseif itsa == 'string' and string.find(value, '\n') then
+         elseif itsa == 'string' and find(value, '\n') then
             style = 'LITERAL'
          end
          return self:emit {
@@ -288,7 +289,7 @@ local parser_mt = {
 
       -- Raise a parse error.
       error = function(self, errmsg, ...)
-         error(string.format('%d:%d: ' .. errmsg, self.mark.line,
+         error(format('%d:%d: ' .. errmsg, self.mark.line,
                                self.mark.column, ...), 0)
       end,
 
@@ -508,7 +509,10 @@ end
 return {
    dump = dump,
    load = load,
-   null = null,
+
+   --- `lyaml.null` value.
+   -- @table null
+   null = NULL,
 
    --- Version number from yaml C binding.
    -- @table _VERSION

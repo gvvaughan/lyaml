@@ -25,10 +25,15 @@
 --- @module lyaml.implicit
 
 
-local NULL = require 'lyaml.functional'.NULL
-local find = string.find
-local gsub = string.gsub
-local sub = string.sub
+local _ENV = require 'std.normalize' {
+   'lyaml.functional.NULL',
+   'math',
+   'math.tointeger',
+   'string.find',
+   'string.gsub',
+   'string.sub',
+}
+
 
 local is_null = {['']=true, ['~']=true, null=true, Null=true, NULL=true}
 
@@ -67,6 +72,14 @@ local function bool(value)
 end
 
 
+local function int(x)
+   local r = tonumber(x)
+   if r ~= nil then
+      return tointeger(r)
+   end
+end
+
+
 --- Parse a binary token, such as '0b1010\_0111\_0100\_1010\_1110'.
 -- @tparam string value token
 -- @treturn[1] int integer equivalent, if a valid token was recognized
@@ -77,7 +90,7 @@ local function binary(value)
    gsub(value, '^([+-]?)0b_*([01][01_]+)$', function(sign, rest)
       r = 0
       gsub(rest, '_*(.)', function(digit)
-         r = r * 2 + tonumber(digit)
+         r = r * 2 + int(digit)
       end)
       if sign == '-' then
          r = r * -1
@@ -97,7 +110,7 @@ local function octal(value)
    gsub(value, '^([+-]?)0_*([0-7][0-7_]*)$', function(sign, rest)
       r = 0
       gsub(rest, '_*(.)', function(digit)
-         r = r * 8 + tonumber(digit)
+         r = r * 8 + int(digit)
       end)
       if sign == '-' then
          r = r * -1
@@ -117,7 +130,7 @@ local function decimal(value)
    gsub(value, '^([+-]?)_*([0-9][0-9_]*)$', function(sign, rest)
       rest = gsub(rest, '_', '')
       if rest == '0' or #rest > 1 or sub(rest, 1, 1) ~= '0' then
-         r = tonumber(rest)
+         r = int(rest)
          if sign == '-' then
             r = r * -1
          end
@@ -136,7 +149,7 @@ local function hexadecimal(value)
    local r
    gsub(value, '^([+-]?)(0x_*[0-9a-fA-F][0-9a-fA-F_]*)$', function(sign, rest)
       rest = gsub(rest, '_', '')
-      r = tonumber(rest)
+      r = int(rest)
       if sign == '-' then
          r = r * -1
       end
@@ -156,7 +169,7 @@ local function sexagesimal(value)
    gsub(value, '^([+-]?)([0-9]+:[0-5]?[0-9][:0-9]*)$', function(sign, rest)
       r = 0
       gsub(rest, '([0-9]+):?', function(digit)
-         r = r * 60 + tonumber(digit)
+         r = r * 60 + int(digit)
       end)
       if sign == '-' then
          r = r * -1
@@ -223,7 +236,7 @@ local function sexfloat(value)
       function(sign, rest, float)
          r = 0
          gsub(rest, '([0-9]+):?', function(digit)
-            r = r * 60 + tonumber(digit)
+            r = r * 60 + int(digit)
          end)
          r = r + tonumber(float)
          if sign == '-' then
