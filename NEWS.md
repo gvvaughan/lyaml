@@ -2,6 +2,9 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+
+## Noteworthy changes in release 6.2 (2017-11-26) [stable]
+
 ### Bug fixes
 
   - `luke` uses the correct spelling of LIBFLAG to match luarocks now.
