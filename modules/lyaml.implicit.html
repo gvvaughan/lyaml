@@ -3,7 +3,7 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <head>
-    <title>lyaml 6.1.2 Reference</title>
+    <title>lyaml 6.2-1 Reference</title>
     <link rel="stylesheet" href="../ldoc.css" type="text/css" />
 </head>
 <body>
@@ -24,7 +24,7 @@
 
 <div id="navigation">
 <br/>
-<h1>lyaml 6.1.2</h1>
+<h1>lyaml 6.2-1</h1>
 
 <ul>
   <li><a href="../index.html">Index</a></li>
@@ -69,23 +69,23 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#binary">binary (value)</a></td>
-	<td class="summary">Parse a binary token, such as "0b1010_0111_0100_1010_1110".</td>
+	<td class="summary">Parse a binary token, such as '0b1010_0111_0100_1010_1110'.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#octal">octal (value)</a></td>
-	<td class="summary">Parse an octal token, such as "012345".</td>
+	<td class="summary">Parse an octal token, such as '012345'.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#decimal">decimal (value)</a></td>
-	<td class="summary">Parse a decimal token, such as "0" or "12345".</td>
+	<td class="summary">Parse a decimal token, such as '0' or '12345'.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#hexadecimal">hexadecimal (value)</a></td>
-	<td class="summary">Parse a hexadecimal token, such as "0xdeadbeef".</td>
+	<td class="summary">Parse a hexadecimal token, such as '0xdeadbeef'.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#sexagesimal">sexagesimal (value)</a></td>
-	<td class="summary">Parse a sexagesimal token, such as "190:20:30".</td>
+	<td class="summary">Parse a sexagesimal token, such as '190:20:30'.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#nan">nan (value)</a></td>
@@ -97,11 +97,11 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#float">float (value)</a></td>
-	<td class="summary">Parse a floating point number token, such as "1e-3" or "-0.12".</td>
+	<td class="summary">Parse a floating point number token, such as '1e-3' or '-0.12'.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#sexfloat">sexfloat (value)</a></td>
-	<td class="summary">Parse a sexagesimal float, such as "190:20:30.15".</td>
+	<td class="summary">Parse a sexagesimal float, such as '190:20:30.15'.</td>
 	</tr>
 </table>
 
@@ -142,7 +142,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_null = implicit.null (token)</pre>
+        <pre class="example">maybe_null = implicit.null(token)</pre>
     </ul>
 
 </dd>
@@ -180,7 +180,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_bool = implicit.bool (token)</pre>
+        <pre class="example">maybe_bool = implicit.bool(token)</pre>
     </ul>
 
 </dd>
@@ -189,13 +189,13 @@
     <strong>binary (value)</strong>
     </dt>
     <dd>
-    Parse a binary token, such as "0b1010_0111_0100_1010_1110".
+    Parse a binary token, such as '0b1010_0111_0100_1010_1110'.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -217,7 +217,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.binary (value)</pre>
+        <pre class="example">maybe_int = implicit.binary(value)</pre>
     </ul>
 
 </dd>
@@ -226,13 +226,13 @@
     <strong>octal (value)</strong>
     </dt>
     <dd>
-    Parse an octal token, such as "012345".
+    Parse an octal token, such as '012345'.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -254,7 +254,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.octal (value)</pre>
+        <pre class="example">maybe_int = implicit.octal(value)</pre>
     </ul>
 
 </dd>
@@ -263,13 +263,13 @@
     <strong>decimal (value)</strong>
     </dt>
     <dd>
-    Parse a decimal token, such as "0" or "12345".
+    Parse a decimal token, such as '0' or '12345'.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -291,7 +291,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.decimal (value)</pre>
+        <pre class="example">maybe_int = implicit.decimal(value)</pre>
     </ul>
 
 </dd>
@@ -300,13 +300,13 @@
     <strong>hexadecimal (value)</strong>
     </dt>
     <dd>
-    Parse a hexadecimal token, such as "0xdeadbeef".
+    Parse a hexadecimal token, such as '0xdeadbeef'.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -328,7 +328,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.hexadecimal (value)</pre>
+        <pre class="example">maybe_int = implicit.hexadecimal(value)</pre>
     </ul>
 
 </dd>
@@ -337,14 +337,14 @@
     <strong>sexagesimal (value)</strong>
     </dt>
     <dd>
-    Parse a sexagesimal token, such as "190:20:30".
+    Parse a sexagesimal token, such as '190:20:30'.
  Useful for times and angles.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -366,7 +366,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.sexagesimal (value)</pre>
+        <pre class="example">maybe_int = implicit.sexagesimal(value)</pre>
     </ul>
 
 </dd>
@@ -381,7 +381,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -403,7 +403,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_nan = implicit.nan (value)</pre>
+        <pre class="example">maybe_nan = implicit.nan(value)</pre>
     </ul>
 
 </dd>
@@ -418,7 +418,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -440,7 +440,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_inf = implicit.inf (value)</pre>
+        <pre class="example">maybe_inf = implicit.inf(value)</pre>
     </ul>
 
 </dd>
@@ -449,13 +449,13 @@
     <strong>float (value)</strong>
     </dt>
     <dd>
-    Parse a floating point number token, such as "1e-3" or "-0.12".
+    Parse a floating point number token, such as '1e-3' or '-0.12'.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -477,7 +477,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_float = implicit.float (value)</pre>
+        <pre class="example">maybe_float = implicit.float(value)</pre>
     </ul>
 
 </dd>
@@ -486,14 +486,14 @@
     <strong>sexfloat (value)</strong>
     </dt>
     <dd>
-    Parse a sexagesimal float, such as "190:20:30.15".
+    Parse a sexagesimal float, such as '190:20:30.15'.
  Useful for times and angles.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -515,7 +515,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_float = implicit.sexfloat (value)</pre>
+        <pre class="example">maybe_float = implicit.sexfloat(value)</pre>
     </ul>
 
 </dd>
@@ -526,7 +526,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2017-04-30 18:57:43 </i>
+<i style="float:right;">Last updated 2017-12-03 21:03:00 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
