@@ -9,6 +9,8 @@
 
   - `luke` uses the correct spelling of LIBFLAG to match luarocks now.
 
+  - `luke` no longer throws spurious `cp: file exists` errors.
+
   - `luke` works on luajit again.
 
 
