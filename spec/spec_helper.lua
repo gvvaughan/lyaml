@@ -1,3 +1,8 @@
+--[[
+ LYAML binding for Lua 5.1, 5.2 & 5.3
+ Copyright (C) 2013-2018 Gary V. Vaughan
+]]
+
 if os.getenv 'installcheck' == nil then
   -- Unless we're running inside `make installcheck`, add the dev-tree
   -- directories to the module search paths.
