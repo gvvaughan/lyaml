@@ -24,10 +24,13 @@ source = (function(gitp)
 end)(_MODREV == 'git')
 
 dependencies = {
-   'ldoc',
    'lua >= 5.1, < 5.4',
    'std.normalize > 2.0',
 }
+
+if _MODREV == 'git' then
+   dependencies[#dependencies + 1] = 'ldoc'
+end
 
 external_dependencies = {
    YAML = {
