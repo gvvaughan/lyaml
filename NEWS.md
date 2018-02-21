@@ -2,6 +2,9 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+
+## Noteworthy changes in release 6.2.1 (2018-02-20) [stable]
+
 ### Bug fixes
 
   - `spec/spec_helper.lua` now looks in the correct objdir
