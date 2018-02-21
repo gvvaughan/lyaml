@@ -3,25 +3,22 @@
  Copyright (C) 2013-2018 Gary V. Vaughan
 ]]
 
-if os.getenv 'installcheck' == nil then
-  -- Unless we're running inside `make installcheck`, add the dev-tree
-  -- directories to the module search paths.
-  local std = require 'specl.std'
+do
+   local std = require 'specl.std'
+   local spawn = require 'specl.shell'.spawn
+   local objdir = spawn('./build-aux/luke --value=objdir').output
 
-  local top_srcdir = os.getenv 'top_srcdir' or '.'
-  local top_builddir = os.getenv 'top_builddir' or '.'
 
-  package.path = std.package.normalize(
-                    top_builddir .. '/lib/?.lua',
-                    top_srcdir .. '/lib/?.lua',
-                    package.path)
-
-  package.cpath = std.package.normalize(
-                    top_builddir .. '/ext/yaml/.libs/?.so',
-                    top_builddir .. '/ext/yaml/_libs/?.dll',
-                    top_srcdir .. '/ext/yaml/.libs/?.so',
-                    top_srcdir .. '/ext/yaml/_libs/?.dll',
-                    package.cpath)
+   package.path = std.package.normalize(
+      './lib/?.lua',
+      './lib/?/init.lua',
+      package.path
+   )
+   package.cpath = std.package.normalize(
+      './' .. objdir:match("^objdir='(.*)'") .. '/?.so',
+      './' .. objdir:match("^objdir='(.*)'") .. '/?.dll',
+      package.cpath
+   )
 end
 
 local hell = require 'specl.shell'

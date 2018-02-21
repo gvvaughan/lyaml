@@ -2,6 +2,13 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### Bug fixes
+
+  - `spec/spec_helper.lua` now looks in the correct objdir
+    for object modules built by luke, instead of adding unused
+    paths from old Autotools objdirs.  So now specl is properly
+    running examples against the not yet installed lyaml objects.
+
 
 ## Noteworthy changes in release 6.2 (2017-11-26) [stable]
 
