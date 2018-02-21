@@ -10,27 +10,15 @@ description = {
    license  = 'MIT/X11',
 }
 
-source = (function(gitp)
-   if gitp then
-      return {
-         url = 'git://github.com/gvvaughan/lyaml.git',
-      }
-   else
-      return {
-         url = 'http://github.com/gvvaughan/lyaml/archive/v' .. _MODREV .. '.zip',
-         dir = 'lyaml-' .. _MODREV,
-      }
-   end
-end)(_MODREV == 'git')
+source = {
+   url = 'http://github.com/gvvaughan/lyaml/archive/v' .. _MODREV .. '.zip',
+   dir = 'lyaml-' .. _MODREV,
+}
 
 dependencies = {
    'lua >= 5.1, < 5.4',
    'std.normalize > 2.0',
 }
-
-if _MODREV == 'git' then
-   dependencies[#dependencies + 1] = 'ldoc'
-end
 
 external_dependencies = {
    YAML = {
@@ -60,3 +48,12 @@ build = {
       .. ' INST_LUADIR="$(LUADIR)"'
       ,
 }
+
+if _MODREV == 'git' then
+   dependencies[#dependencies + 1] = 'ldoc'
+
+   source = {
+      url = 'git://github.com/gvvaughan/lyaml.git',
+   }
+end
+
