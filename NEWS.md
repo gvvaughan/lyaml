@@ -1,7 +1,5 @@
 # lyaml NEWS - User visible changes
 
-## Noteworthy changes in release ?.? (????-??-??) [?]
-
 
 ## Noteworthy changes in release 6.2.1 (2018-02-20) [stable]
 
