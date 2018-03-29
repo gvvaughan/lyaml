@@ -2,6 +2,11 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### Bug fixes
+
+  - Remove spurious dependency on `std.normalize` and `std._debug`
+    libraries.
+
 
 ## Noteworthy changes in release 6.2.1 (2018-02-20) [stable]
 

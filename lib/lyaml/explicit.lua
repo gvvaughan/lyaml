@@ -24,12 +24,12 @@
 
 --- @module lyaml.explicit
 
-local _ENV = require 'std.normalize' {
-   'lyaml.functional.NULL',
-   'lyaml.functional.anyof',
-   'lyaml.functional.id',
-   'lyaml.implicit',
-}
+local functional = require 'lyaml.functional'
+local implicit = require 'lyaml.implicit'
+
+local NULL = functional.NULL
+local anyof = functional.anyof
+local id = functional.id
 
 
 local yn = {y=true, Y=true, n=false, N=false}

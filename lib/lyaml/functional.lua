@@ -24,8 +24,6 @@
 
 --- @module lyaml.functional
 
-local _ENV = require 'std.normalize' {}
-
 
 --- `lyaml.null` value.
 -- @table NULL

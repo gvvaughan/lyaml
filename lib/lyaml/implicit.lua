@@ -25,14 +25,41 @@
 --- @module lyaml.implicit
 
 
-local _ENV = require 'std.normalize' {
-   'lyaml.functional.NULL',
-   'math',
-   'math.tointeger',
-   'string.find',
-   'string.gsub',
-   'string.sub',
-}
+local NULL = require 'lyaml.functional'.NULL
+local find = string.find
+local floor = math.floor
+local gsub = string.gsub
+local sub = string.sub
+
+local tointeger = (function(f)
+   if not tointeger then
+      -- No host tointeger implementation, use our own.
+      return function(x)
+         if type(x) == 'number' and x - floor(x) == 0.0 then
+            return x
+         end
+      end
+
+   elseif f '1' ~= nil then
+      -- Don't perform implicit string-to-number conversion!
+      return function(x)
+         if type(x) == 'number' then
+            return tointeger(x)
+         end
+      end
+   end
+
+   -- Host tointeger is good!
+   return f
+end)(math.tointeger)
+
+
+local function int(x)
+   local r = tonumber(x)
+   if r ~= nil then
+      return tointeger(r)
+   end
+end
 
 
 local is_null = {['']=true, ['~']=true, null=true, Null=true, NULL=true}
@@ -69,14 +96,6 @@ local to_bool = {
 -- @usage maybe_bool = implicit.bool(token)
 local function bool(value)
    return to_bool[value]
-end
-
-
-local function int(x)
-   local r = tonumber(x)
-   if r ~= nil then
-      return tointeger(r)
-   end
 end
 
 

@@ -28,20 +28,19 @@
 --- @module lyaml
 
 
-local _ENV = require 'std.normalize' {
-   'math',
-   'string.find',
-   'string.format',
-   'string.match',
-   'string.gsub',
-   'yaml',
-   'lyaml.functional.NULL',
-   'lyaml.explicit',
-   'lyaml.functional.anyof',
-   'lyaml.functional.id',
-   'lyaml.implicit',
-   'lyaml.functional.isnull',
-}
+local explicit = require 'lyaml.explicit'
+local functional = require 'lyaml.functional'
+local implicit = require 'lyaml.implicit'
+local yaml = require 'yaml'
+
+local NULL = functional.NULL
+local anyof = functional.anyof
+local find = string.find
+local format = string.format
+local gsub = string.gsub
+local id = functional.id
+local isnull = functional.isnull
+local match = string.match
 
 
 local TAG_PREFIX = 'tag:yaml.org,2002:'
@@ -290,7 +289,7 @@ local parser_mt = {
       -- Raise a parse error.
       error = function(self, errmsg, ...)
          error(format('%d:%d: ' .. errmsg, self.mark.line,
-                               self.mark.column, ...), 0)
+                      self.mark.column, ...), 0)
       end,
 
       -- Save node in the anchor table for reference in future ALIASes.
