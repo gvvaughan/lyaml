@@ -1,5 +1,5 @@
 --[[
- LYAML binding for Lua 5.1, 5.2 & 5.3
+ LYAML binding for Lua 5.1, 5.2, 5.3 & 5.4
  Copyright (C) 2013-2018 Gary V. Vaughan
 ]]
 
@@ -28,7 +28,7 @@ yaml = require 'yaml'
 
 BOM = string.char(254, 255) -- UTF-16 Byte Order Mark
 
--- Allow use of bare 'pack' and 'unpack' even in Lua 5.3.
+-- Allow use of bare 'pack' and 'unpack' even in Lua > 5.2.
 pack = table.pack or function(...) return {n = select('#', ...), ...} end
 unpack = table.unpack or unpack
 list = pack

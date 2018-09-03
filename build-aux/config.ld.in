@@ -1,5 +1,5 @@
 --[[
- LYAML binding for Lua 5.1, 5.2 & 5.3
+ LYAML binding for Lua 5.1, 5.2, 5.3 & 5.4
  Copyright (C) 2013-2018 Gary V. Vaughan
 ]]
 
@@ -12,7 +12,7 @@ This is a Lua binding for the fast libYAML C library for converting
 between `%YAML 1.1` and Lua tables, with a flexible Lua language
 API to load and save YAML documents.
 
-It works with Lua 5.1 (including LuaJIT), 5.2 and 5.3.
+It works with Lua 5.1 (including LuaJIT), 5.2, 5.3 and 5.4.
 
 ## LICENSE
 

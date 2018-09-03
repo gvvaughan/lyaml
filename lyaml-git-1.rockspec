@@ -16,7 +16,7 @@ source = {
 }
 
 dependencies = {
-   'lua >= 5.1, < 5.4',
+   'lua >= 5.1, < 5.5',
 }
 
 external_dependencies = {
@@ -46,10 +46,11 @@ build = {
       .. ' INST_LIBDIR="$(LIBDIR)"'
       .. ' INST_LUADIR="$(LUADIR)"'
       ,
+   copy_directories = {'doc'},
 }
 
 if _MODREV == 'git' then
-   dependencies[#dependencies + 1] = 'ldoc'
+   build.copy_directories = nil
 
    source = {
       url = 'git://github.com/gvvaughan/lyaml.git',
