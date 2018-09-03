@@ -4,6 +4,7 @@ sudo: false
 
 env:
   matrix:
+    - VLUA="lua=5.4"
     - VLUA="lua=5.3"
     - VLUA="lua=5.2"
     - VLUA="lua=5.1"
@@ -12,13 +13,16 @@ env:
 
 before_install:
   - pip install hererocks
-  - hererocks here -r^ --$VLUA
+  - hererocks here --luarocks 3 --$VLUA --patch
   - export PATH=$PWD/here/bin:$PATH
 
+  - hererocks tools --luajit=2.0
+  - export PATH=$PATH:$PWD/here/bin
+
 install:
-  - luarocks install ldoc
-  - luarocks install ansicolors
-  - luarocks install luacov
+  - luarocks --lua-dir=$PWD/tools install ldoc
+  - luarocks --lua-dir=$PWD/tools install ansicolors
+  - luarocks --lua-dir=$PWD/tools install luacov
 
 script:
   - luarocks make --force

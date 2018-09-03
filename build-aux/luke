@@ -1,8 +1,9 @@
 #!/usr/bin/env lua
 --[[ minified code follows, see --help text for source location! ]]
-package.searchers=package.searchers or package.loaders
-for i=2,#package.searchers do
-package.searchers[i]=nil
+do local monkey,i,t="@({'_'})@",1,package.searchers or package.loaders
+package.preload[monkey]=true
+while t[i] do if t[i]('_') then i=i+1 else table.remove(t,i) end end
+package.preload[monkey]=nil
 end
 package.preload['luke._base']=function()
 local _ENV=require'std.normalize'{}local function fatal(...)local msg=(...)if select('#',...)>1 then
