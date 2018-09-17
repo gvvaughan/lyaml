@@ -2,6 +2,9 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+
+## Noteworthy changes in release 6.2.3 (2018-09-16) [stable]
+
 ### New Features
 
   - Initial support for Lua 5.4.
