@@ -1,7 +1,7 @@
 -- LYAML parse explicit token values.
 -- Written by Gary V. Vaughan, 2015
 --
--- Copyright(C) 2015-2018 Gary V. Vaughan
+-- Copyright(C) 2015-2020 Gary V. Vaughan
 --
 -- Permission is hereby granted, free of charge, to any person obtaining
 -- a copy of this software and associated documentation files(the

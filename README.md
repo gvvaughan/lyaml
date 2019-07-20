@@ -1,7 +1,7 @@
 LYAML
 =====
 
-Copyright (C) 2013-2018 Gary V. Vaughan
+Copyright (C) 2013-2020 Gary V. Vaughan
 
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://mit-license.org)
 [![travis-ci status](https://secure.travis-ci.org/gvvaughan/lyaml.png)](http://travis-ci.org/gvvaughan/lyaml/builds)

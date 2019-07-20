@@ -2,7 +2,7 @@
  * yaml.c, LibYAML binding for Lua
  * Written by Andrew Danforth, 2009
  *
- * Copyright (C) 2014-2018 Gary V. Vaughan
+ * Copyright (C) 2014-2020 Gary V. Vaughan
  * Copyright (C) 2009 Andrew Danforth
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
