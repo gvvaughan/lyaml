@@ -3,6 +3,14 @@
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
 
+## Noteworthy changes in release 6.2.4 (2019-07-20) [stable]
+
+### Bug fixes
+
+  - `luke` works with upgraded bootstrap luarocks version of
+    `require`.
+
+
 ## Noteworthy changes in release 6.2.3 (2018-09-16) [stable]
 
 ### New Features
