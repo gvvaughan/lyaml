@@ -32,6 +32,7 @@ build = {
       .. ' version="' .. _MODREV .. '"'
       .. ' PREFIX="$(PREFIX)"'
       .. ' CFLAGS="$(CFLAGS)"'
+      .. ' LIBS="-lyaml"'
       .. ' LIBFLAG="$(LIBFLAG)"'
       .. ' LIB_EXTENSION="$(LIB_EXTENSION)"'
       .. ' OBJ_EXTENSION="$(OBJ_EXTENSION)"'
