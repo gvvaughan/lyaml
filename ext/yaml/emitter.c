@@ -276,6 +276,8 @@ emit_SCALAR (lua_State *L, lyaml_emitter *emitter)
    RAWGET_YAML_CHARP (anchor); lua_pop (L, 1);
    RAWGET_YAML_CHARP (tag);    lua_pop (L, 1);
    RAWGET_YAML_CHARP (value);  length = lua_objlen (L, -1); lua_pop (L, 1);
+   RAWGET_BOOLEAN (plain_implicit);
+   RAWGET_BOOLEAN (quoted_implicit);
 
    yaml_scalar_event_initialize (&event, anchor, tag, value, length,
       plain_implicit, quoted_implicit, yaml_style);
