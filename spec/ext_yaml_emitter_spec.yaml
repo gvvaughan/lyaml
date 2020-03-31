@@ -209,6 +209,21 @@ specify emitting:
                     {type = "SCALAR", style = "FOLDED", value = "thud"},
                     "DOCUMENT_END"}).
          to_contain ">-\n  thud\n"
+  - it understands plain_implicit:
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "PLAIN", value = "hello", plain_implicit=false},
+                    "DOCUMENT_END"}).
+         to_contain "'hello'\n"
+  - it understands quoted_implicit:
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "PLAIN", value = "- world", quoted_implicit=false},
+                    "DOCUMENT_END"}).
+         to_contain "! '- world'\n"
+  - it understands tag:
+      expect (emit {"DOCUMENT_START",
+                    {type = "SCALAR", style = "PLAIN", value = "bug_squash", tag="tagger", plain_implicit=false, quoted_implicit=false},
+                    "DOCUMENT_END"}).
+         to_contain "!<tagger> bug_squash\n"
 
 - describe ALIAS:
   - it diagnoses missing anchor parameter:
