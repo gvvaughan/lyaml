@@ -2,6 +2,12 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### Bug fixes
+
+  - `luke` really propagates `YAML_BINDIR`, `YAML_DIR`,
+    `YAML_INCDIR` and `YAML_LIBDIR` to checksymbol test in lukefile
+    given the change to `external_dependencies` layout in 6.1.2.
+
 
 ## Noteworthy changes in release 6.2.4 (2019-07-20) [stable]
 
