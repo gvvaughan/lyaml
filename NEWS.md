@@ -2,6 +2,11 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### Bug fixes
+
+  - `luke` really propagates `LDFLAGS` to module compilation
+    commands.
+
 
 ## Noteworthy changes in release 6.2.5 (2020-04-15) [stable]
 
