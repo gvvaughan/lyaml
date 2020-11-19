@@ -199,9 +199,24 @@ local dumper_mt = {
          elseif itsa == 'string' or itsa == 'boolean' or itsa == 'number' then
             return self:dump_scalar(node)
          elseif itsa == 'table' then
-            if #node > 0 then
+            -- Something is only a sequence if its keys start at 1
+            -- and are consecutive integers without any jumps.
+            local prior_key = 0
+            local is_pure_sequence = true
+            local i, v = next(node, nil)
+            while i and is_pure_sequence do
+              if type(i) ~= "number" or (prior_key + 1 ~= i) then
+                is_pure_sequence = false -- breaks the loop
+              else
+                prior_key = i
+                i, v = next(node, prior_key)
+              end
+            end
+            if is_pure_sequence then
+               -- Only sequentially numbered integer keys starting from 1.
                return self:dump_sequence(node)
             else
+               -- Table contains non sequential integer keys or mixed keys.
                return self:dump_mapping(node)
             end
          else -- unsupported Lua type
