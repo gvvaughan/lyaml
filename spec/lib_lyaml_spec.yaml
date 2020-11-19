@@ -50,11 +50,20 @@ specify lyaml:
   - context sequences:
     - it writes a sequence:
         expect (lyaml.dump {{1, 2, 3}}).to_contain "- 1\n- 2\n- 3"
+    - it writes a sequence containing nils: |
+        expect (lyaml.dump {{1, 2, nil, 3, 4}}).
+           to_contain.all_of {"1: 1", "2: 2", "4: 3", "5: 4"}
 
   - context mappings:
     - it writes a mapping: |
         expect (lyaml.dump {{a=1, b=2, c=3, d=""}}).
            to_contain.all_of {"a: 1", "b: 2", "c: 3", "d: ''"}
+    - it writes a mapping of mixed keys: |
+        expect (lyaml.dump {{[1]=1, [2]=2, three="three", four="4", [5]="five"}}).
+           to_contain.all_of {"1: 1", "2: 2", "three: three", "four: '4'", "5: five"}
+    - it writes a mapping of integer keys: |
+        expect (lyaml.dump {{[2]=2, [3]=3, [4]=4, five=5}}).
+           to_contain.all_of {"2: 2", "3: 3", "4: 4", "five: 5"}
 
   - context anchors and aliases:
     - before:
