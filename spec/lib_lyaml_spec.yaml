@@ -50,9 +50,6 @@ specify lyaml:
   - context sequences:
     - it writes a sequence:
         expect (lyaml.dump {{1, 2, 3}}).to_contain "- 1\n- 2\n- 3"
-    - it writes a sequence containing nils: |
-        expect (lyaml.dump {{1, 2, nil, 3, 4}}).
-           to_contain.all_of {"1: 1", "2: 2", "4: 3", "5: 4"}
 
   - context mappings:
     - it writes a mapping: |
@@ -61,9 +58,18 @@ specify lyaml:
     - it writes a mapping of mixed keys: |
         expect (lyaml.dump {{[1]=1, [2]=2, three="three", four="4", [5]="five"}}).
            to_contain.all_of {"1: 1", "2: 2", "three: three", "four: '4'", "5: five"}
-    - it writes a mapping of integer keys: |
-        expect (lyaml.dump {{[2]=2, [3]=3, [4]=4, five=5}}).
-           to_contain.all_of {"2: 2", "3: 3", "4: 4", "five: 5"}
+    - it writes a mapping of integer keys starting at two: |
+        expect (lyaml.dump {{[2]=2, [3]=3, [4]=4}}).
+           to_contain.all_of {"2: 2", "3: 3", "4: 4"}
+    - it writes a mapping of mixed keys starting at one: |
+        expect (lyaml.dump {{[1]=1, [2]=2, [3]=3, foo="bar"}}).
+           to_contain.all_of {"1: 1", "2: 2", "3: 3", "foo: bar"}
+    - it writes a mapping of mixed keys starting at two: |
+        expect (lyaml.dump {{[2]=2, [3]=3, [4]=4, foo="bar"}}).
+           to_contain.all_of {"2: 2", "3: 3", "4: 4", "foo: bar"}
+    - it writes a table containing nils (jumps in index) as mapping: |
+        expect (lyaml.dump {{1, 2, nil, 3, 4}}).
+           to_contain.all_of {"1: 1", "2: 2", "4: 3", "5: 4"}
 
   - context anchors and aliases:
     - before:
