@@ -3,6 +3,13 @@
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
 
+## Noteworthy changes in release 6.2.7 (2020-11-27) [stable]
+
+### Bug fixes
+
+  - Don't skip YAML entries from mixed key Lua tables.
+
+
 ## Noteworthy changes in release 6.2.6 (2020-08-28) [stable]
 
 ### Bug fixes
