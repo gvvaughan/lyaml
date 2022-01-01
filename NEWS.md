@@ -2,6 +2,11 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### Bug fixes
+
+  - `luke` no longer crashes in `std.normalize` require loops
+    occasionally in Lua 5.4.
+
 
 ## Noteworthy changes in release 6.2.7 (2020-11-27) [stable]
 
