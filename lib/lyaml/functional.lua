@@ -1,7 +1,7 @@
 -- Minimal functional programming utilities.
 -- Written by Gary V. Vaughan, 2015
 --
--- Copyright(C) 2015-2020 Gary V. Vaughan
+-- Copyright(C) 2015-2022 Gary V. Vaughan
 --
 -- Permission is hereby granted, free of charge, to any person obtaining
 -- a copy of this software and associated documentation files(the
