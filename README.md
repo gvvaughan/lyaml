@@ -4,7 +4,7 @@ LYAML
 Copyright (C) 2013-2022 Gary V. Vaughan
 
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://mit-license.org)
-[![travis-ci status](https://secure.travis-ci.org/gvvaughan/lyaml.png)](http://travis-ci.org/gvvaughan/lyaml/builds)
+[![workflow status](https://github.com/gvvaughan/lyaml/actions/workflows/spec.yml/badge.svg?branch=master)](https://github.com/gvvaughan/lyaml/actions)
 [![codecov.io](https://codecov.io/github/gvvaughan/lyaml/coverage.svg?branch=master)](https://codecov.io/github/gvvaughan/lyaml?branch=master)
 
 [LibYAML] binding for [Lua], with a fast C implementation
