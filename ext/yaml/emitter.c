@@ -184,6 +184,8 @@ emit_MAPPING_START (lua_State *L, lyaml_emitter *emitter)
    }
 #undef MENTRY
 
+   if (style) free ((void *) style);
+
    RAWGET_YAML_CHARP (anchor); lua_pop (L, 1);
    RAWGET_YAML_CHARP (tag);    lua_pop (L, 1);
    RAWGET_BOOLEAN (implicit);  lua_pop (L, 1);
@@ -226,6 +228,8 @@ emit_SEQUENCE_START (lua_State *L, lyaml_emitter *emitter)
                              "invalid sequence style '%s'", style));
    }
 #undef MENTRY
+
+   if (style) free ((void *) style);
 
    RAWGET_YAML_CHARP (anchor); lua_pop (L, 1);
    RAWGET_YAML_CHARP (tag);    lua_pop (L, 1);
@@ -272,6 +276,8 @@ emit_SCALAR (lua_State *L, lyaml_emitter *emitter)
                              "invalid scalar style '%s'", style));
    }
 #undef MENTRY
+
+   if (style) free ((void *) style);
 
    RAWGET_YAML_CHARP (anchor); lua_pop (L, 1);
    RAWGET_YAML_CHARP (tag);    lua_pop (L, 1);
