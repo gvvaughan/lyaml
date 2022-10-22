@@ -7,6 +7,9 @@
   - `luke` no longer crashes in `std.normalize` require loops
     occasionally in Lua 5.4.
 
+  - lyaml emitter no longer leaks at least six bytes for every
+    map, sequence and scalar emitted.
+
 
 ## Noteworthy changes in release 6.2.7 (2020-11-27) [stable]
 
