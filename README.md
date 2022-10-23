@@ -4,8 +4,8 @@ LYAML
 Copyright (C) 2013-2022 Gary V. Vaughan
 
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://mit-license.org)
-[![workflow status](https://github.com/gvvaughan/lyaml/actions/workflows/spec.yml/badge.svg?branch=master)](https://github.com/gvvaughan/lyaml/actions)
-[![codecov.io](https://codecov.io/github/gvvaughan/lyaml/coverage.svg?branch=master)](https://codecov.io/github/gvvaughan/lyaml?branch=master)
+[![workflow status](https://github.com/gvvaughan/lyaml/actions/workflows/spec.yml/badge.svg?branch=release-v6.2.8)](https://github.com/gvvaughan/lyaml/actions)
+[![codecov.io](https://codecov.io/github/gvvaughan/lyaml/coverage.svg?branch=release-v6.2.8)](https://codecov.io/github/gvvaughan/lyaml?branch=release-v6.2.8)
 
 [LibYAML] binding for [Lua], with a fast C implementation
 for converting between [%YAML 1.1][yaml11] and [Lua] tables,

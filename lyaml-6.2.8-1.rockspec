@@ -1,4 +1,4 @@
-local _MODREV, _SPECREV = 'git', '-1'
+local _MODREV, _SPECREV = '6.2.8', '-1'
 
 package = 'lyaml'
 version = _MODREV .. _SPECREV

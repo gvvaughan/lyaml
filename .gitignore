@@ -1,10 +1,8 @@
 *~
 *.o
 *.so
-*.html
 *.src.rock
 /ChangeLog
-/doc
 /build-aux/config.ld
 /luacov.*.out
 /lyaml-*.tar.gz
