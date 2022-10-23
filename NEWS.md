@@ -2,6 +2,9 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+
+## Noteworthy changes in release 6.2.8 (2022-10-22) [stable]
+
 ### Bug fixes
 
   - `luke` no longer crashes in `std.normalize` require loops
