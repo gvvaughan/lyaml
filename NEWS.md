@@ -1,8 +1,5 @@
 # lyaml NEWS - User visible changes
 
-## Noteworthy changes in release ?.? (????-??-??) [?]
-
-
 ## Noteworthy changes in release 6.2.9 (2026-07-20) [stable]
 
 ### New Features
