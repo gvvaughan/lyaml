@@ -1,7 +1,7 @@
 LYAML
 =====
 
-Copyright (C) 2013-2022 Gary V. Vaughan
+Copyright (C) 2013-2023 Gary V. Vaughan
 
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://mit-license.org)
 [![workflow status](https://github.com/gvvaughan/lyaml/actions/workflows/spec.yml/badge.svg?branch=master)](https://github.com/gvvaughan/lyaml/actions)
