@@ -2,10 +2,17 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### Bugs Fixed
+
+  - `luke` now uses the same cpp defines for conftests as
+    will be used for module compilation, otherwise we are
+    potestially testing and compiling with different sets
+    of features.
+
 
 ## Noteworthy changes in release 6.2.8 (2022-10-22) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - `luke` no longer crashes in `std.normalize` require loops
     occasionally in Lua 5.4.
@@ -16,14 +23,14 @@
 
 ## Noteworthy changes in release 6.2.7 (2020-11-27) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - Don't skip YAML entries from mixed key Lua tables.
 
 
 ## Noteworthy changes in release 6.2.6 (2020-08-28) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - `luke` really propagates `LDFLAGS` to module compilation
     commands.
@@ -31,7 +38,7 @@
 
 ## Noteworthy changes in release 6.2.5 (2020-04-15) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - `luke` really propagates `YAML_BINDIR`, `YAML_DIR`,
     `YAML_INCDIR` and `YAML_LIBDIR` to checksymbol test in lukefile
@@ -40,7 +47,7 @@
 
 ## Noteworthy changes in release 6.2.4 (2019-07-20) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - `luke` works with upgraded bootstrap luarocks version of
     `require`.
@@ -55,7 +62,7 @@
 
 ## Noteworthy changes in release 6.2.2 (2018-03-28) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - Remove spurious dependency on `std.normalize` and `std._debug`
     libraries.
@@ -63,7 +70,7 @@
 
 ## Noteworthy changes in release 6.2.1 (2018-02-20) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - `spec/spec_helper.lua` now looks in the correct objdir
     for object modules built by luke, instead of adding unused
@@ -73,7 +80,7 @@
 
 ## Noteworthy changes in release 6.2 (2017-11-26) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - `luke` uses the correct spelling of LIBFLAG to match luarocks now.
 
@@ -84,14 +91,14 @@
 
 ## Noteworthy changes in release 6.1.3 (2017-05-29) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - `luke` no longer bombs out with a nil concat error.
 
 
 ## Noteworthy changes in release 6.1.2 (2017-04-30) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - `luke` now propagates `LUA_DIR`, `YAML_INCDIR` and `YAML_LIBDIR`
     correctly.
@@ -106,7 +113,7 @@
 
 ## Noteworthy changes in release 6.1 (2016-10-08) [stable]
 
-### Bug fixes
+### Bugs Fixed
 
   - `lyaml.load` now correctly reads implicit null scalars in a YAML
     document as an `lyaml.null` reference, identical to the "~"
@@ -174,7 +181,7 @@
     }                           -- END_STREAM
     ```
 
-### Bug fixes
+### Bugs Fixed
 
   - Multi-line strings were previously being dumped using single quotes
     which caused the dumped YAML to break.
