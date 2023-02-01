@@ -76,6 +76,7 @@ local default = {
       implicit.sexfloat,
       id,
    },
+   mapping_pairs = pairs,
 }
 
 
@@ -121,7 +122,7 @@ local dumper_mt = {
             anchor = self:get_anchor(map),
             style = 'BLOCK',
          }
-         for k, v in pairs(map) do
+         for k, v in self.mapping_pairs(map) do
             self:dump_node(k)
             self:dump_node(v)
          end
@@ -245,6 +246,7 @@ local function Dumper(opts)
       anchors = anchors,
       emitter = yaml.emitter(),
       implicit_scalar = opts.implicit_scalar,
+      mapping_pairs = opts.mapping_pairs,
    }
    return setmetatable(object, dumper_mt)
 end
@@ -264,13 +266,17 @@ local function dump(documents, opts)
    opts = opts or {}
 
    -- backwards compatibility
-   if opts.anchors == nil and opts.implicit_scalar == nil then
+   if opts.anchors == nil
+      and opts.implicit_scalar == nil
+      and opts.mapping_pairs == nil
+   then
       opts = {anchors=opts}
    end
 
    local dumper = Dumper {
       anchors = opts.anchors or {},
       implicit_scalar = opts.implicit_scalar or default.implicit_scalar,
+      mapping_pairs = opts.mapping_pairs or default.mapping_pairs,
    }
 
    dumper:emit {type='STREAM_START', encoding='UTF8'}
