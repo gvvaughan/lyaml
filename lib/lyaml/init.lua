@@ -396,6 +396,10 @@ local parser_mt = {
             end
             sequence[#sequence + 1] = node
          end
+	 -- Distinguish empty collections from mappings with a metatable.
+	 if self.distinct_sequence and #sequence == 0 then
+	   return setmetatable({}, {}), self:type()
+	 end
          return sequence, self:type()
       end,
 
@@ -456,6 +460,7 @@ local function Parser(s, opts)
       anchors = {},
       explicit_scalar = opts.explicit_scalar,
       implicit_scalar = opts.implicit_scalar,
+      distinct_sequence = opts.distinct_sequence,
       mark = {line=0, column=0},
       next = yaml.parser(s),
    }
@@ -487,6 +492,7 @@ local function load(s, opts)
    local parser = Parser(s, {
       explicit_scalar = opts.explicit_scalar or default.explicit_scalar,
       implicit_scalar = opts.implicit_scalar or default.implicit_scalar,
+      distinct_sequence = opts.distinct_sequence,
    })
 
    if parser:parse() ~= 'STREAM_START' then
