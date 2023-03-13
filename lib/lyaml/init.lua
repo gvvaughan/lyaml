@@ -473,6 +473,7 @@ end
 -- @tfield boolean all load all documents from the stream
 -- @tfield table explicit_scalar map full tag-names to parser functions
 -- @tfield function implicit_scalar parse implicit scalar values
+-- @tfield boolean distinct_sequence adds dummy metatable to empty sequence
 
 
 --- Load a YAML stream into a Lua table.
