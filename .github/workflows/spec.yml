@@ -11,14 +11,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        lua-version: ["5.4", "5.3", "5.2", "5.1", "luajit"]
+        lua-version: ["5.5", "5.4", "5.3", "5.2", "5.1", "luajit"]
 
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
-      - uses: leafo/gh-actions-lua@v12
+      - uses: leafo/gh-actions-lua@v13
         with:
           luaVersion: ${{ matrix.lua-version }}
 
@@ -26,6 +26,7 @@ jobs:
 
       - name: install
         run: |
+          sudo apt-get update -q -q --yes
           sudo apt-get install -y libyaml-dev
           luarocks install ansicolors
           luarocks install ldoc
