@@ -16,7 +16,7 @@ source = {
 }
 
 dependencies = {
-   'lua >= 5.1, < 5.5',
+   'lua >= 5.1, < 5.6',
 }
 
 external_dependencies = {
