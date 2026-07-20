@@ -2,6 +2,13 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+
+## Noteworthy changes in release 6.2.9 (2026-07-20) [stable]
+
+### New Features
+
+  - Initial support for Lua 5.5.
+
 ### Bugs Fixed
 
   - `luke` now uses the same cpp defines for conftests as
