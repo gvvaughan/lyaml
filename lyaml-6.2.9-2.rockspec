@@ -1,4 +1,4 @@
-local _MODREV, _SPECREV = '6.2.9', '-1'
+local _MODREV, _SPECREV = '6.2.9', '-2'
 
 package = 'lyaml'
 version = _MODREV .. _SPECREV

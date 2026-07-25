@@ -30,8 +30,6 @@ incdirs  = {
    '$LUA_INCDIR',
 }
 
-ldocs    = 'build-aux/config.ld.in'
-
 modules  = {
    ['yaml']    = {
       'ext/yaml/yaml.c',
