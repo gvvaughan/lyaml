@@ -3,7 +3,7 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <head>
-    <title>lyaml 6.2.8 Reference</title>
+    <title>lyaml 6.2.9 Reference</title>
     <link rel="stylesheet" href="../ldoc.css" type="text/css" />
 </head>
 <body>
@@ -24,7 +24,8 @@
 
 <div id="navigation">
 <br/>
-<h1>lyaml 6.2.8</h1>
+<h1>lyaml 6.2.9</h1>
+
 
 <ul>
   <li><a href="../index.html">Index</a></li>
@@ -142,7 +143,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_null = implicit.null(token)</pre>
+        <pre class="example">maybe_null = implicit.<span class="function-name">null</span>(token)</pre>
     </ul>
 
 </dd>
@@ -180,7 +181,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_bool = implicit.bool(token)</pre>
+        <pre class="example">maybe_bool = implicit.<span class="function-name">bool</span>(token)</pre>
     </ul>
 
 </dd>
@@ -195,7 +196,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -217,7 +218,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.binary(value)</pre>
+        <pre class="example">maybe_int = implicit.<span class="function-name">binary</span>(value)</pre>
     </ul>
 
 </dd>
@@ -232,7 +233,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -254,7 +255,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.octal(value)</pre>
+        <pre class="example">maybe_int = implicit.<span class="function-name">octal</span>(value)</pre>
     </ul>
 
 </dd>
@@ -269,7 +270,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -291,7 +292,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.decimal(value)</pre>
+        <pre class="example">maybe_int = implicit.<span class="function-name">decimal</span>(value)</pre>
     </ul>
 
 </dd>
@@ -306,7 +307,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -328,7 +329,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.hexadecimal(value)</pre>
+        <pre class="example">maybe_int = implicit.<span class="function-name">hexadecimal</span>(value)</pre>
     </ul>
 
 </dd>
@@ -344,7 +345,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -366,7 +367,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_int = implicit.sexagesimal(value)</pre>
+        <pre class="example">maybe_int = implicit.<span class="function-name">sexagesimal</span>(value)</pre>
     </ul>
 
 </dd>
@@ -381,7 +382,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -403,7 +404,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_nan = implicit.nan(value)</pre>
+        <pre class="example">maybe_nan = implicit.<span class="function-name">nan</span>(value)</pre>
     </ul>
 
 </dd>
@@ -418,7 +419,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -440,7 +441,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_inf = implicit.inf(value)</pre>
+        <pre class="example">maybe_inf = implicit.<span class="function-name">inf</span>(value)</pre>
     </ul>
 
 </dd>
@@ -455,7 +456,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -477,7 +478,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_float = implicit.float(value)</pre>
+        <pre class="example">maybe_float = implicit.<span class="function-name">float</span>(value)</pre>
     </ul>
 
 </dd>
@@ -493,7 +494,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">value</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
          token
         </li>
     </ul>
@@ -515,7 +516,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">maybe_float = implicit.sexfloat(value)</pre>
+        <pre class="example">maybe_float = implicit.<span class="function-name">sexfloat</span>(value)</pre>
     </ul>
 
 </dd>
@@ -525,8 +526,8 @@
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
-<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2022-10-22 17:12:03 </i>
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2026-07-22 11:07:35 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
