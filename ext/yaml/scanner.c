@@ -80,7 +80,7 @@ scan_STREAM_START (lyaml_scanner *scanner)
 {
 #define EVENTF(_f)	(scanner->token.data.stream_start._f)
    lua_State *L = scanner->L;
-   const char *encoding;
+   const char *encoding = NULL;
 
    switch (EVENTF (encoding))
    {
@@ -167,7 +167,7 @@ scan_SCALAR (lyaml_scanner *scanner)
 {
 #define EVENTF(_f)	(scanner->token.data.scalar._f)
    lua_State *L = scanner->L;
-   const char *style;
+   const char *style = NULL;
 
    switch (EVENTF (style))
    {
@@ -230,7 +230,6 @@ static int
 token_iter (lua_State *L)
 {
    lyaml_scanner *scanner = (lyaml_scanner *)lua_touserdata(L, lua_upvalueindex(1));
-   char *str;
 
    scanner_delete_token (scanner);
    if (yaml_parser_scan (&scanner->parser, &scanner->token) != 1)

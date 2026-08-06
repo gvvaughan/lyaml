@@ -47,13 +47,12 @@ static int
 emit_STREAM_START (lua_State *L, lyaml_emitter *emitter)
 {
    yaml_event_t event;
-   yaml_encoding_t yaml_encoding;
+   yaml_encoding_t yaml_encoding = YAML_ANY_ENCODING;
    const char *encoding = NULL;
 
    RAWGET_STRDUP (encoding); lua_pop (L, 1);
 
 #define MENTRY(_s) (STREQ (encoding, #_s)) { yaml_encoding = YAML_##_s##_ENCODING; }
-   if (encoding == NULL) { yaml_encoding = YAML_ANY_ENCODING; } else
    if MENTRY( UTF8	) else
    if MENTRY( UTF16LE	) else
    if MENTRY( UTF16BE	) else
@@ -80,6 +79,7 @@ static int
 emit_STREAM_END (lua_State *L, lyaml_emitter *emitter)
 {
    yaml_event_t event;
+   (void) L;
    yaml_stream_end_event_initialize (&event);
    return yaml_emitter_emit (&emitter->emitter, &event);
 }
@@ -165,7 +165,7 @@ static int
 emit_MAPPING_START (lua_State *L, lyaml_emitter *emitter)
 {
    yaml_event_t event;
-   yaml_mapping_style_t yaml_style;
+   yaml_mapping_style_t yaml_style = YAML_ANY_MAPPING_STYLE;
    yaml_char_t *anchor = NULL, *tag = NULL;
    int implicit = 1;
    const char *style = NULL;
@@ -173,7 +173,6 @@ emit_MAPPING_START (lua_State *L, lyaml_emitter *emitter)
    RAWGET_STRDUP (style);  lua_pop (L, 1);
 
 #define MENTRY(_s) (STREQ (style, #_s)) { yaml_style = YAML_##_s##_MAPPING_STYLE; }
-   if (style == NULL) { yaml_style = YAML_ANY_MAPPING_STYLE; } else
    if MENTRY( BLOCK	) else
    if MENTRY( FLOW	) else
    {
@@ -184,13 +183,12 @@ emit_MAPPING_START (lua_State *L, lyaml_emitter *emitter)
    }
 #undef MENTRY
 
-   if (style) free ((void *) style);
-
    RAWGET_YAML_CHARP (anchor); lua_pop (L, 1);
    RAWGET_YAML_CHARP (tag);    lua_pop (L, 1);
    RAWGET_BOOLEAN (implicit);  lua_pop (L, 1);
 
    yaml_mapping_start_event_initialize (&event, anchor, tag, implicit, yaml_style);
+   if (style) free ((void *) style);
    return yaml_emitter_emit (&emitter->emitter, &event);
 }
 
@@ -200,6 +198,7 @@ static int
 emit_MAPPING_END (lua_State *L, lyaml_emitter *emitter)
 {
    yaml_event_t event;
+   (void) L;
    yaml_mapping_end_event_initialize (&event);
    return yaml_emitter_emit (&emitter->emitter, &event);
 }
@@ -210,7 +209,7 @@ static int
 emit_SEQUENCE_START (lua_State *L, lyaml_emitter *emitter)
 {
    yaml_event_t event;
-   yaml_sequence_style_t yaml_style;
+   yaml_sequence_style_t yaml_style = YAML_ANY_SEQUENCE_STYLE;
    yaml_char_t *anchor = NULL, *tag = NULL;
    int implicit = 1;
    const char *style = NULL;
@@ -218,7 +217,6 @@ emit_SEQUENCE_START (lua_State *L, lyaml_emitter *emitter)
    RAWGET_STRDUP (style);  lua_pop (L, 1);
 
 #define MENTRY(_s) (STREQ (style, #_s)) { yaml_style = YAML_##_s##_SEQUENCE_STYLE; }
-   if (style == NULL) { yaml_style = YAML_ANY_SEQUENCE_STYLE; } else
    if MENTRY( BLOCK	) else
    if MENTRY( FLOW	) else
    {
@@ -229,13 +227,12 @@ emit_SEQUENCE_START (lua_State *L, lyaml_emitter *emitter)
    }
 #undef MENTRY
 
-   if (style) free ((void *) style);
-
    RAWGET_YAML_CHARP (anchor); lua_pop (L, 1);
    RAWGET_YAML_CHARP (tag);    lua_pop (L, 1);
    RAWGET_BOOLEAN (implicit);  lua_pop (L, 1);
 
    yaml_sequence_start_event_initialize (&event, anchor, tag, implicit, yaml_style);
+   if (style) free ((void *) style);
    return yaml_emitter_emit (&emitter->emitter, &event);
 }
 
@@ -245,6 +242,7 @@ static int
 emit_SEQUENCE_END (lua_State *L, lyaml_emitter *emitter)
 {
    yaml_event_t event;
+   (void) L;
    yaml_sequence_end_event_initialize (&event);
    return yaml_emitter_emit (&emitter->emitter, &event);
 }
@@ -255,7 +253,7 @@ static int
 emit_SCALAR (lua_State *L, lyaml_emitter *emitter)
 {
    yaml_event_t event;
-   yaml_scalar_style_t yaml_style;
+   yaml_scalar_style_t yaml_style = YAML_ANY_SCALAR_STYLE;
    yaml_char_t *anchor = NULL, *tag = NULL, *value;
    int length = 0, plain_implicit = 1, quoted_implicit = 1;
    const char *style = NULL;
@@ -263,7 +261,6 @@ emit_SCALAR (lua_State *L, lyaml_emitter *emitter)
    RAWGET_STRDUP (style);  lua_pop (L, 1);
 
 #define MENTRY(_s) (STREQ (style, #_s)) { yaml_style = YAML_##_s##_SCALAR_STYLE; }
-   if (style == NULL) { yaml_style = YAML_ANY_SCALAR_STYLE; } else
    if MENTRY( PLAIN		) else
    if MENTRY( SINGLE_QUOTED	) else
    if MENTRY( DOUBLE_QUOTED	) else
