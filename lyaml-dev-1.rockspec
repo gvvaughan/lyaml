@@ -1,4 +1,4 @@
-local _MODREV, _SPECREV = 'git', '-1'
+local _MODREV, _SPECREV = 'dev', '-1'
 
 package = 'lyaml'
 version = _MODREV .. _SPECREV
@@ -6,12 +6,12 @@ version = _MODREV .. _SPECREV
 description = {
    summary  = 'libYAML binding for Lua',
    detailed = 'Read and write YAML format files with Lua.',
-   homepage = 'http://github.com/gvvaughan/lyaml',
+   homepage = 'https://github.com/gvvaughan/lyaml',
    license  = 'MIT/X11',
 }
 
 source = {
-   url = 'http://github.com/gvvaughan/lyaml/archive/v' .. _MODREV .. '.zip',
+   url = 'https://github.com/gvvaughan/lyaml/archive/v' .. _MODREV .. '.zip',
    dir = 'lyaml-' .. _MODREV,
 }
 
@@ -49,11 +49,10 @@ build = {
    copy_directories = {'doc'},
 }
 
-if _MODREV == 'git' then
+if _MODREV == 'dev' then
    build.copy_directories = nil
 
    source = {
-      url = 'git://github.com/gvvaughan/lyaml.git',
+      url = 'git+https://github.com/gvvaughan/lyaml.git',
    }
 end
-
