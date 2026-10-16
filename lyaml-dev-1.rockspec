@@ -62,9 +62,15 @@ test = {
 }
 
 if _MODREV == 'dev' then
+   -- luarocks.org's ldoc fails on Lua 5.5; gvvaughan's works.
+   build_dependencies = {'gvvaughan/ldoc'}
+
    build.copy_directories = nil
 
    source = {
       url = 'git+https://github.com/gvvaughan/lyaml.git',
    }
+else
+   -- A release commits its LDocs, so don't build them again.
+   build.build_command = build.build_command .. ' LDOC=true'
 end

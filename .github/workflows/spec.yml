@@ -33,7 +33,6 @@ jobs:
         run: |
           sudo apt-get update -q -q --yes
           sudo apt-get install -y libyaml-dev
-          luarocks install --server=https://luarocks.org/manifests/gvvaughan ldoc
           # Run the specs with Specl master, ahead of its next release.
           luarocks install https://raw.githubusercontent.com/gvvaughan/specl/master/specl-dev-1.rockspec
           luarocks test --prepare
