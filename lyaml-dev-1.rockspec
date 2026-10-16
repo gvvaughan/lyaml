@@ -1,5 +1,6 @@
 local _MODREV, _SPECREV = 'dev', '-1'
 
+rockspec_format = '3.0'
 package = 'lyaml'
 version = _MODREV .. _SPECREV
 
@@ -47,6 +48,17 @@ build = {
       .. ' INST_LUADIR="$(LUADIR)"'
       ,
    copy_directories = {'doc'},
+}
+
+test_dependencies = {
+   'ansicolors',
+   'luacov',
+   'specl >= 15',
+}
+
+test = {
+   type = 'command',
+   command = 'specl -vfreport --coverage spec/*_spec.yaml',
 }
 
 if _MODREV == 'dev' then
