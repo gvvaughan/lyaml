@@ -162,7 +162,7 @@ There's no need to download an [lyaml] release, or clone the git repo,
 unless you want to modify the code.  If you use [LuaRocks], you can
 use it to install the latest release from its repository:
 
-    luarocks --server=http://rocks.moonscript.org install lyaml
+    luarocks install lyaml
 
 Or from the rockspec in a release tarball:
 
@@ -170,20 +170,20 @@ Or from the rockspec in a release tarball:
 
 To install current git master from [GitHub][lyaml] (for testing):
 
-    luarocks install http://raw.github.com/gvvaughan/lyaml/master/lyaml-git-1.rockspec
+    luarocks install https://raw.githubusercontent.com/gvvaughan/lyaml/master/lyaml-dev-1.rockspec
 
 To install without [LuaRocks], clone the sources from the
 [repository][lyaml], and then run the following commands:
 
 ```sh
 cd lyaml
-build-aux/luke LYAML_DIR=LIBYAML-INSTALL-PREFIX
+build-aux/luke YAML_DIR=LIBYAML-INSTALL-PREFIX
 sudo build-aux/luke PREFIX=LYAML-INSTALL-PREFIX install
 specl -v1freport spec/*_spec.yaml
 ```
 
 The dependencies are listed in the dependencies entry of the file
-[rockspec][L15].
+[rockspec][L19].
 
 
 Bug reports and code contributions
@@ -221,12 +221,12 @@ points when proposing changes:
    issues with monkey-patching in caller environment.
 
 
-[issues]:   http://github.com/gvvaughas/lyaml/issues
-[libyaml]:  http://pyyaml.org/wiki/LibYAML
-[lua]:      http://www.lua.org
-[luarocks]: http://www.luarocks.org
-[lyaml]:    http://github.com/gvvaughan/lyaml
-[L15]:      http://github.com/gvvaughan/lyaml/blob/master/lyaml-git-1.rockspec#L15
-[yaml.h]:   http://pyyaml.org/browser/libyaml/branches/stable/include/yaml.h
-[yaml]:     http://yaml.org
-[yaml11]:   http://yaml.org/spec/1.1/
+[issues]:   https://github.com/gvvaughan/lyaml/issues
+[libyaml]:  https://pyyaml.org/wiki/LibYAML
+[lua]:      https://www.lua.org
+[luarocks]: https://luarocks.org
+[lyaml]:    https://github.com/gvvaughan/lyaml
+[L19]:      https://github.com/gvvaughan/lyaml/blob/master/lyaml-dev-1.rockspec#L19
+[yaml.h]:   https://github.com/yaml/libyaml/blob/master/include/yaml.h
+[yaml]:     https://yaml.org
+[yaml11]:   https://yaml.org/spec/1.1/
