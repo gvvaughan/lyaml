@@ -86,7 +86,7 @@ specify functional:
   - it handles missing argument:
       expect(f()).to_be()
   - it returns multiple arguments:
-      expect(f(nil, 1, fn, false, nil)).to_be(nil, 1, fn, false, nil)
+      expect(pack(f(nil, 1, f, false, nil))).to_equal(pack(nil, 1, f, false, nil))
 
 
 - describe iscallable:
