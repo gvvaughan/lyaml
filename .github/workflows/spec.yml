@@ -38,7 +38,9 @@ jobs:
           # gvvaughan/ldoc by hand, before anything else needs an ldoc.
           luarocks install --server=https://luarocks.org/manifests/gvvaughan ldoc
           printf gvvaughan > "$(luarocks show --rock-dir ldoc)/rock_namespace"
-          # Run the specs with Specl master, ahead of its next release.
+          # Run the specs with Specl master, ahead of its next release, and
+          # the unreleased typecheck it needs.
+          luarocks install https://raw.githubusercontent.com/gvvaughan/typecheck/master/typecheck-dev-1.rockspec
           luarocks install https://raw.githubusercontent.com/gvvaughan/specl/master/specl-dev-1.rockspec
           luarocks test --prepare
 
