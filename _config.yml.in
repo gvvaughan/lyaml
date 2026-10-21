@@ -1,0 +1,11 @@
+owner:   Gary V. Vaughan
+account: gvvaughan
+
+name:         LYAML
+description:  LibYAML binding for Lua.
+forkme:       "https://github.com/gvvaughan/lyaml"
+release-no:   @version@
+
+url:      "https://gvvaughan.github.io/lyaml"
+markdown: kramdown
+pygments: true

@@ -1,0 +1,16 @@
+*~
+.*.swp
+.DS_Store
+/.jekyll-cache
+/.sass-cache
+/_site
+
+# Build products left behind by master when switching branches.
+/*.src.rock
+/build-aux
+/doc
+/lib
+/luacov.*.out
+/lyaml-*.tar.gz
+/linux
+/macosx
