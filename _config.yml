@@ -4,7 +4,7 @@ account: gvvaughan
 name:         LYAML
 description:  LibYAML binding for Lua.
 forkme:       "https://github.com/gvvaughan/lyaml"
-release-no:   6.2.9
+release-no:   6.2.10
 
 url:      "https://gvvaughan.github.io/lyaml"
 markdown: kramdown
