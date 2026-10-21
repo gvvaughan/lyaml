@@ -48,6 +48,12 @@ modules  = {
    {['lyaml.implicit']   = 'lib/lyaml/implicit.lua'},
 }
 
+-- `luke release` builds lyaml before committing it, without LuaRocks to
+-- say where libyaml and lua.h are, so pass them yourself.  With
+-- Homebrew, for example:
+--
+--    build-aux/luke release version=X.Y YAML_DIR=/opt/homebrew \
+--       LUA_INCDIR=/opt/homebrew/include/lua5.5
 release  = {
    news               = 'NEWS.md',
    rockspec           = 'lyaml-dev-1.rockspec',
