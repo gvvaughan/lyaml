@@ -2,6 +2,9 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+
+## Noteworthy changes in release 6.2.10 (2026-10-20) [stable]
+
 ### New Features
 
   - LYAML has a manual, `doc/lyaml.md`, which is now the home page at
