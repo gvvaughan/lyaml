@@ -2,6 +2,12 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### New Features
+
+  - LYAML has a manual, `doc/lyaml.md`, which is now the home page at
+    <https://gvvaughan.github.io/lyaml>.  The LDoc reference has moved
+    to <https://gvvaughan.github.io/lyaml/api>.
+
 
 ## Noteworthy changes in release 6.2.9 (2026-07-20) [stable]
 

@@ -20,7 +20,7 @@ The code is copyright by its respective authors, and released under the
 MIT license (the same license as Lua itself).  There is no warranty.
 ]]
 
-dir = '../doc'
+dir = '../doc/api'
 
 file = {
   '../lib/lyaml/init.lua',

@@ -52,13 +52,15 @@ release  = {
    news               = 'NEWS.md',
    rockspec           = 'lyaml-dev-1.rockspec',
    check_dependencies = true,
-   add                = {'doc/'},
+   add                = {'doc/api/'},
    replacements       = {
       {['README.md']  = {
          {['?branch=master'] = '?branch=release-v@version@'},
       }},
    },
    ['gh-pages']       = {
-      {['.'] = 'doc/'},
+      {api          = 'doc/api/'},
+      {['index.md'] = 'doc/lyaml.md'},
+      '_config.yml.in',
    },
 }
