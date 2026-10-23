@@ -93,18 +93,21 @@ specify functional:
   - before:
       f = M.iscallable
 
-  - it returns callable for a callable:
-      expect(f(f)).to_be(f)
-      expect(f(setmetatable({}, {__call=f}))).to_be(f)
-  - it returns nil for a non-callable:
-      expect(f()).to_be(nil)
-      expect(f(nil)).to_be(nil)
-      expect(f(false)).to_be(nil)
-      expect(f(true)).to_be(nil)
-      expect(f'str').to_be(nil)
-      expect(f(42)).to_be(nil)
-      expect(f(setmetatable({}, {__index={}}))).to_be(nil)
-      expect(f(setmetatable({}, {__call=42}))).to_be(nil)
+  - it returns true for a callable:
+      expect(f(f)).to_be(true)
+      expect(f(setmetatable({}, {__call=f}))).to_be(true)
+  - it returns false for a non-callable:
+      expect(f()).to_be(false)
+      expect(f(nil)).to_be(false)
+      expect(f(false)).to_be(false)
+      expect(f(true)).to_be(false)
+      expect(f'str').to_be(false)
+      expect(f(42)).to_be(false)
+      expect(f(setmetatable({}, {__index={}}))).to_be(false)
+      expect(f(setmetatable({}, {__call=42}))).to_be(false)
+  - it returns false for a metatable that is protected by a non-table:
+      expect(f(setmetatable({}, {__metatable=true}))).to_be(false)
+      expect(f(setmetatable({}, {__metatable=42}))).to_be(false)
 
 
 - describe isnull:

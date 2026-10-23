@@ -43,12 +43,12 @@ end
 -- @treturn bool `true` if *x* is a function has a __call metamethod
 -- @usage r = iscallable(x) and x(...)
 local function iscallable(x)
-   if type(x) ~= 'function' then
-      x =(getmetatable(x) or {}).__call
-   end
    if type(x) == 'function' then
-      return x
+      return true
    end
+   -- A protected metatable, from `__metatable`, need not be a table.
+   local mt = getmetatable(x)
+   return type(mt) == 'table' and type(mt.__call) == 'function'
 end
 
 

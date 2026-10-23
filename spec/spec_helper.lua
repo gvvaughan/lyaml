@@ -96,7 +96,11 @@ end
 
 
 function iscallable(x)
-   return type(x) == 'function' or type((getmetatable(x) or {}).__call) == 'function'
+   if type(x) == 'function' then
+      return true
+   end
+   local mt = getmetatable(x)
+   return type(mt) == 'table' and type(mt.__call) == 'function'
 end
 
 

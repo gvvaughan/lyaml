@@ -11,6 +11,13 @@
     <https://gvvaughan.github.io/lyaml>.  The LDoc reference has moved
     to <https://gvvaughan.github.io/lyaml/api>.
 
+### Bugs Fixed
+
+  - The internal `lyaml.functional.iscallable` returns `true` or
+    `false`, as it is documented to, rather than the function that it
+    found, and no longer raises an error for an object whose
+    `__metatable` field is not a table.
+
 
 ## Noteworthy changes in release 6.2.9 (2026-07-20) [stable]
 
