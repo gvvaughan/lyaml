@@ -38,6 +38,8 @@ jobs:
           # gvvaughan/ldoc by hand, before anything else needs an ldoc.
           luarocks install --server=https://luarocks.org/manifests/gvvaughan ldoc
           printf gvvaughan > "$(luarocks show --rock-dir ldoc)/rock_namespace"
+          # Until luke is released, install it from its development rockspec.
+          luarocks install https://raw.githubusercontent.com/gvvaughan/luke/master/luke-dev-1.rockspec
           luarocks test --prepare
 
       - name: build
@@ -48,7 +50,7 @@ jobs:
         run: |
           # The rock doesn't build LDocs, but a release does, so find errors
           # in the doc comments now.  LDOC makes a missing ldoc an error.
-          build-aux/luke LDOC="ldoc --fatalwarnings"
+          luke LDOC="ldoc --fatalwarnings"
 
       - name: test
         run: |
