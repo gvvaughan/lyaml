@@ -519,13 +519,14 @@ end
 --[[ ----------------- ]]--
 
 
+--- `lyaml.null` value.
+-- @table null
+
+
 --- @export
 return {
    dump = dump,
    load = load,
-
-   --- `lyaml.null` value.
-   -- @table null
    null = NULL,
 
    --- Version number from yaml C binding.

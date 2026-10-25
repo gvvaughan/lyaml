@@ -10,6 +10,10 @@
     run, and no build without LuaRocks.  Building LDocs, which a release
     commits, no longer needs a build dependency of its own.
 
+### Bugs Fixed
+
+  - `lyaml.null` is in the LDoc reference, where it had been left out.
+
 
 ## Noteworthy changes in release 6.2.10 (2026-10-20) [stable]
 
