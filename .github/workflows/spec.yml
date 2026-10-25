@@ -44,6 +44,12 @@ jobs:
         run: |
           luarocks make --force
 
+      - name: docs
+        run: |
+          # The rock doesn't build LDocs, but a release does, so find errors
+          # in the doc comments now.  LDOC makes a missing ldoc an error.
+          build-aux/luke LDOC=ldoc
+
       - name: test
         run: |
           luarocks test
