@@ -20,6 +20,11 @@ dependencies = {
    'lua >= 5.1, < 5.6',
 }
 
+build_dependencies = {
+   'luarocks-build-luke >= 0.1',
+}
+
+-- LuaRocks finds libyaml, and passes YAML_DIR, YAML_INCDIR and YAML_LIBDIR.
 external_dependencies = {
    YAML = {
      library = 'yaml',
@@ -27,26 +32,48 @@ external_dependencies = {
 }
 
 build = {
-   type = 'command',
-   build_command = '$(LUA) build-aux/luke'
-      .. ' package="' .. package .. '"'
-      .. ' version="' .. _MODREV .. '"'
-      .. ' PREFIX="$(PREFIX)"'
-      .. ' CFLAGS="$(CFLAGS)"'
-      .. ' LIBFLAG="$(LIBFLAG)"'
-      .. ' LIB_EXTENSION="$(LIB_EXTENSION)"'
-      .. ' OBJ_EXTENSION="$(OBJ_EXTENSION)"'
-      .. ' LUA="$(LUA)"'
-      .. ' LUA_DIR="$(LUADIR)"'
-      .. ' LUA_INCDIR="$(LUA_INCDIR)"'
-      .. ' YAML_DIR="$(YAML_DIR)"'
-      .. ' YAML_INCDIR="$(YAML_INCDIR)"'
-      .. ' YAML_LIBDIR="$(YAML_LIBDIR)"'
-      ,
-   install_command = '$(LUA) build-aux/luke install --quiet'
-      .. ' INST_LIBDIR="$(LIBDIR)"'
-      .. ' INST_LUADIR="$(LUADIR)"'
-      ,
+   type = 'luke',
+
+   defines  = {
+      {PACKAGE = '"$package"'},
+      {VERSION = '"$version"'},
+      'NDEBUG',
+      '_FORTIFY_SOURCE=2',
+      platforms   = {
+         aix      = {'_ALL_SOURCE'},
+         bsd      = {'_BSD_SOURCE'},
+         freebsd  = {'__BSD_VISIBLE'},
+         macosx   = {'_DARWIN_C_SOURCE'},
+      },
+   },
+
+   -- What only a probe can check, of the library that LuaRocks found.
+   external_dependencies = {
+      {YAML = {
+         library = {checksymbol = 'yaml_document_initialize'},
+      }},
+   },
+
+   incdirs  = {
+      'ext/include',
+      '$LUA_INCDIR',
+   },
+
+   modules  = {
+      {['yaml'] = {
+         'ext/yaml/yaml.c',
+         'ext/yaml/emitter.c',
+         'ext/yaml/parser.c',
+         'ext/yaml/scanner.c',
+      }},
+
+      {['lyaml']            = 'lib/lyaml/init.lua'},
+      {['lyaml.explicit']   = 'lib/lyaml/explicit.lua'},
+      {['lyaml.functional'] = 'lib/lyaml/functional.lua'},
+      {['lyaml.implicit']   = 'lib/lyaml/implicit.lua'},
+   },
+
+   -- A release commits its LDocs, with the manual, to install.
    copy_directories = {'doc'},
 }
 
@@ -62,15 +89,9 @@ test = {
 }
 
 if _MODREV == 'dev' then
-   -- luarocks.org's ldoc fails on Lua 5.5; gvvaughan's works.
-   build_dependencies = {'gvvaughan/ldoc'}
-
    build.copy_directories = nil
 
    source = {
       url = 'git+https://github.com/gvvaughan/lyaml.git',
    }
-else
-   -- A release commits its LDocs, so don't build them again.
-   build.build_command = build.build_command .. ' LDOC=true'
 end

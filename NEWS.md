@@ -2,6 +2,14 @@
 
 ## Noteworthy changes in release ?.? (????-??-??) [?]
 
+### Incompatible changes
+
+  - LYAML is built from the `build` table of its rockspec, by the
+    `luarocks-build-luke` LuaRocks build backend, which LuaRocks
+    installs for the build, so there is no `build-aux/luke` build to
+    run, and no build without LuaRocks.  Building LDocs, which a release
+    commits, no longer needs a build dependency of its own.
+
 
 ## Noteworthy changes in release 6.2.10 (2026-10-20) [stable]
 

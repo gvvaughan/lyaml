@@ -29,15 +29,17 @@ To install current git master from [GitHub][lyaml] (for testing):
 
     luarocks install https://raw.githubusercontent.com/gvvaughan/lyaml/master/lyaml-dev-1.rockspec
 
-To install without [LuaRocks], clone the sources from the
-[repository][lyaml], and then run the following commands:
+To install into a tree of your own from a clone of the [repository][lyaml],
+and run the specs:
 
 ```sh
 cd lyaml
-build-aux/luke YAML_DIR=LIBYAML-INSTALL-PREFIX
-sudo build-aux/luke PREFIX=LYAML-INSTALL-PREFIX install
-specl -v1freport spec/*_spec.yaml
+luarocks --tree LYAML-INSTALL-TREE make lyaml-dev-1.rockspec YAML_DIR=LIBYAML-INSTALL-PREFIX
+luarocks --tree LYAML-INSTALL-TREE test
 ```
+
+LuaRocks builds lyaml with [luarocks-build-luke], which it installs for
+the build.
 
 The dependencies are listed in the dependencies entry of the file
 [rockspec][L19].
@@ -90,6 +92,7 @@ points when proposing changes:
 [libyaml]:  https://pyyaml.org/wiki/LibYAML
 [lua]:      https://www.lua.org
 [luarocks]: https://luarocks.org
+[luarocks-build-luke]: https://luarocks.org/modules/gvvaughan/luarocks-build-luke
 [lyaml]:    https://github.com/gvvaughan/lyaml
 [manual]:   doc/lyaml.md
 [L19]:      https://github.com/gvvaughan/lyaml/blob/master/lyaml-dev-1.rockspec#L19

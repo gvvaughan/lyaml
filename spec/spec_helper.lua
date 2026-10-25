@@ -5,19 +5,13 @@
 
 do
    local std = require 'specl.std'
-   local spawn = require 'specl.shell'.spawn
-   local objdir = spawn('./build-aux/luke --value=objdir').output
 
-
+   -- Run the Lua modules from this tree, for coverage, and the C module
+   -- from the rock that `luarocks make` installed.
    package.path = std.package.normalize(
       './lib/?.lua',
       './lib/?/init.lua',
       package.path
-   )
-   package.cpath = std.package.normalize(
-      './' .. objdir:match("^objdir='(.*)'") .. '/?.so',
-      './' .. objdir:match("^objdir='(.*)'") .. '/?.dll',
-      package.cpath
    )
 end
 
