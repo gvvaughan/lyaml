@@ -89,6 +89,11 @@ test = {
 }
 
 if _MODREV == 'dev' then
+   -- Only a release builds LDocs, which `luke release` commits, but
+   -- `check_dependencies` finds an ldoc here.  luarocks.org's ldoc fails
+   -- on Lua 5.5; gvvaughan's works.
+   build_dependencies[#build_dependencies + 1] = 'gvvaughan/ldoc'
+
    build.copy_directories = nil
 
    source = {
