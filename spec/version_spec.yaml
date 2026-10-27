@@ -1,0 +1,11 @@
+# LYAML binding for Lua 5.1, 5.2, 5.3, 5.4 & 5.5
+# Copyright (C) 2013-2026 Gary V. Vaughan
+
+before:
+  M = require 'lyaml'._VERSION
+
+specify lyaml._VERSION:
+- it describes this module:
+    expect(M).to_match '^yaml library for Lua '
+- it ends with the release number or the stamp of a development build:
+    expect(M).to_match.any_of {' / %d[%.%d]*$', ' / [%w_.-]+/%x+$'}

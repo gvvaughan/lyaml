@@ -94,6 +94,9 @@ if _MODREV == 'dev' then
    -- on Lua 5.5; gvvaughan's works.
    build_dependencies[#build_dependencies + 1] = 'gvvaughan/ldoc'
 
+   -- Stamp a development build with who made it, and from which commit.
+   build.version = '$USER/$gitref'
+
    build.copy_directories = nil
 
    source = {
