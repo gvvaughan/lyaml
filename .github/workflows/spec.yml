@@ -38,8 +38,7 @@ jobs:
           # gvvaughan/ldoc by hand, before anything else needs an ldoc.
           luarocks install --server=https://luarocks.org/manifests/gvvaughan ldoc
           printf gvvaughan > "$(luarocks show --rock-dir ldoc)/rock_namespace"
-          # Until luke is released, install it from its development rockspec.
-          luarocks install https://raw.githubusercontent.com/gvvaughan/luke/master/luke-dev-1.rockspec
+          luarocks install luke
           luarocks test --prepare
 
       - name: build
