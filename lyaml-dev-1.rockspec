@@ -21,7 +21,7 @@ dependencies = {
 }
 
 build_dependencies = {
-   'luarocks-build-luke >= 0.1',
+   'luarocks-build-luke >= 0.3.1',
 }
 
 -- LuaRocks finds libyaml, and passes YAML_DIR, YAML_INCDIR and YAML_LIBDIR.
