@@ -78,7 +78,7 @@ parse_STREAM_START (lyaml_parser *parser)
 {
 #define EVENTF(_f)	(parser->event.data.stream_start._f)
    lua_State *L = parser->L;
-   const char *encoding;
+   const char *encoding = NULL;
 
    switch (EVENTF (encoding))
    {
@@ -182,7 +182,7 @@ parse_SCALAR (lyaml_parser *parser)
 {
 #define EVENTF(_f)	(parser->event.data.scalar._f)
    lua_State *L = parser->L;
-   const char *style;
+   const char *style = NULL;
 
    switch (EVENTF (style))
    {
@@ -219,7 +219,7 @@ parse_SEQUENCE_START (lyaml_parser *parser)
 {
 #define EVENTF(_f)	(parser->event.data.sequence_start._f)
    lua_State *L = parser->L;
-   const char *style;
+   const char *style = NULL;
 
    switch (EVENTF (style))
    {
@@ -249,7 +249,7 @@ parse_MAPPING_START (lyaml_parser *parser)
 {
 #define EVENTF(_f)	(parser->event.data.mapping_start._f)
    lua_State *L = parser->L;
-   const char *style;
+   const char *style = NULL;
 
    switch (EVENTF (style))
    {
@@ -311,7 +311,6 @@ static int
 event_iter (lua_State *L)
 {
    lyaml_parser *parser = (lyaml_parser *)lua_touserdata(L, lua_upvalueindex(1));
-   char *str;
 
    parser_delete_event (parser);
    if (yaml_parser_parse (&parser->parser, &parser->event) != 1)
